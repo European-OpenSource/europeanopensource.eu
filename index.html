@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>European OpenSource - Under Construction</title>
+    <style>
+        @font-face {
+            font-family: 'NectoMono';
+            src: url('NectoMono-Regular.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+        
+        :root {
+            --primary: #0055a4;
+            --secondary: rgb(213, 24, 181);
+            --accent: #0fb14a;
+            --text: #333;
+            --text-light: #64748b;
+            --background: #f8fafc;
+            --card: #fff;
+            --border: #e2e8f0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'NectoMono', sans-serif;
+            min-height: 100vh;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        header {
+            padding: 2rem 0;
+            text-align: center;
+            background-color: var(--card);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 10;
+        }
+        
+        .logo {
+            font-size: 2.8rem;
+            font-weight: bold;
+            color: var(--primary);
+            display: inline-block;
+            position: relative;
+        }
+        
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+        
+        .construction-badge {
+            display: inline-block;
+            background-color: var(--secondary);
+            color: #333;
+            font-size: 0.9rem;
+            font-weight: bold;
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            margin-top: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        main {
+            flex-grow: 1;
+            padding: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .tagline {
+            font-size: 1.3rem;
+            color: var(--text-light);
+            font-style: italic;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+        
+        .progress-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background-color: var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress {
+            position: absolute;
+            height: 100%;
+            width: 30%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            animation: progress 2.5s ease-in-out infinite;
+            border-radius: 3px;
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+        }
+        
+        .card-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .card {
+            background-color: var(--card);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            padding: 1.5rem 1.5rem 0;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background-color: var(--secondary);
+            border-radius: 1.5px;
+        }
+        
+        p {
+            margin-bottom: 1.5rem;
+            color: var(--text);
+        }
+        
+        .highlight {
+            color: var(--primary);
+            font-weight: bold;
+        }
+        
+        .value-list {
+            list-style-type: none;
+            margin: 1.5rem 0;
+        }
+        
+        .value-list li {
+            margin-bottom: 1rem;
+            padding-left: 2rem;
+            position: relative;
+        }
+        
+        .value-list li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0.5rem;
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent);
+            border-radius: 50%;
+        }
+        
+        .value-list li strong {
+            color: var(--primary);
+            display: block;
+            margin-bottom: 0.2rem;
+        }
+        
+        .cta {
+            text-align: center;
+            margin: 3rem 0;
+        }
+        
+        .cta-text {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        footer {
+            background-color: var(--primary);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .social-links {
+            margin: 1.5rem 0;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+        
+    
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        .social-icon {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+        
+        .copyright {
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        @keyframes progress {
+            0% {
+                left: -30%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .card-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .card.wide {
+                grid-column: span 2;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.2rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .tagline {
+                font-size: 1.1rem;
+            }
+            
+            main {
+                padding: 1.5rem;
+            }
+        }
+        
+        /* Simple circle icons */
+        .icon {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-color: white;
+            border-radius: 50%;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <main>
+            <section class="hero">
+                <h1>European OpenSource</h1>
+                <p class="tagline">Building Europe's Open Source Future.</p>
+                
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress"></div>
+                    </div>
+                    <div class="progress-label">
+                        <span>Development in progress</span>
+                        <span>Coming soon</span>
+                    </div>
+                </div>
+            </section>
+            
+            <div class="card-container">
+                <div class="card wide">
+                    <div class="card-header">
+                        <h2>Our Vision</h2>
+                    </div>
+                    <div class="card-body">
+                        <p>
+                            We want building a platform that unites the technological realities of the European Union and promotes an open, accessible, and collaborative technological ecosystem.
+
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Our Mission</h2>
+                    </div>
+                    <div class="card-body">
+                        <p>To create a hub for EU Member States, where it's possible to:</p>
+                        <ul class="value-list">
+                            <li>Research and exchange innovative ideas</li>
+                            <li>Share and adopt open-source projects</li>
+                            <li>Support the development of transparent and secure technologies</li>
+                            <li>Build a collaborative network between developers, businesses, and institutions</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Our Values</h2>
+                    </div>
+                    <div class="card-body">
+                        <ul class="value-list">
+                            <li><strong>Open Source First</strong> We promote the development, adoption, and use of open-source software in every technological field</li>
+                            <li><strong>Collaboration</strong> We believe in cooperation between individuals, businesses, and institutions to create a robust and secure technological ecosystem</li>
+                            <li><strong>Transparency</strong> Every project must be clear and documented, ensuring traceability and openness</li>
+                            <li><strong>Inclusivity</strong> We welcome anyone who wants to contribute, regardless of background or experience</li>
+                            <li><strong>Security and Digital Sovereignty</strong> The EU must be independent from non-European proprietary technologies and ensure the protection of its citizens' data</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <div class="social-links">
+           <!-- GitHub Icon -->
+           <a href="https://github.com/European-Open-Source" aria-label="GitHub">
+            <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+        </a>
+        
+        <a href="https://www.linkedin.com/company/european-opensource" aria-label="LinkedIn">
+            <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+            </svg>
+        </a>
+        
+        <!-- <a href="#" aria-label="Reddit">
+            <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M24 11.779c0-1.459-1.192-2.645-2.657-2.645-.715 0-1.363.286-1.84.746-1.81-1.191-4.259-1.949-6.971-2.046l1.483-4.669 4.016.941-.006.058c0 1.193.975 2.163 2.174 2.163 1.198 0 2.172-.97 2.172-2.163s-.975-2.164-2.172-2.164c-.92 0-1.704.574-2.021 1.379l-4.329-1.015c-.189-.046-.381.063-.44.249l-1.654 5.207c-2.838.034-5.409.798-7.3 2.025-.474-.438-1.103-.712-1.799-.712-1.465 0-2.656 1.187-2.656 2.646 0 .97.533 1.811 1.317 2.271-.052.282-.086.567-.086.857 0 3.911 4.808 7.093 10.719 7.093s10.72-3.182 10.72-7.093c0-.274-.029-.544-.075-.81.832-.447 1.405-1.312 1.405-2.318zm-17.224 1.816c0-.868.71-1.575 1.582-1.575.872 0 1.581.707 1.581 1.575s-.709 1.574-1.581 1.574-1.582-.706-1.582-1.574zm9.061 4.669c-.797.793-2.048 1.179-3.824 1.179l-.013-.003-.013.003c-1.777 0-3.028-.386-3.824-1.179-.145-.144-.145-.379 0-.523.145-.145.381-.145.526 0 .65.647 1.729.961 3.298.961l.013.003.013-.003c1.569 0 2.648-.315 3.298-.962.145-.145.381-.144.526 0 .145.145.145.379 0 .524zm-.189-3.095c-.872 0-1.581-.706-1.581-1.574 0-.868.709-1.575 1.581-1.575s1.581.707 1.581 1.575-.709 1.574-1.581 1.574z"/>
+            </svg>
+        </a> -->
+            </div>
+            <div class="copyright">
+                &copy; 2025 European OpenSource
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
