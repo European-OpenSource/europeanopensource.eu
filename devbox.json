@@ -1,0 +1,10 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.14.0/.schema/devbox.schema.json",
+  "packages": ["python@3.12", "yarn@1.22.22", "nodejs@23.8.0"],
+  "env": {},
+  "include": [],
+  "shell": {
+    "init_hook": [],
+    "scripts": {}
+  }
+}
