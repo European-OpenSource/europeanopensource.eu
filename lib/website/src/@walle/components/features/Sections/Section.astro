@@ -1,0 +1,132 @@
+---
+import { Image } from "astro:assets";
+
+interface Props {
+  title: string;
+  imageSrc?: string;
+  imageAlt?: string;
+  reversed?: boolean;
+  centered?: boolean;
+  type?: "primary" | "gray" | null;
+}
+
+const {
+  title,
+  imageSrc = null,
+  centered = false,
+  imageAlt = null,
+  type = null,
+  reversed = false,
+} = Astro.props;
+---
+
+<section
+  class={`${type ? `section-content-${type}` : ""} ${reversed ? "reversed" : ""} ${centered ? "text-centered" : ""}`}
+>
+  <div class={`section-content ${imageSrc ? `section-content-image` : ""}`}>
+    <div class="text-container">
+      <h2 class={`section-title ${type ? `section-title-${type}` : ""}`}>{title}</h2>
+      <slot />
+    </div>
+    {
+      imageSrc && (
+        <div class="image-container">
+          <Image
+            src={imageSrc}
+            alt={imageAlt}
+            width={500}
+            height={400}
+            loading="lazy"
+            class="section-image"
+          />
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .section-content-primary {
+    background-color: var(--primary);
+    color: var(--white);
+  }
+
+  .section-content-gray {
+    background-color: var(--gray);
+    color: var(--black);
+  }
+
+  .section-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .section-content-image {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .reversed .section-content {
+    direction: rtl;
+  }
+
+  .text-container {
+    direction: ltr;
+  }
+
+  .section-title {
+    margin-bottom: 1.5rem;
+    color: var(--secondary);
+  }
+
+  .section-title-primary {
+    color: var(--white);
+  }
+
+  .section-title-gray {
+    color: var(--secondary);
+  }
+
+  .image-container {
+    direction: ltr;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+    background-color: var(--white);
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+
+  .image-container:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--box-shadow);
+  }
+
+  .section-image {
+    max-width: 100%;
+    height: auto;
+  }
+
+  @media (max-width: 900px) {
+    .section-content {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .image-container {
+      order: -1;
+    }
+
+    .reversed .section-content {
+      direction: ltr;
+    }
+  }
+</style>

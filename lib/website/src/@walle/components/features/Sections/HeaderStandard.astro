@@ -1,0 +1,527 @@
+---
+import { Image } from "astro:assets";
+
+export interface Props {
+  /**
+   * Titolo principale della pagina (h1)
+   */
+  title: string;
+
+  /**
+   * Sottotitolo o descrizione della pagina
+   */
+  subtitle?: string;
+
+  /**
+   * URL dell'immagine di sfondo o decorativa
+   */
+  imageSrc?: ImageMetadata;
+
+  /**
+   * Testo alternativo per l'immagine
+   */
+  imageAlt?: string;
+
+  /**
+   * Posiziona l'immagine a destra o a sinistra del testo
+   * @default false
+   */
+  imageRight?: boolean;
+
+  /**
+   * Tipo di stile dell'header
+   * @default "primary"
+   */
+  variant?: "primary" | "secondary" | "white";
+
+  /**
+   * Allineamento del contenuto
+   * @default false
+   */
+  centered?: boolean;
+
+  effect?: boolean;
+}
+
+const {
+  title,
+  subtitle = "",
+  imageSrc = null,
+  imageAlt = "",
+  imageRight = false,
+  variant = "primary",
+  centered = true,
+  effect = false,
+} = Astro.props;
+
+const headerId = `header-${Math.random().toString(36).slice(2, 11)}`;
+---
+
+<header
+  id={headerId}
+  class={`header-section header-${variant} ${centered ? "container-centered text-centered" : ""}`}
+>
+  {
+    effect && (
+      <div class="effect-container gradient-bg" />
+      // <div class="effect-container dots-bg"></div>
+    )
+  }
+
+  <div class={`header-content ${imageSrc ? "with-image" : ""} ${imageRight ? "image-right" : ""}`}>
+    <div class="text-content">
+      <h1 class="header-title">{title}</h1>
+      {subtitle && <h2 class="header-subtitle">{subtitle}</h2>}
+      <slot />
+    </div>
+
+    {
+      imageSrc && (
+        <div class="image-container">
+          <div class="image-effects">
+            <span class="spotlight" />
+            <span class="corner top-left" />
+            <span class="corner top-right" />
+            <span class="corner bottom-left" />
+            <span class="corner bottom-right" />
+          </div>
+          <Image
+            src={imageSrc}
+            alt={imageAlt}
+            width={600}
+            height={400}
+            class="header-image"
+            loading="eager"
+          />
+        </div>
+      )
+    }
+  </div>
+</header>
+
+<style>
+  .header-section {
+    padding: 1.5rem 1.5rem 1rem;
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+  }
+
+  /* Base header styles */
+  .header-primary {
+    background-color: var(--primary);
+    color: var(--white);
+  }
+
+  .header-secondary {
+    background-color: var(--white);
+    color: var(--black);
+  }
+
+  .header-white {
+    background-color: transparent;
+    color: var(--black);
+    padding: 1.5rem 1.5rem;
+  }
+
+  /* Enhanced header effects */
+  .effect-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  /* Gradient background effect */
+  .gradient-bg {
+    background: linear-gradient(
+      -45deg,
+      var(--primary-dark),
+      var(--primary-light),
+      var(--secondary)
+    );
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+  }
+
+  .header-secondary .gradient-bg,
+  .header-white .gradient-bg {
+    opacity: 0.1;
+  }
+
+  @keyframes gradientBG {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  /* Dots pattern effect */
+  .dots-bg {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 2px);
+    background-size: 30px 30px;
+    animation: dotsFade 10s ease-in-out infinite alternate;
+  }
+
+  .header-secondary .dots-bg,
+  .header-white .dots-bg {
+    background-image: radial-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 2px);
+    background-size: 30px 30px;
+  }
+
+  @keyframes dotsFade {
+    0% {
+      background-size: 30px 30px;
+    }
+    50% {
+      background-size: 35px 35px;
+    }
+    100% {
+      background-size: 30px 30px;
+    }
+  }
+
+  /* Content layout */
+  .header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    align-items: center;
+    position: relative;
+    z-index: 5;
+  }
+
+  .with-image {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  }
+
+  .image-right .text-content {
+    order: 1;
+  }
+
+  .image-right .image-container {
+    order: 2;
+  }
+
+  .text-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .header-subtitle {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Typography enhancements */
+  .header-title {
+    font-size: 3.5rem;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    font-family: "Ronzino-Medium", sans-serif;
+    font-weight: 600;
+    position: relative;
+    display: inline-block;
+  }
+
+  .header-title::after {
+    content: "";
+    position: absolute;
+    top: 110%;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 50%;
+    background-color: currentColor;
+    transform: translateX(-50%);
+    transition: width var(--transition-normal);
+  }
+
+  .header-section:hover .header-title::after {
+    width: 50%;
+  }
+
+  .header-subtitle {
+    font-size: 1.25rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards;
+    max-width: 38rem;
+  }
+
+  @keyframes fadeInUp {
+    to {
+      opacity: 0.95;
+      transform: translateY(0);
+    }
+  }
+
+  .header-primary .header-title {
+    color: var(--white);
+  }
+
+  .header-primary .header-subtitle {
+    color: var(--gray-light);
+  }
+
+  .header-secondary .header-title {
+    color: var(--primary-dark);
+  }
+
+  /* Image enhancements */
+  .image-container {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative;
+    transform: perspective(1000px) rotateY(0deg) rotateX(0deg);
+  }
+
+  .image-container:hover {
+    transform: translateY(-5px) perspective(1000px) rotateY(2deg) rotateX(2deg);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  }
+
+  .image-effects {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .spotlight {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+      circle at 50% 50%,
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0.35)
+    );
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .image-container:hover .spotlight {
+    opacity: 1;
+  }
+
+  .corner {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    border-color: rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+    opacity: 0;
+  }
+
+  .image-container:hover .corner {
+    opacity: 0.8;
+  }
+
+  .top-left {
+    top: 10px;
+    left: 10px;
+    border-top: 2px solid;
+    border-left: 2px solid;
+  }
+
+  .top-right {
+    top: 10px;
+    right: 10px;
+    border-top: 2px solid;
+    border-right: 2px solid;
+  }
+
+  .bottom-left {
+    bottom: 10px;
+    left: 10px;
+    border-bottom: 2px solid;
+    border-left: 2px solid;
+  }
+
+  .bottom-right {
+    bottom: 10px;
+    right: 10px;
+    border-bottom: 2px solid;
+    border-right: 2px solid;
+  }
+
+  .header-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+    will-change: transform;
+    position: relative;
+    z-index: 1;
+  }
+
+  .image-container:hover .header-image {
+    transform: scale(1.03);
+  }
+
+  /* Responsive styles */
+  @media (max-width: 1024px) {
+    .header-title {
+      font-size: 3rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .header-content.with-image {
+      grid-template-columns: 1fr;
+    }
+
+    .text-content,
+    .image-container {
+      order: unset !important;
+    }
+
+    .header-title {
+      font-size: 2.5rem;
+    }
+
+    .header-subtitle {
+      font-size: 1.125rem;
+    }
+
+    .image-container {
+      margin-top: 1.5rem;
+      max-width: 100%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .header-section {
+      padding: 3rem 1rem;
+    }
+
+    .header-title {
+      font-size: 2rem;
+    }
+  }
+
+  /* High contrast & reduced motion accommodations */
+  @media (prefers-reduced-motion: reduce) {
+    .gradient-bg,
+    .dots-bg,
+    .header-subtitle,
+    .image-container,
+    .header-image,
+    .corner,
+    .spotlight,
+    .header-title::after {
+      animation: none !important;
+      transition: none !important;
+    }
+
+    .header-subtitle {
+      opacity: 1;
+      transform: none;
+    }
+
+    .header-section:hover .header-title::after {
+      width: 0;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .header-title::after {
+      background-color: CanvasText;
+    }
+
+    .corner {
+      border-color: CanvasText;
+    }
+  }
+</style>
+
+<script define:vars={{ headerId }}>
+  document.addEventListener("DOMContentLoaded", function () {
+    const header = document.getElementById(headerId);
+    if (!header) return;
+
+    const imageContainer = header.querySelector(".image-container");
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (imageContainer && !prefersReducedMotion) {
+      // 3D tilt effect on hover
+      imageContainer.addEventListener("mousemove", function (e) {
+        const rect = imageContainer.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        const rotateY = ((x - centerX) / centerX) * 5; // Max 5deg rotation
+        const rotateX = ((centerY - y) / centerY) * 5; // Max 5deg rotation
+
+        imageContainer.style.transform = `perspective(1000px) rotateY(${rotateY}deg) rotateX(${rotateX}deg) translateZ(0) translateY(-5px)`;
+
+        // Move spotlight
+        const spotlight = imageContainer.querySelector(".spotlight");
+        if (spotlight) {
+          spotlight.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0), rgba(255,255,255,0.35))`;
+        }
+      });
+
+      // Reset on mouse leave
+      imageContainer.addEventListener("mouseleave", function () {
+        imageContainer.style.transform =
+          "perspective(1000px) rotateY(0deg) rotateX(0deg) translateZ(0)";
+      });
+    }
+
+    // Text animation with intersection observer
+    const title = header.querySelector(".header-title");
+    if (title && "IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              title.style.animation = "textReveal 1s cubic-bezier(0.22, 1, 0.36, 1) forwards";
+              observer.disconnect();
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
+
+      observer.observe(title);
+    }
+  });
+
+  // Add keyframe dynamically to avoid issues with Astro's CSS scoping
+  if (!document.querySelector("#header-keyframes")) {
+    const style = document.createElement("style");
+    style.id = "header-keyframes";
+    style.innerHTML = `
+      @keyframes textReveal {
+        0% { opacity: 0; transform: translateY(20px); }
+        100% { opacity: 1; transform: translateY(0); }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+</script>
