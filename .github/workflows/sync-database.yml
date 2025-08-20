@@ -1,0 +1,95 @@
+name: Sync Database
+
+permissions: read-all
+
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types:
+      - sync-database
+
+jobs:
+  sync-database:
+    name: Sync Database
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: "website/.nvmrc"
+          cache-dependency-path: website/yarn.lock
+          cache: "yarn"
+
+      - name: Load env
+        id: env
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ] ; then
+            pr_branch_name="feat/sync-database-manual"
+            pr_body="Sync database: manualy triggered by ${{ github.actor }}"
+            hash_commit="latest"
+          else
+            pr_branch_name="feat/sync-database-action-${{ github.event.client_payload.hash }}"
+            pr_body="Sync database: triggered by [awesome-european-opensource](https://github.com/European-OpenSource/awesome-european-opensource) (pipeline: [${{ github.event.client_payload.run_id }}](https://github.com/European-OpenSource/awesome-european-opensource/actions/runs/${{ github.event.client_payload.run_id }}))"
+            hash_commit="${{ github.event.client_payload.hash }}"
+          fi
+
+          pr_body="${pr_body}. Sync database pipeline: [${{ github.run_id }}](https://github.com/European-OpenSource/awesome-european-opensource/actions/runs/${{ github.run_id }})"
+
+          echo "pr_branch_name=${pr_branch_name}" >> $GITHUB_OUTPUT
+          echo "pr_branch_name=${pr_branch_name}"
+
+          echo "pr_body=${pr_body}" >> $GITHUB_OUTPUT
+          echo "pr_body=${pr_body}"
+
+          echo "hash_commit=${hash_commit}" >> $GITHUB_OUTPUT
+          echo "hash_commit=${hash_commit}"
+
+      - name: Download
+        id: download
+        timeout-minutes: 5
+        run: |
+          status=$(git status -s)
+          echo "## Status"
+          echo "${status}"
+
+          # Skip build if only metadata.json has changed and the pipeline was triggered by awesome-european-opensource
+          if [[ "${{ github.event_name }}" == "repository_dispatch" ]] && [[ "${status}" == " M lib/website/src/content/metadata.json" ]] ; then
+            echo "has_changed=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "has_changed=true" >> $GITHUB_OUTPUT
+
+      - name: Create Pull Request
+        if: ${{ steps.download.outputs.has_changed == 'true' }}
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GH_ACTION_WORKFLOWS }}
+          branch: ${{ steps.env.outputs.pr_branch_name }}
+          title: "feat(website): sync database"
+          body: ${{ steps.env.outputs.pr_body }}
+          commit-message: "feat(website): sync database"
+          author: "FabrizioCafolla <${{ secrets.GH_ACTION_EMAIL }}>"
+          add-paths: |
+            website/src/*
+            website/database/*
+
+      - name: Update comment
+        if: ${{ success() && github.event.client_payload.slash_command.args.named.comment_id }}
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.GH_ACTION_WORKFLOWS }}
+          comment-id: ${{ github.event.client_payload.slash_command.args.named.comment_id }}
+          reactions: hooray
+
+      - name: Failure
+        if: ${{ failure() && github.event.client_payload.slash_command.args.named.comment_id }}
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.ACTION_WORKFLOWS }}
+          comment-id: ${{ github.event.client_payload.slash_command.args.named.comment_id }}
+          body: |
+            :warning: Deployment failed. See #[${{ github.run_number }}](https://github.com/European-OpenSource/awesome-european-opensource/actions/runs/${{ github.run_id }}) for more details.

@@ -1,0 +1,135 @@
+---
+import { BasicCard } from "@walle/components";
+import { BaseLayout } from "@walle/layouts";
+import { formatDate } from "@walle/utils";
+import { getCollection } from "astro:content";
+
+const {
+  headerTitle = "Blog",
+  buttonText = "Read more",
+  buttonIcon = "fa:arrow-right",
+  clickableCard = true,
+  posts,
+  postsCollection = "posts",
+  filterTags,
+} = Astro.props;
+
+let postsToUse = posts && posts.length > 0 ? posts : await getCollection(postsCollection);
+
+postsToUse = postsToUse.filter((post: any) => !post.data.draft);
+
+if (filterTags && filterTags.length > 0) {
+  postsToUse = postsToUse.filter((post: any) =>
+    post.data.tags?.some((tag) => filterTags.includes(tag))
+  );
+}
+
+const sortedPosts = postsToUse.sort((a: any, b: any) => {
+  const dateA = a.data.publishDate ? new Date(a.data.publishDate) : new Date(0);
+  const dateB = b.data.publishDate ? new Date(b.data.publishDate) : new Date(0);
+  return dateB.getTime() - dateA.getTime();
+});
+---
+
+<BaseLayout headerTitle={headerTitle}>
+  <main class="blog-layout">
+    <slot />
+    <slot name="before" />
+    {
+      sortedPosts.length === 0 ? (
+        <div class="blog-layout__empty">
+          <p>No posts found.</p>
+        </div>
+      ) : (
+        <div class="blog-layout__grid">
+          {sortedPosts.map((post: PostsEntry) => {
+            const badge = post.data.tags?.length
+              ? { text: post.data.tags[0], color: "secondary" as const }
+              : undefined;
+
+            return (
+              <BasicCard
+                title={post.data.title}
+                content={post.data.description}
+                linkUrl={`/blog/${post.id}`}
+                imageUrl={post.data.image || "/img/posts/default.jpg"}
+                imageAlt={post.data.title}
+                badge={badge}
+                clickableCard={clickableCard}
+                elevated={false}
+                buttonText={buttonText}
+                buttonIcon={buttonIcon}
+                publishDate={
+                  post.data.publishDate ? formatDate(post.data.publishDate.toString()) : null
+                }
+                linkTarget="_self"
+              />
+            );
+          })}
+        </div>
+      )
+    }
+    <slot name="after" />
+  </main>
+</BaseLayout>
+
+<style>
+  .blog-layout {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 24px;
+    min-height: 80vh;
+  }
+
+  .blog-layout__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    align-items: stretch;
+    margin: 0 auto;
+  }
+
+  .blog-layout__empty {
+    text-align: center;
+    padding: 64px 0;
+    color: var(--gray-dark);
+    font-size: 18px;
+  }
+
+  @media (max-width: 768px) {
+    .blog-layout {
+      padding: 32px 16px;
+    }
+
+    .blog-layout__grid {
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .blog-layout {
+      padding: 24px 12px;
+    }
+
+    .blog-layout__grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .blog-layout__grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+  }
+
+  @media (min-width: 1025px) {
+    .blog-layout__grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      max-width: 1200px;
+    }
+  }
+</style>
