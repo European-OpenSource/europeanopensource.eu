@@ -1,0 +1,170 @@
+---
+export interface Props {
+  targetSelector?: string;
+  viewportOffsetFactor?: number;
+}
+
+const { targetSelector = "#article-content", viewportOffsetFactor = 0.25 } = Astro.props;
+---
+
+<!-- Blog Reading Progress Bar -->
+<div
+  class="blog-progress-bar"
+  id="blog-progress-bar"
+  role="progressbar"
+  aria-valuemin="0"
+  aria-valuemax="100"
+  aria-valuenow="0"
+  aria-label="Article reading progress"
+  data-target={targetSelector}
+  data-offset={viewportOffsetFactor}
+>
+</div>
+
+<style>
+  .blog-progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
+    z-index: 1000;
+    transition: width 0.12s ease;
+    will-change: width;
+    pointer-events: none;
+  }
+  @media (max-width: 768px) {
+    .blog-progress-bar {
+      height: 3px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .blog-progress-bar {
+      transition: none;
+    }
+  }
+  @media print {
+    .blog-progress-bar {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  function initBlogReadingProgress() {
+    const bar = document.getElementById("blog-progress-bar");
+    if (!bar) return;
+    const targetSelector = bar.getAttribute("data-target") || "#article-content";
+    const viewportOffsetFactor = parseFloat(bar.getAttribute("data-offset") || "0.25"); // kept for optional mode
+    const articleEl = document.querySelector(targetSelector);
+    if (!(articleEl instanceof HTMLElement)) return;
+
+    // Detect actual scroll container (window vs ancestor with overflow)
+    function findScrollContainer(el: HTMLElement): HTMLElement | Window {
+      let current = el.parentElement;
+      while (current) {
+        const style = getComputedStyle(current);
+        if (/auto|scroll/.test(style.overflowY) && current.scrollHeight > current.clientHeight) {
+          return current;
+        }
+        current = current.parentElement;
+      }
+      return window;
+    }
+
+    const scroller = findScrollContainer(articleEl);
+    const isWindow = scroller === window;
+
+    let ticking = false;
+    let lastHeight = articleEl.scrollHeight;
+
+    // Sentinels for robust measurement (handles dynamic content / images loading)
+    const endSentinel = document.createElement("div");
+    endSentinel.style.cssText = "position:relative;height:1px;width:100%;margin:0;padding:0;";
+    articleEl.appendChild(endSentinel);
+
+    // IntersectionObserver fallback influences recalculation
+    const io = new IntersectionObserver(() => {
+      // If article height changed significantly, force update
+      const currentH = articleEl.scrollHeight;
+      if (Math.abs(currentH - lastHeight) > 32) {
+        // threshold
+        lastHeight = currentH;
+        update(true);
+      }
+    });
+    io.observe(endSentinel);
+
+    function getScrollTop(): number {
+      if (isWindow) return window.pageYOffset || document.documentElement.scrollTop;
+      return (scroller as HTMLElement).scrollTop;
+    }
+
+    function getViewportHeight(): number {
+      if (isWindow) return window.innerHeight;
+      return (scroller as HTMLElement).clientHeight;
+    }
+
+    function computeProgress() {
+      const scrollTop = getScrollTop();
+      const viewport = getViewportHeight();
+      const articleTop = (articleEl as HTMLElement).offsetTop; // offset relative to document
+      const articleHeight = (articleEl as HTMLElement).scrollHeight;
+
+      // If entire article fits in viewport: progress becomes proportion of scroll toward bottom
+      if (articleHeight <= viewport) {
+        const bottomReached = scrollTop + viewport >= articleTop + articleHeight - 4;
+        return bottomReached ? 1 : 0; // keep it simple; optional: (scrollTop - articleTop)/(articleHeight) for gradual
+      }
+
+      const end = articleTop + articleHeight - viewport; // last position where top of viewport touches end
+      if (scrollTop <= articleTop) return 0;
+      if (scrollTop >= end) return 1;
+      return (scrollTop - articleTop) / (end - articleTop);
+    }
+
+    function update(force = false) {
+      if (!force && ticking) return;
+      const progress = computeProgress();
+      const pct = Math.min(Math.max(progress, 0), 1) * 100;
+      if (bar) {
+        bar.style.width = pct + "%";
+        bar.setAttribute("aria-valuenow", Math.round(pct).toString());
+      }
+      ticking = false;
+    }
+
+    function onScroll() {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(() => update(true));
+      }
+    }
+
+    // Recalculate on resize / orientation / load (images may alter height)
+    function onResize() {
+      update(true);
+    }
+    window.addEventListener("resize", onResize, { passive: true });
+    window.addEventListener("orientationchange", () => setTimeout(onResize, 120), {
+      passive: true,
+    });
+    window.addEventListener("load", () => setTimeout(onResize, 60));
+
+    if (isWindow) {
+      window.addEventListener("scroll", onScroll, { passive: true });
+    } else {
+      scroller.addEventListener("scroll", onScroll, { passive: true });
+    }
+
+    // Initial paint
+    update(true);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initBlogReadingProgress);
+  } else {
+    initBlogReadingProgress();
+  }
+</script>
