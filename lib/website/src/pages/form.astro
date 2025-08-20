@@ -1,0 +1,224 @@
+---
+import { BaseLayout } from "@walle/layouts";
+import { Icon } from "astro-icon/components";
+---
+
+<BaseLayout
+  headerTitle="Submit OpenSource project"
+  headerDescription="Discover the mission and vision of European OpenSource."
+  robots="noindex, nofollow"
+>
+  <script async src="https://tally.so/widgets/embed.js"></script>
+  <iframe
+    data-tally-src="https://tally.so/r/n0k9DZ?transparentBackground=1&hideTitle=1&hideLogo=1"
+    width="100%"
+    height="100%"
+    title="Add opensource project"
+  >
+  </iframe>
+  <div class="criteria-footer">
+    <div class="criteria-notice" role="region" aria-labelledby="notice-title">
+      <div class="notice-header">
+        <Icon name="fa:info-circle" class="notice-icon" aria-hidden="true" />
+        <h3 id="notice-title" class="notice-title">Submission Guidelines</h3>
+      </div>
+      <div class="notice-content">
+        <div class="notice-item">
+          <div class="notice-item-header">
+            <Icon name="fa:heart" class="item-icon" aria-hidden="true" />
+            <h4 class="item-title">Evaluation Process</h4>
+          </div>
+          <p class="item-description">
+            The review process may take time before acceptance. We carefully evaluate each
+            submission to ensure quality standards.
+          </p>
+        </div>
+        <div class="notice-item">
+          <div class="notice-item-header">
+            <Icon name="fa:shield" class="item-icon" aria-hidden="true" />
+            <h4 class="item-title">Quality Standards</h4>
+          </div>
+          <p class="item-description">
+            Projects not meeting current or future criteria may be removed to maintain our
+            platform's excellence.
+          </p>
+        </div>
+        <div class="notice-item">
+          <div class="notice-item-header">
+            <Icon name="fa:check-circle" class="item-icon" aria-hidden="true" />
+            <h4 class="item-title">Terms Acceptance</h4>
+          </div>
+          <p class="item-description">
+            By submitting a project, you confirm that you have read and accept our <a
+              href="/terms-and-conditions"
+              class="terms-link">Terms & Conditions</a
+            >.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  iframe {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    border: 0;
+  }
+
+  .criteria-footer {
+    display: block;
+    width: 100%;
+    margin-top: var(--space-xl);
+    padding: var(--space-xl) var(--space-md);
+  }
+
+  .criteria-notice {
+    background: var(--white);
+    border: 1px solid var(--gray-medium);
+    border-radius: var(--radius-lg);
+    padding: var(--space-2xl);
+    box-shadow: var(--box-shadow);
+    max-width: 64rem;
+    margin: 0 auto;
+    transition: var(--transition);
+  }
+
+  .criteria-notice:hover {
+    box-shadow: var(--box-shadow-hover);
+  }
+
+  .notice-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
+    padding-bottom: var(--space-lg);
+    border-bottom: 2px solid var(--primary);
+  }
+
+  .notice-icon {
+    color: var(--primary);
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .notice-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--black);
+    font-family:
+      "Ronzino-Bold",
+      system-ui,
+      -apple-system,
+      sans-serif;
+  }
+
+  .notice-content {
+    display: grid;
+    gap: var(--space-lg);
+  }
+
+  .notice-item {
+    padding: var(--space-lg);
+    background: var(--gray-light);
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--primary);
+    transition: var(--transition);
+  }
+
+  .notice-item:hover {
+    background: var(--gray);
+    transform: translateX(4px);
+  }
+
+  .notice-item-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-sm);
+  }
+
+  .item-icon {
+    color: var(--primary);
+    font-size: 1.125rem;
+    flex-shrink: 0;
+  }
+
+  .item-title {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--black);
+    font-family:
+      "Ronzino-Bold",
+      system-ui,
+      -apple-system,
+      sans-serif;
+  }
+
+  .item-description {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--gray-dark);
+  }
+
+  .terms-link {
+    color: var(--primary);
+    font-weight: 500;
+    text-decoration: underline;
+    transition: var(--transition);
+  }
+
+  .terms-link:hover {
+    color: var(--primary-dark);
+    text-decoration-thickness: 2px;
+  }
+
+  .terms-link:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  @media (max-width: 768px) {
+    .criteria-footer {
+      padding: var(--space-lg) var(--space-sm);
+    }
+
+    .criteria-notice {
+      padding: var(--space-xl);
+    }
+
+    .notice-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-sm);
+      text-align: left;
+    }
+
+    .notice-title {
+      font-size: 1.25rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .criteria-notice {
+      padding: var(--space-lg);
+    }
+
+    .notice-item {
+      padding: var(--space-md);
+    }
+
+    .notice-item-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-xs);
+    }
+  }
+</style>
