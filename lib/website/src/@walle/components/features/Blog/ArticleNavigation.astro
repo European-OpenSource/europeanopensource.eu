@@ -1,0 +1,154 @@
+---
+import { Icon } from "astro-icon/components";
+
+export interface ArticleNavigation {
+  nextArticle?: {
+    title: string;
+    slug: string;
+  };
+  previousArticle?: {
+    title: string;
+    slug: string;
+  };
+  columnName: string;
+}
+
+export interface Props {
+  navigation: ArticleNavigation;
+}
+
+const { navigation } = Astro.props;
+---
+
+<section class="article-navigation" aria-label="Article navigation">
+  <div class="navigation-grid">
+    {
+      navigation.previousArticle && (
+        <div class="nav-card nav-card--previous">
+          <span class="nav-card__label">Previous Article</span>
+          <a href={navigation.previousArticle.slug} class="nav-card__link">
+            <Icon name="fa:chevron-left" class="nav-card__icon" />
+            <span class="nav-card__title">{navigation.previousArticle.title}</span>
+          </a>
+        </div>
+      )
+    }
+
+    {
+      navigation.nextArticle && (
+        <div class="nav-card nav-card--next">
+          <span class="nav-card__label">Next Article</span>
+          <a href={navigation.nextArticle.slug} class="nav-card__link">
+            <span class="nav-card__title">{navigation.nextArticle.title}</span>
+            <Icon name="fa:chevron-right" class="nav-card__icon" />
+          </a>
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .article-navigation {
+    margin-bottom: 1rem;
+  }
+
+  .navigation-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .nav-card {
+    padding: 1.5rem;
+    border: 1px solid var(--gray);
+    border-radius: 12px;
+    background: var(--white);
+    transition: var(--transition);
+    box-shadow: var(--box-shadow);
+  }
+
+  .nav-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+  }
+
+  .nav-card__label {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--gray-dark);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    font-family: "Ronzino-Medium", sans-serif;
+  }
+
+  .nav-card__link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--primary-dark);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+  }
+
+  .nav-card__link:hover {
+    color: var(--primary);
+  }
+
+  .nav-card--previous .nav-card__link {
+    flex-direction: row;
+  }
+
+  .nav-card--next .nav-card__link {
+    flex-direction: row-reverse;
+    text-align: right;
+  }
+
+  .nav-card__icon {
+    flex-shrink: 0;
+    color: var(--primary);
+    width: 20px;
+    height: 20px;
+  }
+
+  .nav-card__title {
+    line-height: 1.3;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .navigation-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .nav-card {
+      padding: 1rem;
+    }
+
+    .nav-card__link {
+      font-size: 0.875rem;
+    }
+  }
+
+  /* Accessibility improvements */
+  @media (prefers-reduced-motion: reduce) {
+    .nav-card {
+      transition: none;
+    }
+
+    .nav-card:hover {
+      transform: none;
+    }
+  }
+
+  /* Focus styles */
+  .nav-card__link:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+</style>

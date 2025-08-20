@@ -1,0 +1,42 @@
+{
+  "name": "website",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write .",
+    "prepare": "cd ../../ && husky lib/website/.husky",
+    "test": "yarn lint:fix && yarn format:fix"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^4.2.6",
+    "@astrojs/rss": "^4.0.11",
+    "@astrojs/sitemap": "^3.4.0",
+    "@iconify-json/fa": "^1.2.1",
+    "@iconify-json/mdi": "^1.2.3",
+    "astro": "^5.7.13",
+    "astro-icon": "^1.1.5"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.32.1",
+    "@typescript-eslint/parser": "^8.32.1",
+    "eslint": "^9.26.0",
+    "eslint-config-prettier": "^10.1.2",
+    "eslint-plugin-astro": "^1.3.1",
+    "eslint-plugin-markdown": "^5.1.0",
+    "husky": "^9.1.7",
+    "prettier": "^3.5.3",
+    "prettier-plugin-astro": "^0.14.1",
+    "typescript": "^5.8.2"
+  }
+}

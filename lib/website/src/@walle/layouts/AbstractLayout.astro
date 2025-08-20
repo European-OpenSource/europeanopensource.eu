@@ -1,0 +1,34 @@
+---
+import { Analytics, Head } from "@walle/components";
+import config from "@walle/config";
+import "@walle/styles/global.css";
+// eslint-disable-next-line
+import "@styles/global.css";
+
+const {
+  headerTitle = "",
+  headerDescription = config.app.website.description || "",
+  headerImage = config.app.website.image || null,
+  headerRobots = config.app.website.robots || "index, follow",
+  headerLanguage = config.app.website.language || "",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang={headerLanguage}>
+  <head>
+    <Head
+      title={headerTitle}
+      description={headerDescription}
+      image={headerImage}
+      robots={headerRobots}
+    />
+    <Analytics
+      enable={config.env.IS_PRODUCTION || false}
+      scriptContent={config.app.astro.analyticsScriptContent || ""}
+    />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

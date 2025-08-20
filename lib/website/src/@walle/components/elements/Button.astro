@@ -1,0 +1,357 @@
+---
+import { Icon } from "astro-icon/components";
+
+type ButtonType = "primary" | "secondary" | "white";
+type ButtonSize = "small" | "medium" | "large";
+
+export interface Props {
+  /**
+   * Text to display in the button
+   */
+  text: string;
+
+  /**
+   * Optional HTML ID
+   */
+  id?: string;
+
+  /**
+   * Destination URL if the button is a link
+   */
+  link?: string;
+
+  /**
+   * Visual style type
+   * @default "primary"
+   */
+  type?: ButtonType;
+
+  /**
+   * If true, apply outline style to the button
+   * @default false
+   */
+  outline?: boolean;
+
+  /**
+   * Additional CSS classes
+   */
+  extraClass?: string;
+
+  /**
+   * Icon name to display (astro-icon)
+   */
+  iconName?: string;
+
+  /**
+   * Button size
+   * @default "medium"
+   */
+  size?: ButtonSize;
+
+  /**
+   * If true, button takes full available width
+   * @default false
+   */
+  fullWidth?: boolean;
+
+  /**
+   * HTML target for links (e.g. "_blank")
+   */
+  target?: string;
+
+  /**
+   * If true, disable the button
+   * @default false
+   */
+  disabled?: boolean;
+
+  disableEffects?: boolean;
+
+  buttonType?: "button" | "submit" | "reset";
+}
+
+const {
+  text,
+  id = null,
+  link = null,
+  type = "primary",
+  outline = false,
+  extraClass = null,
+  iconName = null,
+  size = "medium",
+  fullWidth = false,
+  target = null,
+  disabled = false,
+  disableEffects = false,
+  buttonType = "button",
+} = Astro.props;
+
+const buttonClasses = [
+  `button-${type}`,
+  outline ? `button-outline button-${type}-outline` : "",
+  `button-${size}`,
+  fullWidth ? "button-full-width" : "",
+  extraClass ? extraClass : "",
+  disabled ? "button-disabled" : "",
+  disableEffects ? "no-effects" : "",
+]
+  .filter(Boolean)
+  .join(" ");
+
+const isLink = link && !disabled;
+---
+
+{
+  isLink ? (
+    <a
+      href={link}
+      target={target}
+      class={`button-link-wrapper ${fullWidth ? "button-full-width" : ""}`}
+      aria-disabled={disabled}
+    >
+      <button id={id} class={buttonClasses} disabled={disabled} type={buttonType}>
+        <span class="button-text">{text}</span>
+        {iconName && (
+          <Icon
+            name={iconName}
+            style="margin-left: 8px; vertical-align: 0.20em;"
+            class="button-icon"
+          />
+        )}
+      </button>
+    </a>
+  ) : (
+    <button id={id} class={buttonClasses} disabled={disabled} type={buttonType}>
+      <span class="button-text">{text}</span>
+      {iconName && <Icon name={iconName} class="button-icon" />}
+    </button>
+  )
+}
+
+<style>
+  .button-link-wrapper {
+    display: inline-block;
+    text-decoration: none;
+  }
+
+  .button-link-wrapper[aria-disabled="true"] {
+    pointer-events: none;
+    cursor: not-allowed;
+    opacity: 0.65;
+  }
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: var(--radius-xl);
+    border: none;
+    box-shadow: var(--box-shadow);
+    transition: var(--transition-smooth);
+    cursor: pointer;
+    white-space: nowrap;
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.025em;
+  }
+
+  /* Button animations */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  button {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: fadeInUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1s forwards;
+  }
+
+  /* Button sizes */
+  .button-small {
+    font-size: 0.875rem;
+    padding: var(--space-sm) var(--space-lg);
+    border-radius: var(--radius-md);
+  }
+
+  .button-medium {
+    font-size: 1rem;
+    padding: var(--space-md) var(--space-2xl);
+  }
+
+  .button-large {
+    font-size: 1.125rem;
+    padding: var(--space-lg) var(--space-3xl);
+    border-radius: var(--radius-xl);
+  }
+
+  /* Full width button */
+  .button-full-width {
+    width: 100%;
+  }
+
+  .no-effects {
+    opacity: 1 !important;
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+
+  .no-effects button:hover:not(:disabled),
+  .no-effects button:active:not(:disabled) {
+    transform: none !important;
+  }
+
+  /* Outline buttons */
+  .button-primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: var(--white);
+  }
+
+  .button-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    transform: translateY(-4px);
+    box-shadow: var(--box-shadow-hover);
+  }
+
+  .button-secondary {
+    background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+    color: var(--white);
+  }
+
+  .button-secondary:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--secondary-dark), var(--secondary));
+    transform: translateY(-4px);
+    box-shadow: var(--box-shadow-hover);
+  }
+
+  .button-white {
+    background: var(--white);
+    color: var(--primary);
+    border: 1px solid var(--gray-medium);
+  }
+
+  .button-white:hover:not(:disabled) {
+    background: var(--gray-light);
+    color: var(--primary-dark);
+    transform: translateY(-4px);
+    box-shadow: var(--box-shadow-hover);
+    border-color: var(--primary-light);
+  }
+
+  /* Outline buttons */
+  .button-outline {
+    background: transparent;
+    border: 2px solid;
+    box-shadow: none;
+  }
+
+  .button-primary-outline {
+    color: var(--primary);
+    border-color: var(--primary);
+  }
+
+  .button-primary-outline:hover:not(:disabled) {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    color: var(--white);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  }
+
+  .button-secondary-outline {
+    color: var(--secondary);
+    border-color: var(--secondary);
+  }
+
+  .button-secondary-outline:hover:not(:disabled) {
+    background: var(--secondary-dark);
+    border-color: var(--secondary-dark);
+    color: var(--white);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  }
+
+  .button-white-outline {
+    color: var(--white);
+    border-color: var(--white);
+  }
+
+  .button-white-outline:hover:not(:disabled) {
+    background: var(--white);
+    border-color: var(--white);
+    color: var(--primary);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Disabled state */
+  .button-disabled,
+  button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    pointer-events: none;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Button text and icon */
+  .button-text {
+    display: inline-block;
+  }
+
+  .button-icon {
+    display: inline-block;
+    margin-left: 0.5rem;
+    vertical-align: -0.15em;
+    width: 1em;
+    height: 1em;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .button-small {
+      font-size: 0.75rem;
+      padding: 0.4rem 1rem;
+    }
+
+    .button-medium {
+      font-size: 0.875rem;
+      padding: 0.6rem 1.5rem;
+    }
+
+    .button-large {
+      font-size: 1rem;
+      padding: 0.75rem 2rem;
+    }
+  }
+
+  /* Hover effects and feedback */
+  button:active:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    button {
+      animation: none;
+      opacity: 1;
+      transform: translateY(0);
+      transition: none;
+    }
+
+    button:hover:not(:disabled),
+    button:active:not(:disabled) {
+      transform: none;
+    }
+  }
+</style>

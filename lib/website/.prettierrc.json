@@ -1,0 +1,24 @@
+{
+  "semi": true,
+  "singleQuote": false,
+  "tabWidth": 2,
+  "printWidth": 100,
+  "trailingComma": "es5",
+  "plugins": ["prettier-plugin-astro"],
+  "endOfLine": "auto",
+  "overrides": [
+    {
+      "files": "*.astro",
+      "options": {
+        "parser": "astro"
+      }
+    },
+    {
+      "files": "*.md",
+      "options": {
+        "tabWidth": 2,
+        "proseWrap": "preserve"
+      }
+    }
+  ]
+}

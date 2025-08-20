@@ -1,0 +1,66 @@
+---
+import { Analytics } from "@walle/components";
+import config from "@walle/config";
+import "@walle/styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  robots?: string;
+}
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+const {
+  title,
+  description = config.app.website.description,
+  image = config.app.website.image,
+  robots = null,
+} = Astro.props;
+
+const titleSeo = title + " | " + config.app.website.title;
+---
+
+<!-- Global Metadata -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="sitemap" href="/sitemap-index.xml" />
+<link
+  rel="alternate"
+  type="application/rss+xml"
+  title={titleSeo}
+  href={new URL("rss.xml", Astro.site)}
+/>
+<meta name="generator" content={Astro.generator} />
+
+<!-- Font preloads -->
+<link rel="preload" href="/fonts/NectoMono-Regular.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/fonts/Ronzino-Regular.woff2" as="font" type="font/woff2" crossorigin />
+
+<!-- Canonical URL -->
+<link rel="canonical" href={canonicalURL} />
+
+<!-- Primary Meta Tags -->
+<title>{titleSeo}</title>
+<meta name="title" content={titleSeo} />
+<meta name="description" content={description} />
+
+{robots && <meta name="robots" content={robots} />}
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content={Astro.url} />
+<meta property="og:title" content={titleSeo} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={new URL(image, Astro.url)} />
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content={Astro.url} />
+<meta property="twitter:title" content={titleSeo} />
+<meta property="twitter:description" content={description} />
+<meta property="twitter:image" content={new URL(image, Astro.url)} />
+
+<Analytics />

@@ -1,0 +1,1170 @@
+---
+import { BaseLayout } from "@walle/layouts";
+import { SectionHeaderStandard } from "@walle/components";
+import { formatDate } from "@walle/utils";
+
+interface Props {
+  title: string;
+  description: string;
+  author?: string;
+  publishDate?: Date;
+  readingTime?: string;
+  image?: string | null;
+  tags?: string[];
+  draft?: boolean;
+}
+
+const {
+  title,
+  description,
+  author,
+  publishDate,
+  readingTime,
+  tags,
+  image = null,
+  draft = false,
+} = Astro.props;
+---
+
+<BaseLayout headerTitle={title} headerDescription={description} headerImage={image}>
+  <slot name="before" />
+  {
+    draft ? (
+      <div class="draft-message">
+        <h1>Not Found.</h1>
+        <p>The content you're looking for is not available.</p>
+      </div>
+    ) : (
+      <>
+        <SectionHeaderStandard title={title} subtitle={description} variant="secondary">
+          <div class="meta-wrapper">
+            {(author || publishDate || readingTime) && (
+              <div class="meta-info">
+                {author && <span class="meta-author">{author}</span>}
+                {publishDate && (
+                  <time class="meta-date" datetime={publishDate.toISOString()}>
+                    {formatDate(publishDate.toString())}
+                  </time>
+                )}
+                {readingTime && <span class="meta-reading">{readingTime}</span>}
+              </div>
+            )}
+            {tags && tags.length > 0 && (
+              <div class="tags">
+                {tags.map((tag) => (
+                  <span class="tag">{tag}</span>
+                ))}
+              </div>
+            )}
+          </div>
+        </SectionHeaderStandard>
+
+        <div class="article-container">
+          <aside class="table-of-contents" id="toc">
+            <h3>Contents</h3>
+            <nav class="toc-nav" id="toc-nav" />
+            <div class="toc-footer">
+              <div class="reading-progress">
+                <div class="progress-text">Reading Progress</div>
+                <div class="progress-track">
+                  <div class="progress-fill" id="toc-progress" />
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          <article class="article">
+            <div class="article-content" id="article-content">
+              <slot />
+            </div>
+            <div class="progress-bar" id="progress-bar" />
+          </article>
+        </div>
+      </>
+    )
+  }
+  <slot name="after" />
+</BaseLayout>
+
+<style>
+  .draft-message {
+    text-align: center;
+    padding: 64px 0;
+    color: var(--gray-dark);
+    font-size: 18px;
+  }
+
+  .article-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 3rem;
+    padding: 0 2rem;
+    align-items: start;
+  }
+
+  .table-of-contents {
+    position: sticky;
+    margin-top: 3.5rem;
+    top: 100px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    padding: 0;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.08);
+    max-height: calc(100vh - 120px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .table-of-contents h3 {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--black);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 1.25rem 1.5rem;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    letter-spacing: 0.025em;
+    font-family: "Ronzino-Bold", sans-serif;
+  }
+
+  .toc-icon {
+    color: var(--primary);
+    opacity: 0.7;
+  }
+
+  .toc-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 1.5rem;
+    line-height: 1.3;
+    overflow-y: auto;
+    flex: 1;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.08) transparent;
+    gap: 0.6rem;
+  }
+
+  .toc-nav::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  .toc-nav::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .toc-nav::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 2px;
+  }
+
+  .toc-nav a {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    color: var(--gray-dark);
+    text-decoration: none;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 0;
+    position: relative;
+    margin: 0;
+    border-left: 3px solid transparent;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .toc-nav a::before {
+    display: none;
+  }
+
+  .toc-nav a:hover {
+    background: rgba(var(--primary), 0.06);
+    color: var(--primary);
+    border-left-color: var(--primary);
+    transform: translateX(4px);
+  }
+
+  .toc-nav a.active {
+    background: rgba(var(--primary), 0.08);
+    color: var(--primary);
+    border-left-color: var(--primary);
+    font-weight: 600;
+    transform: translateX(4px);
+  }
+
+  .toc-nav.loading {
+    opacity: 0.6;
+  }
+
+  .toc-nav.loading::after {
+    content: "Loading...";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    color: var(--gray-dark);
+    font-size: 0.875rem;
+    font-style: italic;
+  }
+
+  .toc-footer {
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 1.25rem 1.5rem;
+    background: transparent;
+  }
+
+  .reading-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .progress-text {
+    font-size: 0.75rem;
+    color: var(--gray-dark);
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    font-family: "Ronzino-Bold", sans-serif;
+  }
+
+  .progress-track {
+    height: 3px;
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
+    width: 0%;
+    transition: width 0.3s ease;
+    border-radius: 2px;
+  }
+
+  .article {
+    background: var(--white);
+    position: relative;
+    min-height: 100vh;
+  }
+
+  .meta-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .meta-info {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: var(--gray-dark);
+    flex-wrap: wrap;
+  }
+
+  .meta-author,
+  .meta-date,
+  .meta-reading {
+    position: relative;
+    font-weight: 500;
+    letter-spacing: 0.025em;
+  }
+
+  .meta-author::after,
+  .meta-date::after {
+    content: "•";
+    margin-left: 1rem;
+    opacity: 0.5;
+  }
+
+  .tags {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    background: var(--secondary);
+    color: var(--white);
+    padding: 0.25rem 0.75rem;
+    border-radius: 2rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: all var(--transition);
+    border: 1px solid transparent;
+  }
+
+  .tag:hover {
+    background: var(--secondary-light);
+    color: var(--white);
+    transform: translateY(-1px);
+  }
+
+  .article-content {
+    font-size: 1.125rem;
+    line-height: 1.3;
+    color: var(--black);
+    word-spacing: 0.1em;
+    max-width: 65ch;
+  }
+
+  .article-content :global(h1),
+  .article-content :global(h2),
+  .article-content :global(h3),
+  .article-content :global(h4),
+  .article-content :global(h5),
+  .article-content :global(h6) {
+    font-weight: 700;
+    color: var(--black);
+    line-height: 1.2;
+    margin: 3rem 0 1rem 0;
+    letter-spacing: -0.01em;
+    scroll-margin-top: 120px;
+  }
+
+  .article-content :global(h1) {
+    font-size: 2.5rem;
+    margin-top: 4rem;
+  }
+
+  .article-content :global(h2) {
+    font-size: 2rem;
+    margin-top: 3.5rem;
+  }
+
+  .article-content :global(h3) {
+    font-size: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .article-content :global(h4) {
+    font-size: 1.25rem;
+    margin-top: 2.5rem;
+  }
+
+  .article-content :global(p) {
+    margin: 1.5rem 0;
+    text-align: left;
+    hyphens: auto;
+  }
+
+  .article-content :global(p:first-of-type) {
+    font-size: 1.25rem;
+    color: var(--primary-dark);
+    margin-top: 0;
+  }
+
+  .article-content :global(a) {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all var(--transition);
+    padding-bottom: 1px;
+  }
+
+  .article-content :global(a:hover) {
+    color: var(--primary-dark);
+    border-bottom-color: var(--primary-dark);
+  }
+
+  .article-content :global(blockquote) {
+    border-left: 3px solid var(--primary);
+    padding: 1.5rem 2rem;
+    margin: 2.5rem 0;
+    background: var(--gray);
+    border-radius: 0 0.5rem 0.5rem 0;
+    font-style: italic;
+    color: var(--primary-dark);
+    position: relative;
+  }
+
+  .article-content :global(blockquote::before) {
+    content: '"';
+    font-size: 3rem;
+    position: absolute;
+    top: -0.5rem;
+    left: 1rem;
+    opacity: 0.3;
+    color: var(--primary);
+  }
+
+  .article-content :global(code) {
+    background: var(--gray);
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    color: var(--primary-dark);
+  }
+
+  .article-content :global(pre) {
+    background: var(--black);
+    color: var(--gray);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    overflow-x: auto;
+    margin: 2rem 0;
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
+  .article-content :global(pre code) {
+    background: transparent;
+    padding: 0;
+    color: inherit;
+  }
+
+  .article-content :global(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.75rem;
+    margin: 2.5rem auto;
+    display: block;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  }
+
+  .article-content :global(ul),
+  .article-content :global(ol) {
+    margin: 1.5rem 0;
+    padding-left: 1.5rem;
+  }
+
+  .article-content :global(li) {
+    margin: 0.75rem 0;
+    line-height: 1.6;
+  }
+
+  .article-content :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    border: 1px solid var(--gray);
+  }
+
+  .article-content :global(th),
+  .article-content :global(td) {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--primary-light);
+  }
+
+  .article-content :global(th) {
+    background: var(--primary);
+    font-weight: 600;
+    color: var(--white);
+  }
+
+  .article-content :global(hr) {
+    border: none;
+    height: 1px;
+    background: var(--primary);
+    margin: 3rem 0;
+  }
+
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background: var(--primary);
+    z-index: 1000;
+    transition: width 0.1s ease;
+  }
+
+  @media (max-width: 1024px) {
+    .article-container {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      padding: 0 1.5rem;
+    }
+
+    .table-of-contents {
+      position: relative;
+      top: 0;
+      max-height: none;
+      order: -1;
+      margin-top: 0;
+      margin-bottom: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    .table-of-contents h3 {
+      cursor: pointer;
+      position: relative;
+      padding: 1rem 1.5rem;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: all 0.2s ease;
+    }
+
+    .table-of-contents h3:hover {
+      background: rgba(var(--primary), 0.03);
+    }
+
+    .table-of-contents h3:active {
+      background: rgba(var(--primary), 0.06);
+      transform: scale(0.98);
+    }
+
+    .table-of-contents h3::after {
+      content: "▼";
+      position: absolute;
+      right: 1.5rem;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-size: 0.7rem;
+      color: var(--gray-dark);
+      transform-origin: center;
+    }
+
+    .table-of-contents.collapsed h3::after {
+      transform: rotate(-90deg);
+    }
+
+    .table-of-contents.collapsed .toc-nav,
+    .table-of-contents.collapsed .toc-footer {
+      display: none;
+      opacity: 0;
+    }
+
+    .toc-nav {
+      max-height: 40vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+    }
+
+    .toc-nav a {
+      transition: all 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+      word-break: break-word;
+      line-height: 1.4;
+    }
+
+    .toc-nav a:active {
+      background: rgba(var(--primary), 0.12);
+      transform: scale(0.98);
+    }
+
+    .article-content {
+      max-width: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .draft-message {
+      padding: 2rem 1.5rem;
+      border-radius: 12px;
+    }
+
+    .draft-message h1 {
+      font-size: 2rem;
+    }
+
+    .draft-message p {
+      font-size: 1rem;
+    }
+
+    .article-container {
+      padding: 0 1rem;
+      gap: 1.5rem;
+    }
+
+    .table-of-contents {
+      border-radius: 8px;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      background: var(--white);
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    .table-of-contents h3 {
+      padding: 0.875rem 1.25rem;
+      font-size: 0.85rem;
+    }
+
+    .table-of-contents h3::after {
+      right: 1.25rem;
+    }
+
+    .toc-nav {
+      max-height: 35vh;
+      padding: 0.75rem 0;
+    }
+
+    .toc-nav a {
+      padding: 0.875rem 1.25rem;
+      font-size: 0.85rem;
+      line-height: 1.3;
+      margin: 0.125rem 0;
+    }
+
+    .toc-nav a:hover {
+      transform: translateX(2px);
+    }
+
+    .toc-nav a.active {
+      transform: translateX(2px);
+    }
+
+    .toc-footer {
+      padding: 1rem 1.25rem;
+    }
+
+    .meta-info {
+      flex-direction: column;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .meta-author::after,
+    .meta-date::after {
+      display: none;
+    }
+
+    .article-content {
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    .article-content :global(h1) {
+      font-size: 2rem;
+      margin-top: 3rem;
+    }
+
+    .article-content :global(h2) {
+      font-size: 1.5rem;
+      margin-top: 2.5rem;
+      scroll-margin-top: 100px;
+    }
+
+    .article-content :global(h3) {
+      font-size: 1.25rem;
+      margin-top: 2rem;
+    }
+
+    .article-content :global(blockquote) {
+      padding: 1rem 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .article-content :global(pre) {
+      padding: 1rem;
+      margin: 1.5rem 0;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+
+    .article-content :global(table) {
+      font-size: 0.875rem;
+      overflow-x: auto;
+      display: block;
+      white-space: nowrap;
+    }
+
+    .article-content :global(th),
+    .article-content :global(td) {
+      padding: 0.75rem 0.5rem;
+      min-width: 100px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .draft-container {
+      padding: 1.5rem 0.75rem;
+    }
+
+    .draft-message {
+      padding: 1.5rem 1rem;
+      border-radius: 8px;
+    }
+
+    .draft-message h1 {
+      font-size: 1.75rem;
+    }
+
+    .draft-message p {
+      font-size: 0.9rem;
+    }
+
+    .article-container {
+      padding: 0 0.75rem;
+      gap: 1rem;
+    }
+
+    .table-of-contents {
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .table-of-contents h3 {
+      padding: 0.75rem 1rem;
+      font-size: 0.8rem;
+    }
+
+    .table-of-contents h3::after {
+      right: 1rem;
+      font-size: 0.6rem;
+    }
+
+    .toc-nav {
+      max-height: 30vh;
+      padding: 0.5rem 0;
+    }
+
+    .toc-nav a {
+      padding: 0.75rem 1rem;
+      font-size: 0.8rem;
+      line-height: 1.25;
+      margin: 0.125rem 0;
+      border-radius: 4px;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+    }
+
+    .toc-nav a:hover {
+      transform: translateX(1px);
+    }
+
+    .toc-nav a.active {
+      transform: translateX(1px);
+    }
+
+    .toc-footer {
+      padding: 0.875rem 1rem;
+    }
+
+    .progress-text {
+      font-size: 0.7rem;
+    }
+
+    .tags {
+      gap: 0.25rem;
+    }
+
+    .tag {
+      font-size: 0.625rem;
+      padding: 0.25rem 0.5rem;
+    }
+
+    .article-content :global(h1) {
+      font-size: 1.75rem;
+    }
+
+    .article-content :global(h2) {
+      font-size: 1.375rem;
+      scroll-margin-top: 80px;
+    }
+
+    .article-content :global(h3) {
+      font-size: 1.125rem;
+    }
+
+    .article-content :global(blockquote) {
+      padding: 0.75rem 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .article-content :global(pre) {
+      padding: 0.75rem;
+      font-size: 0.8rem;
+      margin: 1.25rem -0.75rem;
+      border-radius: 0;
+    }
+
+    .article-content :global(table) {
+      font-size: 0.75rem;
+      margin: 1.5rem -0.75rem;
+      width: calc(100% + 1.5rem);
+    }
+
+    .article-content :global(th),
+    .article-content :global(td) {
+      padding: 0.5rem 0.375rem;
+      min-width: 80px;
+    }
+  }
+
+  @media print {
+    .table-of-contents,
+    .progress-bar {
+      display: none;
+    }
+
+    .article-container {
+      grid-template-columns: 1fr;
+      max-width: none;
+      padding: 0;
+    }
+
+    .article-content {
+      font-size: 12pt;
+      line-height: 1.4;
+    }
+  }
+</style>
+
+<script>
+  interface TocItem {
+    id: string;
+    text: string;
+    element: HTMLElement;
+  }
+
+  class TableOfContents {
+    private tocItems: TocItem[] = [];
+    private currentActiveIndex = -1;
+    private articleContent: HTMLElement | null = null;
+    private tocNav: HTMLElement | null = null;
+    private tocContainer: HTMLElement | null = null;
+
+    constructor() {
+      this.articleContent = document.getElementById("article-content");
+      this.tocNav = document.getElementById("toc-nav");
+      this.tocContainer = document.getElementById("toc");
+    }
+
+    init(): void {
+      this.generateTOC();
+      this.initSmoothScroll();
+      this.updateProgress();
+      this.updateActiveTOC();
+      this.bindEvents();
+    }
+
+    private generateTOC(): void {
+      if (!this.articleContent || !this.tocNav || !this.tocContainer) return;
+
+      const headings = this.articleContent.querySelectorAll("h2");
+
+      if (headings.length === 0) {
+        this.tocContainer.style.display = "none";
+        return;
+      }
+
+      this.tocNav.classList.add("loading");
+      this.tocItems = [];
+
+      const fragment = document.createDocumentFragment();
+
+      headings.forEach((heading, index) => {
+        const headingElement = heading as HTMLElement;
+        let id = headingElement.id;
+
+        if (!id) {
+          id = this.generateHeadingId(headingElement, index);
+          headingElement.id = id;
+        }
+
+        const tocItem: TocItem = {
+          id,
+          text: headingElement.textContent || "",
+          element: headingElement,
+        };
+
+        this.tocItems.push(tocItem);
+        fragment.appendChild(this.createTocLink(tocItem, index));
+      });
+
+      this.tocNav.appendChild(fragment);
+      this.tocNav.classList.remove("loading");
+      this.addMobileCollapse();
+    }
+
+    private generateHeadingId(element: HTMLElement, index: number): string {
+      const text = element.textContent || "";
+      return `heading-h2-${index}-${text
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^\w\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .substring(0, 50)}`;
+    }
+
+    private createTocLink(tocItem: TocItem, index: number): HTMLAnchorElement {
+      const link = document.createElement("a");
+      link.href = `#${tocItem.id}`;
+      link.textContent = tocItem.text;
+      link.setAttribute("data-toc-index", index.toString());
+      link.setAttribute("data-level", "2");
+      link.setAttribute("aria-label", `Go to: ${tocItem.text}`);
+      return link;
+    }
+
+    private addMobileCollapse(): void {
+      if (!this.tocContainer) return;
+
+      const tocHeader = this.tocContainer.querySelector("h3");
+      if (!tocHeader) return;
+
+      // Remove existing event listeners to prevent duplication
+      const newHeader = tocHeader.cloneNode(true) as HTMLElement;
+      tocHeader.parentNode?.replaceChild(newHeader, tocHeader);
+
+      if (window.innerWidth <= 1024) {
+        let touchStartY = 0;
+        let touchEndY = 0;
+
+        // Handle both click and touch events for better mobile experience
+        const toggleCollapse = (e: Event) => {
+          e.preventDefault();
+          this.tocContainer?.classList.toggle("collapsed");
+
+          // Add haptic feedback on supported devices
+          if ("vibrate" in navigator) {
+            navigator.vibrate(50);
+          }
+        };
+
+        const handleTouchStart = (e: TouchEvent) => {
+          touchStartY = e.touches[0].clientY;
+        };
+
+        const handleTouchEnd = (e: TouchEvent) => {
+          touchEndY = e.changedTouches[0].clientY;
+
+          // Only trigger if it's a tap (minimal movement)
+          if (Math.abs(touchEndY - touchStartY) < 10) {
+            toggleCollapse(e);
+          }
+        };
+
+        newHeader.addEventListener("touchstart", handleTouchStart, { passive: true });
+        newHeader.addEventListener("touchend", handleTouchEnd, { passive: false });
+        newHeader.addEventListener("click", toggleCollapse);
+
+        // Auto-collapse logic for better UX
+        if (this.tocItems.length > 5 || window.innerWidth <= 768) {
+          this.tocContainer.classList.add("collapsed");
+        }
+
+        // Add visual feedback for interactive element
+        newHeader.style.cursor = "pointer";
+        newHeader.setAttribute("role", "button");
+        newHeader.setAttribute("aria-expanded", "true");
+        newHeader.setAttribute("aria-label", "Toggle table of contents");
+
+        // Update aria-expanded when collapsed state changes
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            if (mutation.type === "attributes" && mutation.attributeName === "class") {
+              const isCollapsed = this.tocContainer?.classList.contains("collapsed");
+              newHeader.setAttribute("aria-expanded", (!isCollapsed).toString());
+            }
+          });
+        });
+
+        if (this.tocContainer) {
+          observer.observe(this.tocContainer, { attributes: true });
+        }
+      }
+    }
+
+    private updateActiveTOC(): void {
+      if (this.tocItems.length === 0) return;
+
+      const scrollTop = window.pageYOffset;
+      const offset = 150;
+      let activeIndex = -1;
+
+      for (let i = 0; i < this.tocItems.length; i++) {
+        const element = this.tocItems[i].element;
+        const elementTop = element.getBoundingClientRect().top + scrollTop;
+
+        if (elementTop <= scrollTop + offset) {
+          activeIndex = i;
+        }
+      }
+
+      if (activeIndex !== this.currentActiveIndex) {
+        this.updateActiveLinks(activeIndex);
+        this.currentActiveIndex = activeIndex;
+      }
+    }
+
+    private updateActiveLinks(activeIndex: number): void {
+      const tocLinks = document.querySelectorAll(".toc-nav a");
+      tocLinks.forEach((link, index) => {
+        (link as HTMLElement).classList.toggle("active", index === activeIndex);
+      });
+    }
+
+    private updateProgress(): void {
+      const article = document.querySelector(".article-content") as HTMLElement;
+      const progressBar = document.getElementById("progress-bar");
+      const tocProgress = document.getElementById("toc-progress");
+
+      if (!article) return;
+
+      const articleHeight = article.scrollHeight;
+      const articleTop = article.offsetTop;
+      const windowHeight = window.innerHeight;
+      const scrolled = window.pageYOffset;
+
+      const progress = Math.min(
+        Math.max((scrolled - articleTop + windowHeight * 0.25) / articleHeight, 0),
+        1
+      );
+
+      const percentage = Math.round(progress * 100);
+
+      if (progressBar) {
+        progressBar.style.width = `${percentage}%`;
+      }
+
+      if (tocProgress) {
+        tocProgress.style.width = `${percentage}%`;
+        tocProgress.setAttribute("aria-label", `Reading progress: ${percentage}%`);
+      }
+    }
+
+    private initSmoothScroll(): void {
+      document.addEventListener("click", (e) => {
+        const target = e.target as HTMLElement;
+        if (target.tagName === "A" && target.getAttribute("href")?.startsWith("#")) {
+          e.preventDefault();
+          const targetId = target.getAttribute("href")?.substring(1);
+          const targetElement = document.getElementById(targetId || "");
+
+          if (targetElement) {
+            this.scrollToElement(targetElement);
+          }
+        }
+      });
+    }
+
+    private scrollToElement(element: HTMLElement): void {
+      const rect = element.getBoundingClientRect();
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const elementTop = rect.top + scrollTop;
+      const isMobile = window.innerWidth <= 768;
+      const offset = isMobile ? 80 : 120;
+
+      // Close mobile TOC after clicking a link for better UX
+      if (isMobile && this.tocContainer) {
+        this.tocContainer.classList.add("collapsed");
+      }
+
+      // Use native smooth scroll with fallback for older browsers
+      if ("scrollBehavior" in document.documentElement.style) {
+        window.scrollTo({
+          top: elementTop - offset,
+          behavior: "smooth",
+        });
+      } else {
+        // Fallback smooth scroll for older browsers
+        this.smoothScrollPolyfill(elementTop - offset, 500);
+      }
+    }
+
+    private smoothScrollPolyfill(targetPosition: number, duration: number): void {
+      const startPosition = window.pageYOffset;
+      const distance = targetPosition - startPosition;
+      const startTime = performance.now();
+
+      const animateScroll = (currentTime: number) => {
+        const timeElapsed = currentTime - startTime;
+        const progress = Math.min(timeElapsed / duration, 1);
+
+        // Easing function for smoother animation
+        const easeInOutCubic = (t: number) =>
+          t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+
+        const easedProgress = easeInOutCubic(progress);
+
+        window.scrollTo(0, startPosition + distance * easedProgress);
+
+        if (progress < 1) {
+          requestAnimationFrame(animateScroll);
+        }
+      };
+
+      requestAnimationFrame(animateScroll);
+    }
+
+    private throttle(func: Function, limit: number): Function {
+      let inThrottle: boolean;
+      return function (this: any, ...args: any[]) {
+        if (!inThrottle) {
+          func.apply(this, args);
+          inThrottle = true;
+          setTimeout(() => (inThrottle = false), limit);
+        }
+      };
+    }
+
+    private bindEvents(): void {
+      const throttledScroll = this.throttle(() => {
+        this.updateProgress();
+        this.updateActiveTOC();
+      }, 16) as EventListener;
+
+      const throttledResize = this.throttle(() => {
+        this.updateProgress();
+        this.addMobileCollapse();
+      }, 250) as EventListener;
+
+      // Use passive listeners for better scroll performance
+      window.addEventListener("scroll", throttledScroll, { passive: true });
+      window.addEventListener("resize", throttledResize, { passive: true });
+
+      // Handle orientation change for mobile devices
+      window.addEventListener("orientationchange", () => {
+        // Small delay to ensure layout has updated after orientation change
+        setTimeout(() => {
+          this.updateProgress();
+          this.addMobileCollapse();
+        }, 100);
+      });
+
+      // Prevent zoom on double-tap for TOC links on mobile
+      let lastTouchEnd = 0;
+      document.addEventListener(
+        "touchend",
+        (event) => {
+          const now = new Date().getTime();
+          if (now - lastTouchEnd <= 300) {
+            const target = event.target as HTMLElement;
+            if (target.closest(".toc-nav a")) {
+              event.preventDefault();
+            }
+          }
+          lastTouchEnd = now;
+        },
+        false
+      );
+
+      // Improve focus management for keyboard navigation
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && window.innerWidth <= 1024) {
+          this.tocContainer?.classList.add("collapsed");
+        }
+      });
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    new TableOfContents().init();
+  });
+</script>
