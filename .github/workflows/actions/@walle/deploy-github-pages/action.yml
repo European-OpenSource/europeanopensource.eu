@@ -1,0 +1,45 @@
+name: Deploy to GitHub Pages
+description: |
+  This workflow deploys your Astro site to GitHub Pages.
+  It builds the site and then deploys it to the `gh-pages` branch.
+
+inputs:
+  token:
+    description: "GitHub token for authentication (usually `secrets.GITHUB_TOKEN`)"
+    required: true
+  publish_dir:
+    description: "Directory to publish"
+    required: true
+    default: "./lib/website/dist"
+  cname:
+    description: "Custom domain for GitHub Pages"
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout your repository using git
+      uses: actions/checkout@v5
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: lib/website/.nvmrc
+        cache: "yarn"
+        cache-dependency-path: lib/website/yarn.lock
+    - name: Install dependencies
+      shell: bash
+      working-directory: lib/website
+      run: |
+        yarn install --frozen-lockfile
+    - name: Build Astro site
+      shell: bash
+      working-directory: lib/website
+      run: |
+        yarn build
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ inputs.token }}
+        publish_dir: ${{ inputs.publish_dir }}
+        cname: ${{ inputs.cname }}

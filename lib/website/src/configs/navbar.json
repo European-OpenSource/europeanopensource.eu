@@ -1,0 +1,25 @@
+{
+  "logo": {
+    "title": "European OpenSource",
+    "url": "/",
+    "cssClasses": "logo-text-navbar"
+  },
+  "items": [
+    {
+      "name": "Home",
+      "url": "/"
+    },
+    {
+      "name": "Submit Project",
+      "url": "/form"
+    },
+    {
+      "icon": "fa:linkedin",
+      "url": "https://www.linkedin.com/company/european-opensource"
+    },
+    {
+      "icon": "fa:github",
+      "url": "https://github.com/European-OpenSource"
+    }
+  ]
+}
