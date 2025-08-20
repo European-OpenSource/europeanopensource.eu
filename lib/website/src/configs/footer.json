@@ -1,0 +1,26 @@
+{
+  "logo": {
+    "title": "European OpenSource",
+    "url": "/",
+    "cssClasses": "logo-text-footer",
+    "license": "Licensed under AGPLv3"
+  },
+  "items": [
+    {
+      "name": "Privacy Policy",
+      "url": "/privacy-policy"
+    },
+    {
+      "name": "Terms & Conditions",
+      "url": "/terms-and-conditions"
+    },
+    {
+      "icon": "fa:linkedin",
+      "url": "https://www.linkedin.com/company/european-opensource"
+    },
+    {
+      "icon": "fa:github",
+      "url": "https://github.com/European-OpenSource"
+    }
+  ]
+}

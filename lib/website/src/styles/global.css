@@ -1,0 +1,55 @@
+:root {
+  --primary: #0046ad;
+  --primary-light: #0153ce;
+  --primary-dark: #00216e;
+  --secondary: #bd1178;
+  --secondary-light: #cb1482;
+  --secondary-dark: #a90b6a;
+  --alternative: #ffcc00;
+  --alternative-light: #ffd700;
+  --alternative-dark: #ffad00;
+  --white: #fefefe;
+  --black: #161616;
+  --gray: #ebebeb;
+  --gray-light: #f5f5f5;
+  --gray-dark: #656565;
+  --gray-gradient: rgba(var(--gray-light), 50%), var(--white);
+  --box-shadow:
+    0 1px 4px rgba(var(--gray), 20%), 0 6px 16px rgba(var(--gray), 30%),
+    0 13px 28px rgba(var(--gray), 30%);
+
+  --transition: 0.2s ease;
+  --transition-normal: 0.3s ease;
+}
+
+@font-face {
+  font-family: "NectoMono";
+  src: url("/fonts/NectoMono-Regular.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+.logo-text,
+.logo-text-footer {
+  font-family: "NectoMono", sans-serif;
+}
+
+.logo-img-navbar {
+  width: 3.6rem;
+  margin: 0;
+  padding: 0;
+}
+
+.logo-text-footer {
+  font-size: 1rem;
+  margin: 0;
+  padding: 0;
+}
+
+@media screen and (max-width: 768px) {
+  .logo-img-navbar {
+    width: 3.3rem;
+    padding: 0.125rem;
+  }
+}
