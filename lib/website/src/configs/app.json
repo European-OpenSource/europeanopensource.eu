@@ -1,0 +1,18 @@
+{
+  "website": {
+    "title": "European OpenSource",
+    "description": "Open code, shared future! European OpenSource is a community-driven platform connecting developers, companies, and institutions across Europe to build a transparent and sovereign digital future through open-source innovation.",
+    "favicon": "/img/favicon/favicon.svg",
+    "image": "/img/logo/light/logo-standard-version.svg",
+    "robots": "index, follow",
+    "language": "en-US",
+    "github_awesome_project_url": "https://github.com/European-OpenSource/awesome-european-opensource",
+    "github_website_project_url": "https://github.com/European-OpenSource/europeanopensource.eu"
+  },
+  "astro": {
+    "baseUrl": "https://europeanopensource.eu/",
+    "basePath": "/",
+    "trailingSlash": "never",
+    "analyticsScriptContent": "<script>(function(v,i,s,a,t){v[t]=v[t]||function(){(v[t].v=v[t].v||[]).push(arguments)};if(!v._visaSettings){v._visaSettings={}}v._visaSettings[a]={v:'1.0',s:a,a:'1',t:t};var b=i.getElementsByTagName('body')[0];var p=i.createElement('script');p.defer=1;p.async=1;p.src=s+'?s='+a;b.appendChild(p)})(window,document,'//app-worker.visitor-analytics.io/main.js','aa9c870b-df2b-11f0-84e1-960004340fd3','va')</script>"
+  }
+}

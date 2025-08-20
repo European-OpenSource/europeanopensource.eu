@@ -1,0 +1,280 @@
+---
+export interface Props {
+  title: string;
+  content: string;
+  imageUrl?: string;
+  imageAlt?: string;
+  linkUrl: string;
+  linkTarget?: "_blank" | "_self";
+  extraClass?: string;
+  publishDate?: Date | string | null;
+  badge?: {
+    text: string;
+    color?: "primary" | "secondary";
+  };
+}
+
+const {
+  title,
+  content,
+  imageUrl,
+  imageAlt = title,
+  linkUrl,
+  linkTarget = "_self",
+  extraClass = "",
+  badge,
+  publishDate,
+} = Astro.props;
+
+const cardClasses = ["card", extraClass].filter(Boolean).join(" ");
+
+// Truncate description to 120 characters for minimalist design
+const truncatedContent = content.length > 120 ? content.substring(0, 120) + "..." : content;
+---
+
+<a href={linkUrl} target={linkTarget} class={cardClasses} aria-label={`Read ${title}`}>
+  <article class="card__wrapper">
+    {
+      imageUrl && (
+        <div class="card__image">
+          <img src={imageUrl} alt={imageAlt} loading="lazy" width="120" height="120" />
+        </div>
+      )
+    }
+
+    <div class="card__content">
+      <div class="card__meta">
+        {
+          badge && (
+            <span class={`card__badge card__badge--${badge.color || "primary"}`}>{badge.text}</span>
+          )
+        }
+        {publishDate && <span class="card__date">{publishDate}</span>}
+      </div>
+
+      <h3 class="card__title">{title}</h3>
+      <p class="card__description">{truncatedContent}</p>
+    </div>
+  </article>
+</a>
+
+<style>
+  .card {
+    --card-padding: 20px;
+    --card-gap: 12px;
+    --card-border-color: var(--gray);
+    --card-hover-border-color: var(--primary);
+    --card-transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    width: 100%;
+    height: 100%;
+  }
+
+  .card__wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 380px;
+    padding: var(--card-padding);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--radius-md);
+    background: var(--white);
+    transition: var(--card-transition);
+    box-sizing: border-box;
+  }
+
+  .card:hover .card__wrapper {
+    border-color: var(--card-hover-border-color);
+    box-shadow: 0 8px 16px rgba(0, 70, 173, 0.12);
+  }
+
+  .card:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: var(--radius-md);
+  }
+
+  .card__image {
+    width: 100%;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: var(--radius-sm);
+    background: var(--gray-light);
+    margin-bottom: var(--space-lg);
+  }
+
+  .card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .card:hover .card__image img {
+    transform: scale(1.03);
+  }
+
+  .card__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--card-gap);
+    flex: 1;
+  }
+
+  .card__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-xs);
+  }
+
+  .card__badge {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 4px 10px;
+    border-radius: 4px;
+  }
+
+  .card__badge--primary {
+    color: var(--primary);
+    background: rgba(0, 70, 173, 0.08);
+  }
+
+  .card__badge--secondary {
+    color: var(--secondary);
+    background: rgba(189, 17, 120, 0.08);
+  }
+
+  .card__date {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--gray-dark);
+    letter-spacing: 0.3px;
+  }
+
+  .card__title {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--black);
+    margin: 0 0 var(--space-sm) 0;
+    transition: color 0.2s ease;
+  }
+
+  .card:hover .card__title {
+    color: var(--primary);
+  }
+
+  .card__description {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--gray-dark);
+    margin: 0;
+    flex: 1;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .card {
+      --card-padding: 16px;
+      --card-gap: 10px;
+    }
+
+    .card__wrapper {
+      min-height: 340px;
+    }
+
+    .card__title {
+      font-size: 16px;
+    }
+
+    .card__description {
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .card__badge {
+      font-size: 10px;
+      padding: 3px 8px;
+    }
+
+    .card__date {
+      font-size: 11px;
+    }
+
+    .card__image {
+      margin-bottom: var(--space-md);
+    }
+  }
+
+  @media (min-width: 641px) and (max-width: 768px) {
+    .card {
+      --card-padding: 18px;
+      --card-gap: 11px;
+    }
+
+    .card__wrapper {
+      min-height: 360px;
+    }
+
+    .card__title {
+      font-size: 17px;
+    }
+
+    .card__description {
+      font-size: 13px;
+    }
+  }
+
+  @media (min-width: 769px) {
+    .card__wrapper {
+      min-height: 380px;
+    }
+  }
+
+  /* Accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    .card,
+    .card__wrapper,
+    .card__image img,
+    .card__title {
+      transition: none;
+    }
+
+    .card:hover .card__image img {
+      transform: none;
+    }
+  }
+
+  @media (prefers-contrast: high) {
+    .card__wrapper {
+      border: 2px solid var(--black);
+    }
+
+    .card:hover .card__wrapper {
+      border-color: var(--primary-dark);
+    }
+
+    .card__badge--primary {
+      background: var(--primary);
+      color: var(--white);
+    }
+
+    .card__badge--secondary {
+      background: var(--secondary);
+      color: var(--white);
+    }
+  }
+
+  /* Focus visible for keyboard navigation */
+  .card:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+</style>

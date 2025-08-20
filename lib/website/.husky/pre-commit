@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+cd "$(dirname -- "$0")/.." || exit 1
+
+yarn lint || (yarn lint:fix ; exit 1)
+
+yarn format || (yarn format:fix ; exit 1)
