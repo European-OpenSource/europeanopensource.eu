@@ -1,0 +1,230 @@
+---
+const today = new Date();
+import type { FooterConfig, NavigationLink } from "@walle/config";
+import config from "@walle/config";
+import { Icon } from "astro-icon/components";
+
+const footerConfig: FooterConfig = config.footer;
+const footerItems = Array.isArray(footerConfig.items) ? footerConfig.items : [];
+const navigationLinks = footerItems.filter((item: NavigationLink) => item.name);
+const socialLinks = footerItems.filter((item: NavigationLink) => item.icon);
+
+const hasLogo = footerConfig.logo?.src;
+const hasTitle = footerConfig.logo?.title;
+const shouldShowBrand = hasLogo || hasTitle;
+---
+
+<footer>
+  <div class="footer-container">
+    <div class="footer-section footer-left">
+      <div class="copyright">
+        {
+          shouldShowBrand && (
+            <a
+              href={footerConfig.logo.url}
+              class={`brand-link ${footerConfig.logo.cssClasses || ""}`}
+            >
+              {hasLogo && (
+                <img
+                  src={footerConfig.logo.src}
+                  alt={footerConfig.logo.alt || footerConfig.logo.title || "Logo"}
+                  aria-label={footerConfig.logo.alt || footerConfig.logo.title || "Logo"}
+                  width={footerConfig.logo.width || 32}
+                  height={footerConfig.logo.height || 32}
+                  class={footerConfig.logo.cssClasses || ""}
+                />
+              )}
+              {hasTitle && (
+                <span class={footerConfig.logo.cssClasses || ""}>{footerConfig.logo.title}</span>
+              )}
+            </a>
+          )
+        }
+        {
+          !shouldShowBrand && (
+            <span class={footerConfig.logo.cssClasses || ""}>{footerConfig.logo.title}</span>
+          )
+        }
+        <span class="license">{today.getFullYear()} &copy; {footerConfig.logo.license}</span>
+      </div>
+    </div>
+
+    <div class="footer-section footer-center">
+      <nav class="footer-nav">
+        {navigationLinks.map((item: NavigationLink) => <a href={item.url}>{item.name}</a>)}
+      </nav>
+    </div>
+
+    <div class="footer-section footer-right">
+      <div class="social-links">
+        {
+          socialLinks.map((item: NavigationLink) => (
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noopener"
+              aria-label={item.icon?.replace("fa:", "")}
+            >
+              <Icon name={item.icon!} aria-hidden="true" size={20} />
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  footer {
+    bottom: 0;
+    margin-top: auto;
+    padding: 1.75rem 2rem;
+    background-color: var(--gray);
+    border-top: 1px solid #eaeaea;
+    color: var(--gray-dark);
+    font-size: 0.9rem;
+    z-index: 10;
+  }
+
+  .footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .footer-section {
+    flex: 1;
+  }
+
+  .footer-left {
+    text-align: left;
+  }
+
+  .footer-center {
+    text-align: center;
+  }
+
+  .footer-right {
+    text-align: right;
+  }
+
+  .copyright {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    font-family: "Ronzino-Regular", sans-serif;
+  }
+
+  .brand-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s ease;
+  }
+
+  .brand-link:hover {
+    color: var(--primary);
+    transform: translateY(-1px);
+  }
+
+  .brand-link img {
+    border-radius: 4px;
+  }
+
+  .license {
+    font-size: 0.8rem;
+    opacity: 0.8;
+  }
+
+  .license a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .license a:hover {
+    text-decoration: underline;
+  }
+
+  .footer-nav {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+  }
+
+  .footer-nav a {
+    color: #666;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    position: relative;
+  }
+
+  .footer-nav a:after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 1px;
+    bottom: -4px;
+    left: 0;
+    background-color: var(--primary);
+    transition: width 0.3s ease;
+  }
+
+  .footer-nav a:hover {
+    color: var(--primary);
+  }
+
+  .footer-nav a:hover:after {
+    width: 100%;
+  }
+
+  .social-links {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+  }
+
+  .social-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background-color: #f1f1f1;
+    color: #666;
+    transition: all 0.2s ease;
+  }
+
+  .social-links a:hover {
+    background-color: var(--primary);
+    color: #ffffff;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    .footer-container {
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .footer-left,
+    .footer-center,
+    .footer-right {
+      text-align: center;
+    }
+
+    .copyright {
+      align-items: center;
+    }
+
+    .social-links {
+      justify-content: center;
+    }
+  }
+</style>

@@ -1,0 +1,327 @@
+---
+import { BaseLayout } from "@walle/layouts";
+import { Icon } from "astro-icon/components";
+---
+
+<BaseLayout
+  headerTitle="Submit OpenSource project"
+  headerDescription="Submit your open-source project to be featured on European OpenSource catalog."
+  robots="noindex, nofollow"
+>
+  <script async src="https://tally.so/widgets/embed.js"></script>
+  <section class="submission-embed">
+    <iframe
+      class="submission-embed-frame"
+      data-tally-src="https://tally.so/r/n0k9DZ?transparentBackground=1&hideTitle=1&hideLogo=1"
+      title="Add opensource project"
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+    >
+    </iframe>
+  </section>
+  <section class="submission-guidelines" role="region" aria-labelledby="notice-title">
+    <div class="guidelines-card">
+      <div class="guidelines-header">
+        <span class="guidelines-badge" aria-hidden="true">
+          <Icon name="fa:info-circle" class="guidelines-header-icon" aria-hidden="true" />
+        </span>
+        <h3 id="notice-title" class="guidelines-title">Submission Guidelines</h3>
+      </div>
+      <div class="guidelines-grid">
+        <article class="guideline-card">
+          <div class="guideline-card-header">
+            <span class="guideline-icon" aria-hidden="true">
+              <Icon name="fa:heart" class="guideline-icon-symbol" aria-hidden="true" />
+            </span>
+            <h4 class="guideline-title">Evaluation Process</h4>
+          </div>
+          <p class="guideline-description">
+            The review process may take time before acceptance. We carefully evaluate each
+            submission to ensure quality standards.
+          </p>
+        </article>
+        <article class="guideline-card">
+          <div class="guideline-card-header">
+            <span class="guideline-icon" aria-hidden="true">
+              <Icon name="fa:shield" class="guideline-icon-symbol" aria-hidden="true" />
+            </span>
+            <h4 class="guideline-title">Quality Standards</h4>
+          </div>
+          <p class="guideline-description">
+            Projects not meeting current or future criteria may be removed to maintain our
+            platform's excellence.
+          </p>
+        </article>
+        <article class="guideline-card">
+          <div class="guideline-card-header">
+            <span class="guideline-icon" aria-hidden="true">
+              <Icon name="fa:check-circle" class="guideline-icon-symbol" aria-hidden="true" />
+            </span>
+            <h4 class="guideline-title">Terms Acceptance</h4>
+          </div>
+          <p class="guideline-description">
+            By submitting a project, you confirm that you have read and accept our <a
+              href="/terms-and-conditions"
+              class="terms-link">Terms & Conditions</a
+            >.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .submission-embed {
+    width: 100%;
+    margin: 0 auto var(--space-4xl);
+    padding: 0 var(--space-md);
+    box-sizing: border-box;
+  }
+
+  .submission-embed-frame {
+    display: block;
+    width: 100%;
+    min-height: 85vh;
+    border: none;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--box-shadow);
+    background: var(--white);
+  }
+
+  .submission-guidelines {
+    width: 100%;
+    margin: 0 auto var(--space-4xl);
+    padding: 0 var(--space-md);
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+  }
+
+  .guidelines-card {
+    width: min(100%, 64rem);
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08);
+    padding: var(--space-3xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xl);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .guidelines-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(88, 101, 242, 0.08), rgba(249, 168, 212, 0.08));
+    opacity: 0;
+    transition: var(--transition-smooth);
+    pointer-events: none;
+  }
+
+  .guidelines-card:focus-within::before,
+  .guidelines-card:hover::before {
+    opacity: 1;
+  }
+
+  .guidelines-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+
+  .guidelines-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: var(--white);
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+  }
+
+  .guidelines-header-icon {
+    font-size: 1.5rem;
+  }
+
+  .guidelines-title {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--black);
+    font-family: "Ronzino-Bold", system-ui, sans-serif;
+  }
+
+  .guidelines-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-xl);
+    position: relative;
+    z-index: 1;
+  }
+
+  .guideline-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    padding: var(--space-xl);
+    border-radius: var(--radius-xl);
+    background: var(--white);
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+    transition: var(--transition-smooth);
+  }
+
+  .guideline-card:hover,
+  .guideline-card:focus-within {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 52px rgba(15, 23, 42, 0.12);
+  }
+
+  .guideline-card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
+  .guideline-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+    color: var(--white);
+    flex-shrink: 0;
+  }
+
+  .guideline-card:nth-child(2) .guideline-icon {
+    background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+  }
+
+  .guideline-card:nth-child(3) .guideline-icon {
+    background: linear-gradient(135deg, var(--alternative), var(--alternative-light));
+  }
+
+  .guideline-icon-symbol {
+    font-size: 1.25rem;
+  }
+
+  .guideline-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--black);
+    font-family: "Ronzino-Bold", system-ui, sans-serif;
+    letter-spacing: -0.005em;
+  }
+
+  .guideline-description {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--gray-darker);
+  }
+
+  .terms-link {
+    color: var(--primary);
+    font-weight: 500;
+    text-decoration: underline;
+    transition: var(--transition);
+  }
+
+  .terms-link:hover {
+    color: var(--primary-dark);
+    text-decoration-thickness: 2px;
+  }
+
+  .terms-link:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  .guideline-card:focus-within {
+    outline: 2px solid var(--primary-light);
+    outline-offset: 4px;
+  }
+
+  .guideline-card:focus-within .guideline-title {
+    color: var(--primary);
+  }
+
+  @media (max-width: 1024px) {
+    .submission-embed {
+      padding: 0 var(--space-sm);
+    }
+
+    .submission-guidelines {
+      padding: 0 var(--space-sm);
+    }
+
+    .guidelines-card {
+      padding: var(--space-2xl);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .submission-embed {
+      margin-bottom: var(--space-3xl);
+    }
+
+    .submission-embed-frame {
+      min-height: 70vh;
+      border-radius: var(--radius-lg);
+    }
+
+    .guidelines-card {
+      gap: var(--space-xl);
+    }
+
+    .guidelines-title {
+      font-size: 1.5rem;
+    }
+
+    .guidelines-grid {
+      gap: var(--space-lg);
+    }
+  }
+
+  @media (max-width: 560px) {
+    .guidelines-card {
+      padding: var(--space-xl);
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+    }
+
+    .guideline-card {
+      padding: var(--space-lg);
+    }
+
+    .guideline-title {
+      font-size: 1.125rem;
+    }
+
+    .guideline-description {
+      font-size: 0.95rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .submission-embed-frame,
+    .guidelines-card,
+    .guideline-card,
+    .guideline-card:hover,
+    .guideline-card:focus-within {
+      transition: none;
+      transform: none;
+    }
+  }
+</style>

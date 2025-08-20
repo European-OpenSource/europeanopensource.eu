@@ -1,0 +1,153 @@
+---
+import { Icon } from "astro-icon/components";
+
+export interface BreadcrumbItem {
+  /**
+   * Label to display
+   */
+  label: string;
+
+  /**
+   * Destination URL
+   */
+  url?: string;
+
+  /**
+   * Icon name (optional)
+   */
+  iconName?: string;
+}
+
+export interface Props {
+  /**
+   * Array of breadcrumb items
+   */
+  items: BreadcrumbItem[];
+
+  /**
+   * Custom separator (default: chevron-right)
+   */
+  separator?: string;
+
+  /**
+   * Additional CSS classes
+   */
+  extraClass?: string;
+}
+
+const { items = [], extraClass = "" } = Astro.props;
+
+const breadcrumbsClasses = ["breadcrumbs", extraClass].filter(Boolean).join(" ");
+---
+
+<nav aria-label="Breadcrumb" class={breadcrumbsClasses}>
+  <ol>
+    {
+      items.map((item, index) => (
+        <li class={index === items.length - 1 ? "current" : ""}>
+          {index > 0 && (
+            <span class="separator" aria-hidden="true">
+              /
+            </span>
+          )}
+
+          {item.url && index !== items.length - 1 ? (
+            <a href={item.url}>
+              {item.iconName && <Icon name={item.iconName} class="item-icon" aria-hidden="true" />}
+              <span>{item.label}</span>
+            </a>
+          ) : (
+            <span class="current-item">
+              {item.iconName && <Icon name={item.iconName} class="item-icon" aria-hidden="true" />}
+              <span>{item.label}</span>
+            </span>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+
+<style>
+  .breadcrumbs {
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    color: var(--gray-dark);
+  }
+
+  .breadcrumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 0.2rem;
+  }
+
+  .breadcrumbs li {
+    display: flex;
+    align-items: center;
+  }
+
+  .breadcrumbs a {
+    color: var(--primary);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.3rem 0.4rem;
+    border-radius: 0.3rem;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .breadcrumbs a:hover {
+    background: rgba(0, 70, 173, 0.05);
+    color: var(--primary-dark);
+  }
+
+  .current-item {
+    color: var(--gray-dark);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.3rem 0.4rem;
+    white-space: nowrap;
+  }
+
+  .separator {
+    color: var(--gray-dark);
+    display: flex;
+    align-items: center;
+    opacity: 0.6;
+    font-size: 0.7rem;
+    margin: 0 0.2rem;
+  }
+
+  .item-icon {
+    width: 0.9em;
+    height: 0.9em;
+  }
+
+  @media (max-width: 640px) {
+    .breadcrumbs {
+      font-size: 0.85rem;
+    }
+
+    .breadcrumbs li:not(:first-child):not(:last-child) {
+      display: none;
+    }
+
+    .breadcrumbs li:first-child + li.current .separator {
+      display: flex;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .breadcrumbs a,
+    .current-item {
+      padding: 0.2rem;
+    }
+  }
+</style>
