@@ -1,0 +1,156 @@
+---
+import { Image } from "astro:assets";
+
+interface Props {
+  title: string;
+  imageSrc?: string;
+  imageAlt?: string;
+  reversed?: boolean;
+  centered?: boolean;
+  type?: "primary" | "gray" | null;
+}
+
+const {
+  title,
+  imageSrc = null,
+  centered = false,
+  imageAlt = null,
+  type = null,
+  reversed = false,
+} = Astro.props;
+---
+
+<section
+  class={`section ${type ? `section-content-${type}` : ""} ${reversed ? "reversed" : ""} ${centered ? "text-centered" : ""}`}
+>
+  <div class={`section-content ${imageSrc ? `section-content-image` : ""}`}>
+    <div class="text-container">
+      <h2 class={`section-title ${type ? `section-title-${type}` : ""}`}>{title}</h2>
+      <slot />
+    </div>
+    {
+      imageSrc && (
+        <div class="image-container">
+          <Image
+            src={imageSrc}
+            alt={imageAlt}
+            width={500}
+            height={400}
+            loading="lazy"
+            class="section-image"
+          />
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .section {
+    padding: var(--space-4xl) 0;
+  }
+
+  .text-centered {
+    text-align: center;
+  }
+
+  .section-content-primary {
+    background-color: var(--primary);
+    color: var(--white);
+  }
+
+  .section-content-gray {
+    background-color: var(--gray-light);
+    color: var(--black);
+  }
+
+  .section-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-xl);
+  }
+
+  .section-content-image {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4xl);
+    align-items: center;
+  }
+
+  .reversed .section-content {
+    direction: rtl;
+  }
+
+  .text-container {
+    direction: ltr;
+  }
+
+  .section-title {
+    margin-bottom: var(--space-2xl);
+    color: var(--black);
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .section-title-primary {
+    color: var(--white);
+  }
+
+  .section-title-gray {
+    color: var(--black);
+  }
+
+  .image-container {
+    direction: ltr;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+    background-color: var(--white);
+    padding: var(--space-2xl);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: var(--transition-smooth);
+  }
+
+  .image-container:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--box-shadow-hover);
+  }
+
+  .section-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+  }
+
+  @media (max-width: 900px) {
+    .section {
+      padding: var(--space-2xl) 0;
+    }
+
+    .section-content {
+      padding: 0 var(--space-lg);
+    }
+
+    .section-content-image {
+      grid-template-columns: 1fr;
+      gap: var(--space-2xl);
+    }
+
+    .image-container {
+      order: -1;
+    }
+
+    .reversed .section-content {
+      direction: ltr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .section-content {
+      padding: 0 var(--space-md);
+    }
+  }
+</style>

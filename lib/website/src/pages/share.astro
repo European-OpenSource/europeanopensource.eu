@@ -1,0 +1,303 @@
+---
+import { BaseLayout } from "@walle/layouts";
+import { Icon } from "astro-icon/components";
+---
+
+<BaseLayout
+  headerTitle="Share links"
+  headerDescription="All the links to share European Open-Source with your community."
+  robots="noindex, nofollow"
+>
+  <div class="share-container">
+    <div class="share-content">
+      <h1 class="share-title">European OpenSource</h1>
+      <p class="share-subtitle">Official social media links</p>
+
+      <nav class="share-links" aria-label="Social and contact links">
+        <a
+          href="https://www.linkedin.com/company/european-opensource/"
+          class="share-link"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Visit our LinkedIn page"
+        >
+          <span class="link-icon" aria-hidden="true">
+            <Icon name="fa:linkedin" />
+          </span>
+          <div class="link-content">
+            <span class="link-label">LinkedIn</span>
+            <span class="link-value">European OpenSource</span>
+          </div>
+        </a>
+
+        <a
+          href="https://github.com/European-OpenSource"
+          class="share-link"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Visit our GitHub organization"
+        >
+          <span class="link-icon" aria-hidden="true">
+            <Icon name="fa:github" />
+          </span>
+          <div class="link-content">
+            <span class="link-label">GitHub</span>
+            <span class="link-value">@European-OpenSource</span>
+          </div>
+        </a>
+
+        <a
+          href="https://www.europeanopensource.eu"
+          class="share-link"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Visit our website"
+        >
+          <span class="link-icon" aria-hidden="true">
+            <Icon name="fa:globe" />
+          </span>
+          <div class="link-content">
+            <span class="link-label">Website</span>
+            <span class="link-value">www.europeanopensource.eu</span>
+          </div>
+        </a>
+
+        <a
+          href="https://github.com/European-OpenSource/media-kit"
+          class="share-link"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Download our media kit"
+        >
+          <span class="link-icon" aria-hidden="true">
+            <Icon name="fa:download" />
+          </span>
+          <div class="link-content">
+            <span class="link-label">Media Kit</span>
+            <span class="link-value">github.com/European-OpenSource/media-kit</span>
+          </div>
+        </a>
+      </nav>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .share-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 65vh;
+    padding: var(--space-4xl) var(--space-xl);
+  }
+
+  .share-content {
+    width: 100%;
+    max-width: 480px;
+    text-align: center;
+  }
+
+  .share-title {
+    font-family: "Ronzino-Bold", system-ui, sans-serif;
+    font-size: 2.25rem;
+    margin: 0 0 var(--space-xs) 0;
+    color: var(--black);
+    letter-spacing: -0.025em;
+    font-weight: 700;
+  }
+
+  .share-subtitle {
+    font-size: 1rem;
+    color: var(--gray-dark);
+    margin: 0 0 var(--space-4xl) 0;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+
+  .share-links {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .share-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+    padding: var(--space-lg) var(--space-xl);
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--gray-medium);
+    text-decoration: none;
+    color: var(--gray-darker);
+    transition: all var(--transition-smooth);
+    position: relative;
+  }
+
+  .share-link::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 0;
+    height: 2px;
+    background: var(--primary);
+    transition: width var(--transition-smooth);
+  }
+
+  .share-link:hover::before,
+  .share-link:focus::before {
+    width: 100%;
+  }
+
+  .share-link:hover,
+  .share-link:focus {
+    background: rgba(0, 70, 173, 0.02);
+  }
+
+  .share-link:hover .link-icon,
+  .share-link:focus .link-icon {
+    transform: scale(1.1);
+    color: var(--primary);
+  }
+
+  .share-link:hover .link-label,
+  .share-link:focus .link-label {
+    color: var(--primary);
+  }
+
+  .link-icon {
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray-darker);
+    transition: all var(--transition-smooth);
+  }
+
+  .link-icon svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .link-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .link-label {
+    font-family: "Ronzino-Bold", system-ui, sans-serif;
+    font-size: 1rem;
+    color: var(--black);
+    margin-bottom: 0.125rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    transition: color var(--transition);
+  }
+
+  .link-value {
+    font-size: 0.875rem;
+    color: var(--gray-dark);
+    word-break: break-all;
+    font-weight: 500;
+  }
+
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .share-container {
+      padding: var(--space-3xl) var(--space-lg);
+      min-height: 55vh;
+    }
+
+    .share-title {
+      font-size: 2rem;
+    }
+
+    .share-subtitle {
+      font-size: 0.9375rem;
+      margin-bottom: var(--space-3xl);
+    }
+
+    .share-links {
+      gap: var(--space-md);
+    }
+
+    .share-link {
+      padding: var(--space-md) var(--space-lg);
+      gap: var(--space-md);
+    }
+
+    .link-icon {
+      width: 2.25rem;
+      height: 2.25rem;
+    }
+
+    .link-icon svg {
+      width: 1.375rem;
+      height: 1.375rem;
+    }
+
+    .link-label {
+      font-size: 0.9375rem;
+    }
+
+    .link-value {
+      font-size: 0.8125rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .share-container {
+      padding: var(--space-2xl) var(--space-md);
+    }
+
+    .share-title {
+      font-size: 1.75rem;
+    }
+
+    .share-subtitle {
+      font-size: 0.875rem;
+    }
+
+    .share-link {
+      padding: var(--space-md);
+    }
+
+    .link-icon {
+      width: 2rem;
+      height: 2rem;
+    }
+
+    .link-icon svg {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+  }
+
+  /* Accessibility */
+  .share-link:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .share-link,
+    .link-icon,
+    .link-label,
+    .share-link::before {
+      transition: none;
+    }
+
+    .share-link:hover .link-icon,
+    .share-link:focus .link-icon {
+      transform: none;
+    }
+  }
+</style>

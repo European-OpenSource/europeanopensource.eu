@@ -1,0 +1,181 @@
+---
+import { BasicCard, BlogFilters } from "@walle/components";
+import { BaseLayout } from "@walle/layouts";
+import { formatDate } from "@walle/utils";
+import { getCollection } from "astro:content";
+import type { PostsEntry } from "src/pages/blog/interfaces";
+
+const {
+  headerTitle = "Blog",
+  posts,
+  postsCollection = "posts",
+  filterTags,
+  showFilters = true,
+} = Astro.props;
+
+let postsToUse = posts && posts.length > 0 ? posts : await getCollection(postsCollection);
+
+// Filter out draft posts
+postsToUse = postsToUse.filter((post: any) => !post.data.draft);
+
+// Apply tag filtering if specified
+if (filterTags && filterTags.length > 0) {
+  postsToUse = postsToUse.filter((post: any) =>
+    post.data.tags?.some((tag: string) => filterTags.includes(tag))
+  );
+}
+
+// Sort posts by publish date (newest first)
+const sortedPosts = postsToUse.sort((a: any, b: any) => {
+  const dateA = a.data.publishDate ? new Date(a.data.publishDate) : new Date(0);
+  const dateB = b.data.publishDate ? new Date(b.data.publishDate) : new Date(0);
+  return dateB.getTime() - dateA.getTime();
+});
+
+// Extract unique categories from posts for filtering
+const allCategories: string[] = Array.from(
+  new Set(postsToUse.flatMap((post: any) => post.data.tags || []).filter(Boolean))
+).sort() as string[];
+---
+
+<BaseLayout headerTitle={headerTitle}>
+  <main class="blog-layout">
+    <div class="blog-layout__header">
+      <slot />
+    </div>
+
+    <div class="blog-layout__container">
+      {showFilters && allCategories.length > 0 && <BlogFilters categories={allCategories} />}
+
+      <slot name="before" />
+      {
+        sortedPosts.length === 0 ? (
+          <div class="blog-layout__empty">
+            <p>No posts found.</p>
+          </div>
+        ) : (
+          <div class="blog-layout__grid">
+            {sortedPosts.map((post: PostsEntry) => {
+              const badge = post.data.tags?.length
+                ? { text: post.data.tags[0], color: "secondary" as const }
+                : undefined;
+
+              return (
+                <BasicCard
+                  title={post.data.title}
+                  content={post.data.description}
+                  linkUrl={`/blog/${post.id}`}
+                  imageUrl={post.data.image || "/img/posts/default.jpg"}
+                  imageAlt={post.data.title}
+                  badge={badge}
+                  publishDate={
+                    post.data.publishDate ? formatDate(post.data.publishDate.toString()) : null
+                  }
+                  linkTarget="_self"
+                />
+              );
+            })}
+          </div>
+        )
+      }
+      <slot name="after" />
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .blog-layout {
+    width: 100%;
+    min-height: 80vh;
+  }
+
+  .blog-layout__header {
+    width: 100%;
+    margin-bottom: 48px;
+  }
+
+  .blog-layout__container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 32px 64px;
+  }
+
+  .blog-layout__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 32px;
+    align-items: start;
+  }
+
+  .blog-layout__empty {
+    text-align: center;
+    padding: 80px 24px;
+    color: var(--gray-dark);
+    font-size: 18px;
+  }
+
+  /* Mobile First - smartphones */
+  @media (max-width: 640px) {
+    .blog-layout__container {
+      padding: 0 16px 40px;
+    }
+
+    .blog-layout__header {
+      margin-bottom: 32px;
+    }
+
+    .blog-layout__grid {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+  }
+
+  /* Tablet portrait */
+  @media (min-width: 641px) and (max-width: 768px) {
+    .blog-layout__container {
+      padding: 0 24px 48px;
+    }
+
+    .blog-layout__grid {
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+    }
+  }
+
+  /* Tablet landscape */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .blog-layout__container {
+      padding: 0 28px 56px;
+    }
+
+    .blog-layout__grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+    }
+  }
+
+  /* Desktop */
+  @media (min-width: 1025px) and (max-width: 1440px) {
+    .blog-layout__container {
+      padding: 0 32px 64px;
+    }
+
+    .blog-layout__grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+  }
+
+  /* Large Desktop */
+  @media (min-width: 1441px) {
+    .blog-layout__container {
+      max-width: 1600px;
+      padding: 0 48px 80px;
+    }
+
+    .blog-layout__grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 36px;
+    }
+  }
+</style>
