@@ -1,0 +1,1095 @@
+---
+import SectionHeaderHome from "@components/HeaderHome.astro";
+import { Button, Section, SectionFlow } from "@walle/components";
+import { BaseLayout } from "@walle/layouts";
+import { Icon } from "astro-icon/components";
+
+const submissionSteps = [
+  {
+    number: 1,
+    title: "Submit Project",
+    description:
+      "Fill out the form with all the necessary information. The more details you provide, the faster your project will be evaluated.",
+    icon: "fa:list",
+  },
+  {
+    number: 2,
+    title: "Evaluation",
+    description:
+      "Our team ensures the project meets all the criteria to be included in the European OpenSource platform.",
+    icon: "fa:spinner",
+  },
+  {
+    number: 3,
+    title: "Publication",
+    description:
+      "Once approved, your project is added to the GitHub repository and published on the platform. You will be notified via email.",
+    icon: "fa:github",
+  },
+];
+---
+
+<BaseLayout
+  headerTitle="European Open‑Source"
+  headerDescription="The European platform that brings together developers, companies, and institutions to build an open, transparent, and sovereign digital future, promoting collaboration and open-source innovation."
+>
+  <SectionHeaderHome />
+
+  <!-- Manifesto -->
+  <Section title="" centered={true}>
+    <div class="manifesto-hero">
+      <p class="manifesto-hero-lead">
+        We are building Europe's open-source future with the first platform that connects
+        developers, companies and institutions so they can share code, knowledge and innovative
+        ideas.
+      </p>
+      <p class="manifesto-hero-subtitle">
+        We want to transform fragmentation into tangible collaboration, promoting software reuse and
+        generating a positive social impact.
+      </p>
+    </div>
+
+    <div class="manifesto-pillars">
+      <div class="manifesto-pillar">
+        <h4 class="manifesto-pillar-title">Our Goals</h4>
+        <div class="manifesto-pillar-list">
+          <div class="manifesto-pillar-item">
+            <Icon name="fa:check-circle" class="manifesto-pillar-icon" />
+            <span><strong>Build an European OpenSource catalog</strong></span>
+          </div>
+          <div class="manifesto-pillar-item">
+            <Icon name="fa:check-circle" class="manifesto-pillar-icon" />
+            <span><strong>Build a Innovative Tech ecosystem</strong></span>
+          </div>
+          <div class="manifesto-pillar-item">
+            <Icon name="fa:check-circle" class="manifesto-pillar-icon" />
+            <span><strong>Innovate OpenSource world</strong></span>
+          </div>
+          <div class="manifesto-pillar-item">
+            <Icon name="fa:check-circle" class="manifesto-pillar-icon" />
+            <span><strong>Security and Digital Sovereignty</strong></span>
+          </div>
+        </div>
+      </div>
+      <div class="manifesto-pillar">
+        <h4 class="manifesto-pillar-title">Our Values</h4>
+        <div class="manifesto-pillar-list">
+          <div class="manifesto-pillar-item">
+            <Icon name="fa:check-circle" class="manifesto-pillar-icon" />
+            <span><strong>Open-Source First</strong></span>
+          </div>
+          <div class="manifesto-pillar-item">
+            <Icon name="fa:check-circle" class="manifesto-pillar-icon" />
+            <span><strong>Collaboration and Inclusivity</strong></span>
+          </div>
+          <div class="manifesto-pillar-item">
+            <Icon name="fa:check-circle" class="manifesto-pillar-icon" />
+            <span><strong>Transparency</strong></span>
+          </div>
+          <div class="manifesto-pillar-item">
+            <Icon name="fa:check-circle" class="manifesto-pillar-icon" />
+            <span><strong>Apolitical and Non-Governmental</strong></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <Button link="/form" text="Submit Project" type="secondary" extraClass="mt-xl" />
+  </Section>
+
+  <!-- Benefits Section -->
+  <Section title="Why Join European OpenSource?" centered={true}>
+    <div class="benefits-intro">
+      <p>
+        Adding your open-source project to European OpenSource means becoming part of a unique
+        ecosystem that offers concrete advantages for your project and the community.
+      </p>
+    </div>
+
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <div class="benefit-icon">
+          <Icon name="fa:eye" />
+        </div>
+        <h4 class="benefit-title">Increased Visibility</h4>
+        <p class="benefit-description">
+          Showcase your project to a targeted European audience of developers, companies, and
+          institutions actively looking for innovative solutions.
+        </p>
+      </div>
+
+      <div class="benefit-card">
+        <div class="benefit-icon">
+          <Icon name="fa:users" />
+        </div>
+        <h4 class="benefit-title">Growing Community</h4>
+        <p class="benefit-description">
+          Connect with like-minded developers and organizations who share your values of
+          transparency, collaboration, and digital sovereignty.
+        </p>
+      </div>
+
+      <div class="benefit-card">
+        <div class="benefit-icon">
+          <Icon name="fa:handshake-o" />
+        </div>
+        <h4 class="benefit-title">Collaboration Opportunities</h4>
+        <p class="benefit-description">
+          Foster partnerships and collaborations with other European projects, creating synergies
+          that amplify innovation and impact.
+        </p>
+      </div>
+
+      <div class="benefit-card">
+        <div class="benefit-icon">
+          <Icon name="fa:shield" />
+        </div>
+        <h4 class="benefit-title">Digital Sovereignty</h4>
+        <p class="benefit-description">
+          Contribute to building a more independent and secure European digital infrastructure,
+          reducing dependency on external solutions.
+        </p>
+      </div>
+
+      <div class="benefit-card">
+        <div class="benefit-icon">
+          <Icon name="fa:leaf" />
+        </div>
+        <h4 class="benefit-title">Sustainable Future</h4>
+        <p class="benefit-description">
+          Be part of an ethical approach to technology that prioritizes sustainability,
+          accessibility, and positive social impact.
+        </p>
+      </div>
+
+      <div class="benefit-card">
+        <div class="benefit-icon">
+          <Icon name="fa:star" />
+        </div>
+        <h4 class="benefit-title">Quality Recognition</h4>
+        <p class="benefit-description">
+          Gain recognition as a high-quality, European-vetted project that meets strict standards
+          for innovation, documentation, and community value.
+        </p>
+      </div>
+    </div>
+
+    <Button link="/form" text="Submit Project" type="secondary" extraClass="mt-xl" />
+  </Section>
+
+  <!-- Submission Flow -->
+  <SectionFlow title="How the submission process works" steps={submissionSteps}>
+    <Button link="/form" text="Submit Project" type="secondary" extraClass="mt-xl" />
+  </SectionFlow>
+
+  <!-- Eligibility Criteria -->
+  <Section title="Eligibility Criteria" centered={true}>
+    <div class="criteria-grid">
+      <div class="criteria-card">
+        <div class="criteria-header">
+          <div class="criteria-number">European Affiliation</div>
+          <div class="criteria-icon">
+            <Icon name="fa:building" />
+          </div>
+        </div>
+        <div class="criteria-content">
+          <div class="criteria-list">
+            <div class="criteria-item">
+              <Icon name="fa:check-circle" class="check-icon" />
+              <span>Your company is based in an EU country</span>
+            </div>
+            <div class="criteria-item">
+              <Icon name="fa:check-circle" class="check-icon" />
+              <span>Non-EU company with at least 2/3 founders being European citizens</span>
+            </div>
+            <div class="criteria-item">
+              <Icon name="fa:check-circle" class="check-icon" />
+              <span>You are a developer or creator with EU citizenship</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="criteria-card">
+        <div class="criteria-header">
+          <div class="criteria-number">Project Quality</div>
+          <div class="criteria-icon">
+            <Icon name="fa:code" />
+          </div>
+        </div>
+        <div class="criteria-content">
+          <div class="criteria-list">
+            <div class="criteria-item">
+              <Icon name="fa:check-circle" class="check-icon" />
+              <span>Addresses a concrete and useful problem</span>
+            </div>
+            <div class="criteria-item">
+              <Icon name="fa:check-circle" class="check-icon" />
+              <span>Clear documentation for users</span>
+            </div>
+            <div class="criteria-item">
+              <Icon name="fa:check-circle" class="check-icon" />
+              <span>Includes guides for contributors</span>
+            </div>
+            <div class="criteria-item">
+              <Icon name="fa:check-circle" class="check-icon" />
+              <span>Actively updated and maintained</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="criteria-card criteria-card--highlight">
+        <div class="criteria-header">
+          <div class="criteria-number">European Values</div>
+          <div class="criteria-icon">
+            <Icon name="fa:heart" />
+          </div>
+        </div>
+        <div class="criteria-content">
+          <div class="criteria-list">
+            <div class="criteria-item">
+              <Icon name="fa:check-circle" class="check-icon" />
+              <span>Accessible and inclusive</span>
+            </div>
+            <div class="criteria-item">
+              <Icon name="fa:check-circle" class="check-icon" />
+              <span>Sustainable and responsible approach</span>
+            </div>
+            <div class="criteria-item">
+              <Icon name="fa:check-circle" class="check-icon" />
+              <span>Brings benefits to the community</span>
+            </div>
+            <div class="criteria-item">
+              <Icon name="fa:check-circle" class="check-icon" />
+              <span>Respects user privacy</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <Button link="/form" text="Submit Project" type="secondary" extraClass="mt-xl" />
+  </Section>
+
+  <Section title="Mission & Vision" centered={true}>
+    <div class="columns">
+      <div class="column">
+        <h5>Innovation</h5>
+        <p>We support innovative tech projects that address real and tangible problems.</p>
+      </div>
+      <div class="column">
+        <h5>European Community</h5>
+        <p>
+          We bring together developers, companies, institutions, and communities on a single
+          platform.
+        </p>
+      </div>
+      <div class="column">
+        <h5>Visibility</h5>
+        <p>We give a voice to projects and companies that truly want to build a better future.</p>
+      </div>
+      <div class="column">
+        <h5>Digital Sovereignty</h5>
+        <p>An open and shared technological independence that defends rights.</p>
+      </div>
+      <div class="column">
+        <h5>Ethics and Open-Source</h5>
+        <p>We believe in open-source as an ethical and sustainable model.</p>
+      </div>
+      <div class="column">
+        <h5>Inspiration</h5>
+        <p>A Europe that leads by example, engages in dialogue, and inspires internationally.</p>
+      </div>
+    </div>
+  </Section>
+
+  <Section title="Our Collective" centered={true}>
+    <div class="collective-intro">
+      <p>
+        We are a group of individuals who believe in a more united European tech ecosystem and see
+        open-source as a driver of growth and innovation.
+      </p>
+    </div>
+  </Section>
+</BaseLayout>
+
+<style>
+  .hero {
+    max-width: 700px;
+    margin: 0 auto 3rem auto;
+    text-align: center;
+  }
+  .hero h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+  }
+  .highlight {
+    color: var(--primary);
+  }
+  .lead {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    color: var(--gray-dark);
+  }
+  .brand-position {
+    max-width: 700px;
+    margin: 0 auto 2rem auto;
+    font-size: 1.1rem;
+  }
+  .brand-position ul {
+    margin-top: 1rem;
+    padding-left: 1.2rem;
+  }
+  .brand-position li {
+    margin-bottom: 0.5rem;
+  }
+  .columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: var(--space-3xl);
+    text-align: left;
+  }
+  .column h5 {
+    font-size: 1.375rem;
+    margin-bottom: var(--space-lg);
+    position: relative;
+    font-weight: 600;
+    color: var(--black);
+    line-height: 1.3;
+  }
+  .column h5::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -0.75rem;
+    height: 3px;
+    width: 48px;
+    background: linear-gradient(90deg, var(--primary), var(--primary-light));
+    border-radius: 2px;
+  }
+  .column p {
+    line-height: 1.7;
+    color: var(--gray-dark);
+    font-size: 1rem;
+    margin-bottom: var(--space-lg);
+  }
+
+  /* Manifesto Section - Minimal & Impactful */
+  .manifesto-hero {
+    text-align: center;
+    max-width: 900px;
+    margin: 0 auto var(--space-4xl) auto;
+    padding: 0 var(--space-2xl) 0;
+  }
+
+  .manifesto-hero-lead {
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
+    font-weight: 700;
+    color: var(--black);
+    line-height: 1.4;
+    margin: 0 0 var(--space-2xl) 0;
+    font-family: "Ronzino-Bold", system-ui, sans-serif;
+    letter-spacing: -0.02em;
+  }
+
+  .manifesto-hero-subtitle {
+    font-size: clamp(1.125rem, 2.5vw, 1.375rem);
+    font-weight: 500;
+    color: var(--primary-dark);
+    line-height: 1.5;
+    margin: 0;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .manifesto-pillars {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4xl);
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .manifesto-pillar {
+    text-align: center;
+  }
+
+  .manifesto-pillar-title {
+    font-weight: 700;
+    color: var(--black);
+    margin: 0 0 var(--space-2xl) 0;
+    position: relative;
+    padding-bottom: var(--space-sm);
+  }
+
+  .manifesto-pillar-title::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 2px;
+    width: 60px;
+    background: var(--primary);
+    border-radius: 1px;
+  }
+
+  .manifesto-pillar-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    text-align: left;
+  }
+
+  .manifesto-pillar-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+    line-height: 1.5;
+    color: var(--gray-darker);
+  }
+
+  .manifesto-pillar-icon {
+    color: var(--primary);
+    font-size: 1rem;
+    margin-top: 0.125rem;
+    flex-shrink: 0;
+  }
+
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    .manifesto-hero {
+      padding: var(--space-2xl) 0;
+      margin-bottom: var(--space-2xl);
+    }
+
+    .manifesto-hero-lead {
+      font-size: 1.75rem;
+    }
+
+    .manifesto-hero-subtitle {
+      font-size: 1.125rem;
+    }
+
+    .manifesto-pillars {
+      grid-template-columns: 1fr;
+      gap: var(--space-3xl);
+      max-width: 600px;
+    }
+
+    .manifesto-pillar-title {
+      font-size: 1.375rem;
+    }
+
+    .manifesto-pillar-item {
+      font-size: 0.95rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .manifesto-hero {
+      padding: var(--space-xl) 0;
+    }
+
+    .manifesto-hero-lead {
+      font-size: 1.5rem;
+    }
+
+    .manifesto-hero-subtitle {
+      font-size: 1rem;
+    }
+
+    .manifesto-pillars {
+      gap: var(--space-2xl);
+    }
+
+    .manifesto-pillar-title {
+      font-size: 1.25rem;
+      margin-bottom: var(--space-lg);
+    }
+
+    .manifesto-pillar-item {
+      font-size: 0.9rem;
+    }
+  }
+  .criteria-intro {
+    text-align: center;
+    margin-bottom: var(--space-4xl);
+    max-width: 680px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .criteria-intro p {
+    font-size: 1.125rem;
+    color: var(--gray-dark);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .criteria-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: var(--space-2xl);
+    margin-bottom: var(--space-4xl);
+  }
+
+  .criteria-card {
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--gray-medium);
+    box-shadow: var(--box-shadow);
+    padding: 0;
+    transition: var(--transition-smooth);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .criteria-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--box-shadow-hover);
+    border-color: var(--primary-light);
+  }
+
+  .criteria-card--highlight {
+    border-color: var(--primary);
+    position: relative;
+  }
+
+  .criteria-header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: var(--white);
+    padding: var(--space-2xl);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+  }
+
+  .criteria-card--highlight .criteria-header {
+    background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-light) 100%);
+  }
+
+  .criteria-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    opacity: 0.95;
+    font-family: "Ronzino-Bold", system-ui, sans-serif;
+  }
+
+  .criteria-icon {
+    font-size: 1.75rem;
+    opacity: 0.9;
+  }
+
+  .criteria-content {
+    padding: var(--space-2xl);
+  }
+
+  .criteria-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .criteria-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+    font-size: 1rem;
+    line-height: 1.6;
+    text-align: left;
+  }
+
+  .check-icon {
+    color: var(--primary);
+    font-size: 1.125rem;
+    margin-top: 0.125rem;
+    flex-shrink: 0;
+  }
+
+  .criteria-card--highlight .check-icon {
+    color: var(--secondary);
+  }
+
+  .criteria-cta {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .criteria-cta p {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--primary-dark);
+    margin-bottom: 0;
+  }
+
+  /* Benefits Section Styles */
+  .benefits-intro {
+    text-align: center;
+    margin-bottom: var(--space-4xl);
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .benefits-intro p {
+    font-size: 1.25rem;
+    color: var(--gray-dark);
+    line-height: 1.7;
+    margin: 0;
+    font-weight: 500;
+  }
+
+  .benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: var(--space-2xl);
+    margin-bottom: var(--space-4xl);
+  }
+
+  .benefit-card {
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--gray-medium);
+    padding: var(--space-2xl);
+    text-align: center;
+    transition: var(--transition-smooth);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .benefit-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    transform: scaleX(0);
+    transition: var(--transition-smooth);
+  }
+
+  .benefit-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--box-shadow-hover);
+    border-color: var(--primary-light);
+  }
+
+  .benefit-card:hover::before {
+    transform: scaleX(1);
+  }
+
+  .benefit-card:nth-child(2n)::before {
+    background: linear-gradient(90deg, var(--secondary), var(--alternative));
+  }
+
+  .benefit-card:nth-child(3n)::before {
+    background: linear-gradient(90deg, var(--alternative), var(--primary));
+  }
+
+  .benefit-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto var(--space-lg) auto;
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 2rem;
+    transition: var(--transition-smooth);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .benefit-icon::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: var(--transition-smooth);
+  }
+
+  .benefit-card:hover .benefit-icon {
+    transform: scale(1.1);
+    background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+  }
+
+  .benefit-card:hover .benefit-icon::after {
+    width: 100px;
+    height: 100px;
+  }
+
+  .benefit-card:nth-child(2n) .benefit-icon {
+    background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+  }
+
+  .benefit-card:nth-child(2n):hover .benefit-icon {
+    background: linear-gradient(135deg, var(--alternative), var(--alternative-light));
+  }
+
+  .benefit-card:nth-child(3n) .benefit-icon {
+    background: linear-gradient(135deg, var(--alternative), var(--alternative-light));
+  }
+
+  .benefit-card:nth-child(3n):hover .benefit-icon {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  }
+
+  .benefit-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--black);
+    margin: 0 0 var(--space-lg) 0;
+    line-height: 1.3;
+    font-family: "Ronzino-Bold", system-ui, sans-serif;
+    transition: var(--transition);
+  }
+
+  .benefit-card:hover .benefit-title {
+    color: var(--primary);
+  }
+
+  .benefit-description {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: var(--gray-dark);
+    margin: 0;
+  }
+
+  /* Mobile optimizations for benefits */
+  @media (max-width: 768px) {
+    .benefits-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-xl);
+      margin-bottom: var(--space-2xl);
+    }
+
+    .benefit-card {
+      padding: var(--space-xl);
+    }
+
+    .benefit-icon {
+      width: 70px;
+      height: 70px;
+      font-size: 1.75rem;
+      margin-bottom: var(--space-md);
+    }
+
+    .benefit-title {
+      font-size: 1.375rem;
+    }
+
+    .benefit-description {
+      font-size: 1rem;
+    }
+
+    .benefits-intro p {
+      font-size: 1.125rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .benefit-card {
+      padding: var(--space-lg);
+    }
+
+    .benefit-icon {
+      width: 60px;
+      height: 60px;
+      font-size: 1.5rem;
+    }
+
+    .benefit-title {
+      font-size: 1.25rem;
+    }
+
+    .benefits-intro p {
+      font-size: 1rem;
+    }
+  }
+
+  /* Accessibility improvements for benefits */
+  @media (prefers-reduced-motion: reduce) {
+    .benefit-card,
+    .benefit-icon,
+    .benefit-title {
+      transition: none;
+    }
+
+    .benefit-card:hover,
+    .benefit-card:hover .benefit-icon,
+    .benefit-card::before {
+      transform: none;
+    }
+  }
+
+  .benefit-card:focus-within {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 768px) {
+    .criteria-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-xl);
+    }
+
+    .criteria-header {
+      padding: var(--space-xl);
+    }
+
+    .criteria-content {
+      padding: var(--space-xl);
+    }
+
+    .criteria-item {
+      font-size: 0.95rem;
+    }
+
+    .columns {
+      grid-template-columns: 1fr;
+      gap: var(--space-2xl);
+    }
+
+    .collective-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-xl);
+      margin-top: var(--space-2xl);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .criteria-intro {
+      margin-bottom: var(--space-2xl);
+    }
+
+    .criteria-header {
+      padding: var(--space-lg);
+    }
+
+    .criteria-content {
+      padding: var(--space-lg);
+    }
+
+    .collective-intro {
+      margin-bottom: var(--space-2xl);
+    }
+  }
+
+  /* Enhanced micro-interactions */
+  .criteria-item {
+    transition: var(--transition);
+  }
+
+  .criteria-item:hover {
+    color: var(--black);
+  }
+
+  .criteria-item:hover .check-icon {
+    transform: scale(1.1);
+    transition: transform var(--transition);
+  }
+
+  /* Focus states for accessibility */
+  .criteria-card:focus-within {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+
+  /* Smooth scrolling behavior */
+  @media (prefers-reduced-motion: no-preference) {
+    .criteria-card,
+    .collective-card {
+      transition: var(--transition-smooth);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .criteria-card,
+    .collective-card {
+      transition: none;
+    }
+
+    .criteria-card:hover,
+    .collective-card:hover {
+      transform: none;
+    }
+  }
+
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: var(--space-2xl);
+    margin-top: var(--space-xl);
+  }
+
+  .collective-card-image {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--gray-light), var(--gray-medium));
+  }
+
+  .collective-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-smooth);
+  }
+
+  .collective-card:hover .collective-card-image img {
+    transform: scale(1.05);
+  }
+
+  .collective-card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0, 70, 173, 0.92), rgba(189, 17, 120, 0.92));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--transition-smooth);
+    backdrop-filter: blur(2px);
+  }
+
+  .collective-card:hover .collective-card-overlay {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .collective-card-social {
+    display: flex;
+    gap: var(--space-lg);
+    align-items: center;
+    justify-content: center;
+  }
+
+  .social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    color: var(--white);
+    text-decoration: none;
+    transition: var(--transition-smooth);
+    backdrop-filter: blur(10px);
+  }
+
+  .social-link:hover {
+    background: var(--white);
+    color: var(--primary);
+    border-color: var(--white);
+    transform: scale(1.15);
+  }
+
+  .social-link svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .collective-card-content {
+    padding: var(--space-2xl);
+  }
+
+  .collective-card-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--black);
+    margin: 0 0 var(--space-sm) 0;
+    line-height: 1.3;
+    font-family: "Ronzino-Bold", system-ui, sans-serif;
+  }
+
+  .collective-card-position {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary);
+    margin: 0 0 var(--space-lg) 0;
+    text-transform: uppercase;
+    letter-spacing: 0.75px;
+  }
+
+  .collective-card-bio {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--gray-dark);
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .collective-intro {
+      margin-bottom: 2rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .collective-card {
+      border-radius: 1rem;
+    }
+
+    .collective-card-image {
+      height: 240px;
+    }
+
+    .collective-card-content {
+      padding: 1.25rem;
+    }
+
+    .collective-card-name {
+      font-size: 1.25rem;
+    }
+
+    .collective-card-position {
+      font-size: 0.9rem;
+    }
+
+    .collective-card-bio {
+      font-size: 0.9rem;
+    }
+
+    .social-link {
+      width: 44px;
+      height: 44px;
+    }
+
+    .social-link svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  /* High-DPI displays */
+  @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .collective-card {
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .collective-card:hover {
+      box-shadow: 0 8px 32px rgba(0, 70, 173, 0.2);
+    }
+  }
+</style>

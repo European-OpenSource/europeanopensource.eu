@@ -1,0 +1,222 @@
+---
+/**
+ * Hero section for homepage with animated EU flags and call-to-action
+ */
+import { Button } from "@walle/components";
+
+const euCountries = [
+  { name: "Italy", code: "it" },
+  { name: "France", code: "fr" },
+  { name: "Germany", code: "de" },
+  { name: "Spain", code: "es" },
+  { name: "Poland", code: "pl" },
+  { name: "Netherlands", code: "nl" },
+  { name: "Belgium", code: "be" },
+  { name: "Sweden", code: "se" },
+  { name: "Austria", code: "at" },
+  { name: "Czech Republic", code: "cz" },
+  { name: "Denmark", code: "dk" },
+  { name: "Finland", code: "fi" },
+  { name: "Greece", code: "gr" },
+  { name: "Hungary", code: "hu" },
+  { name: "Ireland", code: "ie" },
+  { name: "Croatia", code: "hr" },
+  { name: "Lithuania", code: "lt" },
+  { name: "Latvia", code: "lv" },
+  { name: "Slovakia", code: "sk" },
+  { name: "Slovenia", code: "si" },
+  { name: "Estonia", code: "ee" },
+  { name: "Portugal", code: "pt" },
+  { name: "Bulgaria", code: "bg" },
+  { name: "Romania", code: "ro" },
+  { name: "Luxembourg", code: "lu" },
+  { name: "Malta", code: "mt" },
+  { name: "Cyprus", code: "cy" },
+];
+---
+
+<section class="hero">
+  <div class="content-wrapper">
+    <h1><span class="logo-text">European OpenSource</span></h1>
+    <h2>Building Europe's open-source future</h2>
+    <Button link="/form" text="Submit Project" iconName="mdi:arrow-right" type="secondary" />
+  </div>
+  {
+    euCountries.map((country, index) => {
+      // Calculate flag positioning and animation timing
+      let top, left;
+      if (index % 4 === 0) {
+        top = Math.random() * 25;
+        left = Math.random() * 100;
+      } else if (index % 4 === 1) {
+        top = Math.random() * 25 + 75;
+        left = Math.random() * 100;
+      } else if (index % 4 === 2) {
+        top = Math.random() * 50 + 25;
+        left = Math.random() * 20;
+      } else {
+        top = Math.random() * 50 + 25;
+        left = Math.random() * 20 + 80;
+      }
+      const fadeDelay = (index * 0.1).toFixed(1);
+      const floatDuration = (5 + Math.random() * 5).toFixed(1);
+      const floatDelay = (Math.random() * 5).toFixed(1);
+      return (
+        <img
+          src={`https://flagcdn.com/w80/${country.code}.png`}
+          alt={country.name}
+          class="flag"
+          style={`
+          top: ${top}%;
+          left: ${left}%;
+          animation-delay: ${fadeDelay}s, ${floatDelay}s;
+          animation-duration: 1s, ${floatDuration}s;
+        `}
+        />
+      );
+    })
+  }
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: var(--primary);
+    padding: var(--space-4xl) var(--space-lg);
+  }
+
+  .content-wrapper {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    max-width: 950px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    margin: 0 0 var(--space-xl);
+    color: var(--white);
+    font-size: clamp(3.5rem, 8vw, 6rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    transform: translateY(40px);
+    animation: fadeInUp 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s forwards;
+  }
+
+  .logo-text {
+    background: var(--white);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: inline-block;
+  }
+
+  h2 {
+    margin: 0 0 var(--space-3xl);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: clamp(1.25rem, 4vw, 1.875rem);
+    font-weight: 400;
+    line-height: 1.4;
+    max-width: 780px;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.7s forwards;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  }
+
+  .flag {
+    position: absolute;
+    width: 40px;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+    opacity: 0;
+    animation:
+      fadeIn 2s ease-out forwards,
+      float infinite ease-in-out;
+    z-index: 2;
+    transition: var(--transition);
+  }
+
+  .flag:hover {
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5));
+    transform: scale(1.1);
+  }
+
+  @media (max-width: 768px) {
+    .flag {
+      width: 28px;
+    }
+
+    .hero {
+      padding: var(--space-2xl) var(--space-md);
+    }
+
+    h1 {
+      margin-bottom: var(--space-md);
+    }
+
+    h2 {
+      margin-bottom: var(--space-2xl);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .flag {
+      width: 24px;
+    }
+
+    .hero {
+      padding: var(--space-xl) var(--space-sm);
+    }
+  }
+
+  @keyframes fadeIn {
+    to {
+      opacity: 0.75;
+    }
+  }
+
+  @keyframes float {
+    0% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    33% {
+      transform: translateY(-8px) rotate(1deg);
+    }
+    66% {
+      transform: translateY(4px) rotate(-0.5deg);
+    }
+    100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+  }
+
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Prefers reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .flag {
+      animation: fadeIn 2s ease-out forwards;
+    }
+
+    h1,
+    h2 {
+      animation: fadeIn 1s ease-out forwards;
+    }
+  }
+</style>

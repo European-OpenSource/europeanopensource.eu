@@ -1,0 +1,165 @@
+---
+import { Section } from "@walle/components";
+import { Icon } from "astro-icon/components";
+
+export interface FlowStep {
+  number: number;
+  title: string;
+  description: string;
+  icon?: string;
+}
+
+export interface Props {
+  title: string;
+  steps: FlowStep[];
+  centered?: boolean;
+  type?: "primary" | "gray" | null;
+}
+
+const { title, steps, centered = true, type = null } = Astro.props;
+---
+
+<Section title={title} centered={centered} type={type}>
+  <ol class="flow-steps" aria-label="Fasi del processo">
+    {
+      steps.map((step) => (
+        <li class="flow-step" tabindex="0">
+          <div class="step-number" aria-hidden="true">
+            {step.icon && <Icon name={step.icon} aria-hidden="true" size={20} />}
+          </div>
+          <div class="step-content">
+            <h5>{step.title}</h5>
+            <p>{step.description}</p>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+
+  <slot />
+</Section>
+
+<style>
+  .flow-steps {
+    counter-reset: step;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2rem 0;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+  }
+
+  .flow-step {
+    display: flex;
+    align-items: center;
+    margin-bottom: 3rem;
+    opacity: 0;
+    transform: translateY(40px);
+    transition:
+      opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .flow-step.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .flow-step:last-child {
+    margin-bottom: 0;
+  }
+
+  .step-number {
+    flex-shrink: 0;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background: var(--primary);
+    color: var(--white);
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1.5rem;
+    box-shadow: var(--box-shadow);
+    position: relative;
+  }
+
+  .step-content {
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: var(--box-shadow);
+    padding: 1.5rem 2rem;
+    flex: 1;
+    position: relative;
+  }
+
+  .step-content h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+  }
+
+  .step-content p {
+    margin: 0;
+    color: var(--gray-dark);
+  }
+
+  .step-icon {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    color: var(--primary);
+    opacity: 0.7;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .flow-step {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .step-number {
+      margin: 0 0 1rem 0;
+      align-self: flex-start;
+    }
+
+    .step-content {
+      padding: 1rem;
+    }
+
+    .step-icon {
+      top: 1rem;
+      right: 1rem;
+    }
+  }
+
+  /* Ensure text is readable in all color themes */
+  :global(.section-content-primary) .step-content {
+    color: var(--black);
+  }
+
+  :global(.section-content-primary) .step-content p {
+    color: var(--gray-dark);
+  }
+</style>
+
+<script>
+  // Animazione reveal on scroll, minimale e accessibile
+  document.addEventListener("DOMContentLoaded", () => {
+    const steps = document.querySelectorAll(".flow-step");
+    const reveal = () => {
+      steps.forEach((step, i) => {
+        const rect = step.getBoundingClientRect();
+        if (rect.top < window.innerHeight - 80) {
+          setTimeout(() => step.classList.add("visible"), i * 120);
+        }
+      });
+    };
+    reveal();
+    window.addEventListener("scroll", reveal, { passive: true });
+  });
+</script>

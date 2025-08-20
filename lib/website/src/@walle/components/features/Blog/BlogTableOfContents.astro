@@ -1,0 +1,422 @@
+---
+export interface Props {}
+
+const {} = Astro.props;
+---
+
+<aside class="table-of-contents" id="toc">
+  <h3>Contents</h3>
+  <nav class="toc-nav" id="toc-nav" aria-label="Table of contents navigation"></nav>
+</aside>
+
+<style>
+  .table-of-contents {
+    position: sticky;
+    margin-top: 3.5rem;
+    top: 100px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    padding: 0;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.08);
+    max-height: calc(100vh - 120px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .table-of-contents h3 {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--black);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 1.25rem 1.5rem;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    letter-spacing: 0.025em;
+    font-family: "Ronzino-Bold", sans-serif;
+  }
+
+  .toc-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 1.5rem;
+    line-height: 1.3;
+    overflow-y: auto;
+    flex: 1;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.08) transparent;
+    gap: 0.6rem;
+  }
+
+  .toc-nav::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  .toc-nav::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .toc-nav::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 2px;
+  }
+
+  .toc-nav :global(a) {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    color: var(--gray-dark);
+    text-decoration: none;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 0;
+    position: relative;
+    margin: 0;
+    border-left: 3px solid transparent;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .toc-nav :global(a::before) {
+    display: none;
+  }
+
+  .toc-nav :global(a:hover) {
+    background: rgba(var(--primary), 0.06);
+    color: var(--primary);
+    border-left-color: var(--primary);
+    transform: translateX(4px);
+  }
+
+  .toc-nav :global(a.active) {
+    background: rgba(var(--primary), 0.08);
+    color: var(--primary);
+    border-left-color: var(--primary);
+    font-weight: 600;
+    transform: translateX(4px);
+  }
+
+  .toc-nav :global(a.navigating) {
+    background: rgba(var(--primary), 0.12);
+    color: var(--primary-dark);
+    border-left-color: var(--primary-dark);
+    pointer-events: none;
+  }
+
+  /* Simplified focus style (no surrounding border/box) */
+  .toc-nav :global(a:focus-visible) {
+    outline: none;
+    box-shadow: none;
+    background: rgba(var(--primary), 0.06);
+    border-left-color: var(--primary);
+  }
+
+  /* Ensure tap/click focus on mobile doesn't show default browser outline */
+  .toc-nav :global(a:focus),
+  .toc-nav :global(a:active) {
+    outline: none !important;
+    box-shadow: none !important;
+    background: rgba(var(--primary), 0.06);
+    border-left-color: var(--primary);
+  }
+
+  /* Remove Firefox dotted outline fallback */
+  .toc-nav :global(a::-moz-focus-inner) {
+    border: 0;
+  }
+
+  /* Optional: provide a very subtle accessibility indicator only when navigated via keyboard */
+  @media (hover: none) {
+    .toc-nav :global(a:focus-visible) {
+      background: rgba(var(--primary), 0.08);
+    }
+  }
+
+  .toc-nav.loading {
+    opacity: 0.6;
+  }
+
+  .toc-nav.loading::after {
+    content: "Loading...";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    color: var(--gray-dark);
+    font-size: 0.875rem;
+    font-style: italic;
+  }
+
+  .toc-footer {
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 1.25rem 1.5rem;
+    background: transparent;
+  }
+
+  .reading-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .progress-text {
+    font-size: 0.75rem;
+    color: var(--gray-dark);
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    font-family: "Ronzino-Bold", sans-serif;
+  }
+
+  .progress-track {
+    height: 3px;
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
+    width: 0%;
+    transition: width 0.3s ease;
+    border-radius: 2px;
+  }
+
+  /* Responsive - Tablet & Mobile */
+  @media (max-width: 1024px) {
+    .table-of-contents {
+      position: relative;
+      top: 0;
+      max-height: none;
+      margin-top: 0;
+      margin-bottom: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    .table-of-contents h3 {
+      cursor: pointer;
+      position: relative;
+      padding: 1rem 1.5rem;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: all 0.2s ease;
+      touch-action: manipulation;
+    }
+
+    .table-of-contents h3:hover {
+      background: rgba(var(--primary), 0.03);
+    }
+
+    .table-of-contents h3:active {
+      background: rgba(var(--primary), 0.06);
+      transform: scale(0.98);
+    }
+
+    .table-of-contents h3::after {
+      content: "▼";
+      position: absolute;
+      right: 1.5rem;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-size: 0.7rem;
+      color: var(--gray-dark);
+      transform-origin: center;
+    }
+
+    .table-of-contents.collapsed h3::after {
+      transform: rotate(-90deg);
+    }
+
+    .table-of-contents.collapsed .toc-nav,
+    .table-of-contents.collapsed .toc-footer {
+      display: none;
+      opacity: 0;
+    }
+
+    .toc-nav {
+      max-height: 40vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+    }
+
+    .toc-nav :global(a) {
+      transition: all 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+      word-break: break-word;
+      line-height: 1.4;
+      touch-action: manipulation;
+      cursor: pointer;
+    }
+
+    .toc-nav :global(a:active:not(.navigating)) {
+      background: rgba(var(--primary), 0.12);
+      transform: scale(0.98);
+    }
+
+    .toc-nav :global(a.navigating) {
+      animation: pulse 0.8s ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%,
+      100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.7;
+      }
+    }
+  }
+
+  /* Mobile Optimizations */
+  @media (max-width: 768px) {
+    .table-of-contents {
+      border-radius: 8px;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      background: var(--white);
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    .table-of-contents h3 {
+      padding: 0.875rem 1.25rem;
+      font-size: 0.85rem;
+    }
+
+    .table-of-contents h3::after {
+      right: 1.25rem;
+    }
+
+    .toc-nav {
+      max-height: 35vh;
+    }
+
+    .toc-nav :global(a) {
+      padding: 0.875rem 1.25rem;
+      font-size: 0.85rem;
+      line-height: 1.3;
+      margin: 0.125rem 0;
+    }
+
+    .toc-nav :global(a:hover),
+    .toc-nav :global(a.active) {
+      transform: translateX(2px);
+    }
+
+    .toc-footer {
+      padding: 1rem 1.25rem;
+    }
+  }
+
+  /* Small Mobile */
+  @media (max-width: 480px) {
+    .table-of-contents {
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .table-of-contents h3 {
+      padding: 0.75rem 1rem;
+      font-size: 0.8rem;
+    }
+
+    .table-of-contents h3::after {
+      right: 1rem;
+      font-size: 0.6rem;
+    }
+
+    .toc-nav {
+      max-height: 30vh;
+    }
+
+    .toc-nav :global(a) {
+      padding: 0.75rem 1rem;
+      font-size: 0.8rem;
+      line-height: 1.25;
+      margin: 0.125rem 0;
+      border-radius: 4px;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+    }
+
+    .toc-nav :global(a:hover),
+    .toc-nav :global(a.active) {
+      transform: translateX(1px);
+    }
+
+    .toc-footer {
+      padding: 0.875rem 1rem;
+    }
+
+    .progress-text {
+      font-size: 0.7rem;
+    }
+  }
+
+  /* Print */
+  @media print {
+    .table-of-contents {
+      display: none;
+    }
+  }
+
+  /* Accessibility - Reduced Motion */
+  @media (prefers-reduced-motion: reduce) {
+    .table-of-contents,
+    .toc-nav :global(a),
+    .table-of-contents h3,
+    .table-of-contents h3::after {
+      transition: none;
+    }
+
+    .toc-nav :global(a.navigating) {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  import { TableOfContentsManager } from "./tableOfContents";
+
+  // Example: read optional data attributes from the aside container for configuration
+  const tocEl = document.getElementById("toc");
+  const options: any = {};
+
+  if (tocEl) {
+    // Allow overriding heading selector via data-heading-selector="h2, h3, h4"
+    const headingSelector = tocEl.getAttribute("data-heading-selector");
+    if (headingSelector) options.headingSelector = headingSelector;
+
+    // Provide comma separated exclusion selectors in data-exclude-selectors=".intro,.no-menu"
+    const excludeSelectors = tocEl.getAttribute("data-exclude-selectors");
+    if (excludeSelectors)
+      options.excludeSelectors = excludeSelectors
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+
+    // Custom attribute/class names
+    const skipAttr = tocEl.getAttribute("data-skip-attr");
+    if (skipAttr) options.skipAttribute = skipAttr;
+    const skipClass = tocEl.getAttribute("data-skip-class");
+    if (skipClass) options.skipClass = skipClass;
+  }
+
+  const init = () => new TableOfContentsManager(options).init();
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+</script>
