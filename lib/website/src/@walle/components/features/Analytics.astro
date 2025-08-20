@@ -1,0 +1,10 @@
+---
+interface Props {
+  enable?: boolean;
+  scriptContent?: string;
+}
+
+const { enable = true, scriptContent } = Astro.props;
+---
+
+{enable && scriptContent && <Fragment set:html={scriptContent} />}

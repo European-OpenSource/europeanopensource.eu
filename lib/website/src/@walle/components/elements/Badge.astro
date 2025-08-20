@@ -1,0 +1,198 @@
+---
+import { Icon } from "astro-icon/components";
+
+export interface Props {
+  /**
+   * Text to display in the badge
+   */
+  text: string;
+
+  /**
+   * Badge color
+   * @default "gray"
+   */
+  color?: "primary" | "secondary" | "alternative" | "gray" | "success" | "warning" | "danger";
+
+  /**
+   * Icon name to show (astro-icon)
+   */
+  iconName?: string;
+
+  /**
+   * Icon position relative to text
+   * @default "end"
+   */
+  iconPosition?: "start" | "end";
+
+  /**
+   * Optional URL to make the badge clickable
+   */
+  link?: string;
+
+  /**
+   * HTML target for links (e.g. "_blank")
+   */
+  target?: string;
+
+  /**
+   * Additional CSS classes
+   */
+  extraClass?: string;
+
+  /**
+   * Badge size
+   * @default "medium"
+   */
+  size?: "small" | "medium" | "large";
+}
+
+const {
+  text,
+  color = "gray",
+  iconName,
+  iconPosition = "end",
+  link,
+  target,
+  extraClass = "",
+  size = "medium",
+} = Astro.props;
+
+const labelClasses = [
+  "eos-label",
+  `eos-label-${color}`,
+  `eos-label-${size}`,
+  link ? "eos-label-link" : "",
+  iconName ? `eos-label-with-icon eos-label-icon-${iconPosition}` : "",
+  extraClass,
+]
+  .filter(Boolean)
+  .join(" ");
+
+const Element = link ? "a" : "span";
+
+const attrs = link ? { href: link, target } : {};
+---
+
+<Element class={labelClasses} {...attrs}>
+  {iconName && <Icon name={iconName} class="eos-label-icon" aria-hidden="true" />}
+  <span class="eos-label-text">{text}</span>
+</Element>
+
+<style>
+  .eos-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    border-radius: 2rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .eos-label-with-icon {
+    position: relative;
+  }
+
+  .eos-label-icon-start {
+    flex-direction: row;
+  }
+
+  .eos-label-icon-end {
+    flex-direction: row-reverse;
+  }
+
+  .eos-label-small {
+    font-size: 0.8rem;
+    padding: 0.2em 0.7em;
+  }
+
+  .eos-label-medium {
+    font-size: 0.95rem;
+    padding: 0.25em 0.8em;
+  }
+
+  .eos-label-large {
+    font-size: 1rem;
+    padding: 0.3em 0.9em;
+  }
+
+  .eos-label-icon {
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+  }
+
+  .eos-label-primary {
+    background-color: var(--primary-light);
+    color: var(--white);
+  }
+
+  .eos-label-secondary {
+    background-color: var(--secondary-light);
+    color: var(--white);
+  }
+
+  .eos-label-alternative {
+    background-color: var(--alternative-light);
+    color: var(--black);
+  }
+
+  .eos-label-gray {
+    background-color: var(--gray-light);
+    color: var(--black);
+  }
+
+  .eos-label-success {
+    background-color: #2ecc71;
+    color: var(--white);
+  }
+
+  .eos-label-warning {
+    background-color: #f39c12;
+    color: var(--white);
+  }
+
+  .eos-label-danger {
+    background-color: #e74c3c;
+    color: var(--white);
+  }
+
+  /* Link behavior */
+  .eos-label-link {
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .eos-label-link:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .eos-label-primary.eos-label-link:hover {
+    background-color: var(--primary-dark);
+  }
+
+  .eos-label-secondary.eos-label-link:hover {
+    background-color: var(--secondary-dark);
+  }
+
+  .eos-label-alternative.eos-label-link:hover {
+    background-color: var(--alternative-dark);
+  }
+
+  .eos-label-gray.eos-label-link:hover {
+    background-color: var(--gray-dark);
+    color: var(--white);
+  }
+
+  /* Ensure all labels have proper spacing when next to each other */
+  .eos-label + .eos-label {
+    margin-left: 0.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .eos-label-large {
+      font-size: 0.95rem;
+      padding: 0.25em 0.8em;
+    }
+  }
+</style>
