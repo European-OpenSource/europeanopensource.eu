@@ -1102,10 +1102,10 @@ astro-icon@^1.1.5:
     "@iconify/types" "^2.0.0"
     "@iconify/utils" "^2.1.30"
 
-astro@^5.7.13:
-  version "5.13.2"
-  resolved "https://registry.yarnpkg.com/astro/-/astro-5.13.2.tgz#13e7a92516ba6e0cec9708267d43baffe31ade15"
-  integrity sha512-yjcXY0Ua3EwjpVd3GoUXa65HQ6qgmURBptA+M9GzE0oYvgfuyM7bIbH8IR/TWIbdefVUJR5b7nZ0oVnMytmyfQ==
+astro@^5.13.5:
+  version "5.13.5"
+  resolved "https://registry.yarnpkg.com/astro/-/astro-5.13.5.tgz#e895e5688528b1d8dcd7062c04ed932422362b4b"
+  integrity sha512-XmBzkl13XU97+n/QiOM5uXQdAVe0yKt5gO+Wlgc8dHRwHR499qhMQ5sMFckLJweUINLzcNGjP3F5nG4wV8a2XA==
   dependencies:
     "@astrojs/compiler" "^2.12.2"
     "@astrojs/internal-helpers" "0.7.2"
