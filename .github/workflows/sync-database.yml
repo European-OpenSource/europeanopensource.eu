@@ -85,7 +85,7 @@ jobs:
 
       - name: Update comment
         if: ${{ success() && github.event.client_payload.slash_command.args.named.comment_id }}
-        uses: peter-evans/create-or-update-comment@v4
+        uses: peter-evans/create-or-update-comment@v5
         with:
           token: ${{ secrets.GH_ACTION_WORKFLOWS }}
           comment-id: ${{ github.event.client_payload.slash_command.args.named.comment_id }}
@@ -93,7 +93,7 @@ jobs:
 
       - name: Failure
         if: ${{ failure() && github.event.client_payload.slash_command.args.named.comment_id }}
-        uses: peter-evans/create-or-update-comment@v4
+        uses: peter-evans/create-or-update-comment@v5
         with:
           token: ${{ secrets.ACTION_WORKFLOWS }}
           comment-id: ${{ github.event.client_payload.slash_command.args.named.comment_id }}
