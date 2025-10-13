@@ -25,6 +25,11 @@
   resolved "https://registry.yarnpkg.com/@astrojs/internal-helpers/-/internal-helpers-0.7.3.tgz#3e991ef509ee20cf425fd1ae87da9f97e8dbb3de"
   integrity sha512-6Pl0bQEIChuW5wqN7jdKrzWfCscW2rG/Cz+fzt4PhSQX2ivBpnhXgFUCs0M3DCYvjYHnPVG2W36X5rmFjZ62sw==
 
+"@astrojs/internal-helpers@0.7.4":
+  version "0.7.4"
+  resolved "https://registry.yarnpkg.com/@astrojs/internal-helpers/-/internal-helpers-0.7.4.tgz#827469f88087f6690813949b02d9f9983236cc93"
+  integrity sha512-lDA9MqE8WGi7T/t2BMi+EAXhs4Vcvr94Gqx3q15cFEz8oFZMO4/SFBqYr/UcmNlvW+35alowkVj+w9VhLvs5Cw==
+
 "@astrojs/markdown-remark@6.3.7":
   version "6.3.7"
   resolved "https://registry.yarnpkg.com/@astrojs/markdown-remark/-/markdown-remark-6.3.7.tgz#68d80083205afe12cd51118ea2d545a1e83fcc56"
@@ -52,12 +57,39 @@
     unist-util-visit-parents "^6.0.1"
     vfile "^6.0.3"
 
-"@astrojs/mdx@^4.3.6":
-  version "4.3.6"
-  resolved "https://registry.yarnpkg.com/@astrojs/mdx/-/mdx-4.3.6.tgz#217bab4ba0439666af8e401e2a8b99ad852ce67b"
-  integrity sha512-jH04tYgaqLfq3To42+z1oEcXrXUzo3BxZ4fTkb+7BEmOJkQ9/c3iIixFEC+x0GgE8lJb4SuEDGldpAv7+1yY8A==
+"@astrojs/markdown-remark@6.3.8":
+  version "6.3.8"
+  resolved "https://registry.yarnpkg.com/@astrojs/markdown-remark/-/markdown-remark-6.3.8.tgz#292cebc1bfb069cccb1e245eb1ac4aad4da0221f"
+  integrity sha512-uFNyFWadnULWK2cOw4n0hLKeu+xaVWeuECdP10cQ3K2fkybtTlhb7J7TcScdjmS8Yps7oje9S/ehYMfZrhrgCg==
   dependencies:
-    "@astrojs/markdown-remark" "6.3.7"
+    "@astrojs/internal-helpers" "0.7.4"
+    "@astrojs/prism" "3.3.0"
+    github-slugger "^2.0.0"
+    hast-util-from-html "^2.0.3"
+    hast-util-to-text "^4.0.2"
+    import-meta-resolve "^4.2.0"
+    js-yaml "^4.1.0"
+    mdast-util-definitions "^6.0.0"
+    rehype-raw "^7.0.0"
+    rehype-stringify "^10.0.1"
+    remark-gfm "^4.0.1"
+    remark-parse "^11.0.0"
+    remark-rehype "^11.1.2"
+    remark-smartypants "^3.0.2"
+    shiki "^3.13.0"
+    smol-toml "^1.4.2"
+    unified "^11.0.5"
+    unist-util-remove-position "^5.0.0"
+    unist-util-visit "^5.0.0"
+    unist-util-visit-parents "^6.0.1"
+    vfile "^6.0.3"
+
+"@astrojs/mdx@^4.3.7":
+  version "4.3.7"
+  resolved "https://registry.yarnpkg.com/@astrojs/mdx/-/mdx-4.3.7.tgz#a6cb6e2c05af037e8abdc6049be342f35210158c"
+  integrity sha512-5SRmvMyT/UMWaU2eoD+htnXtE2mUZZEH2K/nEzhuEy+iCsOSuS/DUry59WuKUJRQETi1mgJFdNR4dZLJHYVuRA==
+  dependencies:
+    "@astrojs/markdown-remark" "6.3.8"
     "@mdx-js/mdx" "^3.1.1"
     acorn "^8.15.0"
     es-module-lexer "^1.7.0"
@@ -4194,7 +4226,7 @@ shebang-regex@^3.0.0:
   resolved "https://registry.yarnpkg.com/shebang-regex/-/shebang-regex-3.0.0.tgz#ae16f1644d873ecad843b0307b143362d4c42172"
   integrity sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==
 
-shiki@^3.12.0, shiki@^3.12.2:
+shiki@^3.12.0, shiki@^3.12.2, shiki@^3.13.0:
   version "3.13.0"
   resolved "https://registry.yarnpkg.com/shiki/-/shiki-3.13.0.tgz#9675e9d36a893434cc297d66ddd4598a4af1fea1"
   integrity sha512-aZW4l8Og16CokuCLf8CF8kq+KK2yOygapU5m3+hoGw0Mdosc6fPitjM+ujYarppj5ZIKGyPDPP1vqmQhr+5/0g==
