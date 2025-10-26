@@ -14,5 +14,5 @@ owner:
   url_website: http://europeanopensource.eu
 metadata:
   filename: awesome-european-opensource-3cc1bf.json
-  created_at: 2025-09-27T10:53:07Z
+  created_at: 2025-10-26T21:23:48Z
 ---
