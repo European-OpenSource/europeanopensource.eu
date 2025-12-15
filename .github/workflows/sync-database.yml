@@ -67,7 +67,7 @@ jobs:
 
       - name: Create Pull Request
         if: ${{ steps.download.outputs.has_changed == 'true' }}
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.GH_ACTION_WORKFLOWS }}
           branch: ${{ steps.env.outputs.pr_branch_name }}
