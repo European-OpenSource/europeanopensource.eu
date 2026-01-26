@@ -86,12 +86,12 @@
     fast-xml-parser "^5.3.0"
     picocolors "^1.1.1"
 
-"@astrojs/sitemap@^3.6.0":
-  version "3.6.0"
-  resolved "https://registry.yarnpkg.com/@astrojs/sitemap/-/sitemap-3.6.0.tgz#e9a83abb96df6c7e89be301b07adce032e49a96f"
-  integrity sha512-4aHkvcOZBWJigRmMIAJwRQXBS+ayoP5z40OklTXYXhUDhwusz+DyDl+nSshY6y9DvkVEavwNcFO8FD81iGhXjg==
+"@astrojs/sitemap@^3.7.0":
+  version "3.7.0"
+  resolved "https://registry.yarnpkg.com/@astrojs/sitemap/-/sitemap-3.7.0.tgz#26ffe9b2f51e2720e5e96f358ecc20f4d87f7218"
+  integrity sha512-+qxjUrz6Jcgh+D5VE1gKUJTA3pSthuPHe6Ao5JCxok794Lewx8hBFaWHtOnN0ntb2lfOf7gvOi9TefUswQ/ZVA==
   dependencies:
-    sitemap "^8.0.0"
+    sitemap "^8.0.2"
     stream-replace-string "^2.0.0"
     zod "^3.25.76"
 
@@ -4130,10 +4130,10 @@ sisteransi@^1.0.5:
   resolved "https://registry.yarnpkg.com/sisteransi/-/sisteransi-1.0.5.tgz#134d681297756437cc05ca01370d3a7a571075ed"
   integrity sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==
 
-sitemap@^8.0.0:
-  version "8.0.1"
-  resolved "https://registry.yarnpkg.com/sitemap/-/sitemap-8.0.1.tgz#2ba2612089207e7a794f501fd11d7cb080273697"
-  integrity sha512-4Y8ynSMFAy/DadeAeio8Kx4zfC8/0VcKi7TH0I1SazvBcrU2fpJaGoeWsX1FMRaHoe3VGMA53DqVoLErZrtG9Q==
+sitemap@^8.0.2:
+  version "8.0.2"
+  resolved "https://registry.yarnpkg.com/sitemap/-/sitemap-8.0.2.tgz#27bddb5fc2c61a1cf8f0194674cd89d762c9f5ae"
+  integrity sha512-LwktpJcyZDoa0IL6KT++lQ53pbSrx2c9ge41/SeLTyqy2XUNA6uR4+P9u5IVo5lPeL2arAcOKn1aZAxoYbCKlQ==
   dependencies:
     "@types/node" "^17.0.5"
     "@types/sax" "^1.2.1"
