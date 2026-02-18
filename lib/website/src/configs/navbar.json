@@ -11,6 +11,10 @@
       "url": "/"
     },
     {
+      "name": "CATALOG",
+      "url": "/projects"
+    },
+    {
       "name": "SUBMIT PROJECT",
       "url": "/form"
     },

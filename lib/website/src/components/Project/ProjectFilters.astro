@@ -1,0 +1,441 @@
+---
+/**
+ * ProjectFilters component provides filtering, sorting and search functionality for project listings.
+ * Supports pagination, real-time filtering by category/language/license, and search capabilities.
+ */
+import { Icon } from "astro-icon/components";
+import { Button } from "@walle/components";
+import type { ProjectEntry } from "@utils/interfaces";
+import "./project-filters.css";
+
+const { allProjects = [] } = Astro.props;
+
+const projectsPerPage = 9;
+
+const allCategories = [
+  ...new Set(allProjects.map((project: ProjectEntry) => project.data.category)),
+].sort() as string[];
+
+const allLanguages = [
+  ...new Set(allProjects.map((project: ProjectEntry) => project.data.source.language)),
+].sort() as string[];
+
+const allLicenses = [
+  ...new Set(allProjects.map((project: ProjectEntry) => project.data.source.license)),
+].sort() as string[];
+---
+
+<section class="filters-section">
+  <div class="container">
+    <div class="container-centered">
+      <Button
+        id="filters-toggle"
+        extraClass="visible-xs"
+        iconName="fa:sliders"
+        text="Open Filters"
+      />
+    </div>
+    <div class="filters-form" id="filters-form">
+      <!-- Search Bar -->
+      <div class="search-container">
+        <Icon name="fa:search" class="search-icon" />
+        <input
+          type="text"
+          name="search"
+          id="search"
+          placeholder="Search projects..."
+          class="search-input"
+        />
+        <button type="button" id="clear-search" class="clear-btn" style="display: none;">
+          <Icon name="fa:times" />
+        </button>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-container">
+        <div class="filter-group">
+          <label for="category">Category</label>
+          <div class="select-wrapper">
+            <select name="category" id="category" class="filter-select">
+              <option value="">All Categories</option>
+              {allCategories.map((category) => <option value={category}>{category}</option>)}
+            </select>
+            <Icon name="fa:chevron-down" class="select-icon" size={13} />
+          </div>
+        </div>
+        <div class="filter-group">
+          <label for="language">Language</label>
+          <div class="select-wrapper">
+            <select name="language" id="language" class="filter-select">
+              <option value="">All Languages</option>
+              {allLanguages.map((language) => <option value={language}>{language}</option>)}
+            </select>
+            <Icon name="fa:chevron-down" class="select-icon" size={13} />
+          </div>
+        </div>
+        <div class="filter-group">
+          <label for="license">License</label>
+          <div class="select-wrapper">
+            <select name="license" id="license" class="filter-select">
+              <option value="">All Licenses</option>
+              {allLicenses.map((license) => <option value={license}>{license}</option>)}
+            </select>
+            <Icon name="fa:chevron-down" class="select-icon" size={13} />
+          </div>
+        </div>
+        <div class="filter-group">
+          <label for="sort">Sort By</label>
+          <div class="select-wrapper">
+            <select name="sort" id="sort" class="filter-select">
+              <option value="name">Name</option>
+              <option value="category">Category</option>
+              <option value="language">Language</option>
+              <option value="recent">Most Recent</option>
+            </select>
+            <Icon name="fa:chevron-down" class="select-icon" size={13} />
+          </div>
+        </div>
+      </div>
+      <div class="filter-actions">
+        <Button
+          id="filters-reset"
+          text="Reset Filters"
+          type="secondary"
+          outline={true}
+          iconName="fa:remove"
+          size="small"
+          disableEffects={true}
+        />
+        <Button
+          id="filters-close"
+          text="Close Filters"
+          extraClass="visible-xs"
+          type="secondary"
+          outline={true}
+          iconName="fa:sliders"
+          size="small"
+          disableEffects={true}
+        />
+      </div>
+    </div>
+  </div>
+  <slot />
+  <script
+    type="module"
+    define:vars={{
+      projectsPerPage,
+      totalProjects: allProjects.length,
+    }}
+  >
+    // Client-side filtering and rendering
+    document.addEventListener("DOMContentLoaded", () => {
+      // Parse URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      const initialSearch = urlParams.get("search") || "";
+      const initialCategory = urlParams.get("category") || "";
+      const initialLanguage = urlParams.get("language") || "";
+      const initialLicense = urlParams.get("license") || "";
+      const initialSort = urlParams.get("sort") || "name";
+      const initialPage = parseInt(urlParams.get("page") || "1");
+
+      const searchInput = document.getElementById("search");
+      const clearSearchBtn = document.getElementById("clear-search");
+      const categorySelect = document.getElementById("category");
+      const languageSelect = document.getElementById("language");
+      const licenseSelect = document.getElementById("license");
+      const sortSelect = document.getElementById("sort");
+      const resetButton = document.getElementById("filters-reset");
+      const resetSearchButton = document.getElementById("reset-search");
+      const projectsGrid = document.getElementById("projects-grid");
+      const emptyState = document.getElementById("empty-state");
+      const paginationContainer = document.getElementById("pagination");
+      const filtersSection = document.querySelector(".filters-section");
+
+      // All project wrappers - wait for DOM to be fully loaded
+      let projectWrappers = [];
+
+      function initializeProjectWrappers() {
+        if (projectsGrid) {
+          projectWrappers = Array.from(projectsGrid.querySelectorAll(".project-card-wrapper"));
+        }
+      }
+
+      // Initialize project wrappers after all DOM elements are selected
+      initializeProjectWrappers();
+
+      let currentFilters = {
+        page: initialPage,
+        search: initialSearch,
+        category: initialCategory,
+        language: initialLanguage,
+        license: initialLicense,
+        sort: initialSort,
+      };
+
+      let currentView = localStorage.getItem("projectViewMode") || "grid";
+
+      // Ensure form elements are synchronized with URL parameters
+      if (searchInput) searchInput.value = currentFilters.search;
+      if (categorySelect) categorySelect.value = currentFilters.category;
+      if (languageSelect) languageSelect.value = currentFilters.language;
+      if (licenseSelect) licenseSelect.value = currentFilters.license;
+      if (sortSelect) sortSelect.value = currentFilters.sort;
+
+      updateClearSearchButtonVisibility();
+      setViewMode(currentView);
+      renderProjects();
+
+      window.addEventListener("scroll", () => {
+        if (window.scrollY > 150) {
+          filtersSection.classList.add("scrolled");
+        } else {
+          filtersSection.classList.remove("scrolled");
+        }
+      });
+
+      function setViewMode(mode) {
+        currentView = mode;
+        localStorage.setItem("projectViewMode", mode);
+      }
+
+      searchInput.addEventListener(
+        "input",
+        debounce(() => {
+          currentFilters.search = searchInput.value.trim();
+          currentFilters.page = 1;
+          updateClearSearchButtonVisibility();
+          renderProjects();
+          updateUrl();
+        }, 300)
+      );
+
+      clearSearchBtn.addEventListener("click", () => {
+        searchInput.value = "";
+        currentFilters.search = "";
+        currentFilters.page = 1;
+        updateClearSearchButtonVisibility();
+        renderProjects();
+        updateUrl();
+      });
+
+      [categorySelect, languageSelect, licenseSelect, sortSelect].forEach((select) => {
+        select.addEventListener("change", () => {
+          currentFilters = {
+            ...currentFilters,
+            category: categorySelect.value,
+            language: languageSelect.value,
+            license: licenseSelect.value,
+            sort: sortSelect.value || "name",
+            page: 1,
+          };
+          renderProjects();
+          updateUrl();
+        });
+      });
+
+      resetButton.addEventListener("click", resetAllFilters);
+      if (resetSearchButton) {
+        resetSearchButton.addEventListener("click", resetAllFilters);
+      }
+
+      function resetAllFilters() {
+        searchInput.value = "";
+        categorySelect.value = "";
+        languageSelect.value = "";
+        licenseSelect.value = "";
+        sortSelect.value = "name";
+        currentFilters = {
+          page: 1,
+          search: "",
+          category: "",
+          language: "",
+          license: "",
+          sort: "name",
+        };
+        updateClearSearchButtonVisibility();
+        renderProjects();
+        updateUrl();
+      }
+
+      function updateUrl() {
+        const url = new URL(window.location);
+        Object.entries(currentFilters).forEach(([key, value]) => {
+          if ((value && value !== "1" && key !== "page") || (key === "page" && value > 1)) {
+            url.searchParams.set(key, value);
+          } else {
+            url.searchParams.delete(key);
+          }
+        });
+        history.pushState({}, "", url);
+      }
+
+      function updateClearSearchButtonVisibility() {
+        clearSearchBtn.style.display = searchInput.value ? "block" : "none";
+      }
+
+      function renderProjects() {
+        // Ensure projectWrappers exist before filtering
+        if (!projectWrappers.length) {
+          initializeProjectWrappers();
+          if (!projectWrappers.length) return;
+        }
+
+        // Filter
+        let filtered = projectWrappers.filter((el) => {
+          // Search
+          if (currentFilters.search) {
+            const search = currentFilters.search.toLowerCase();
+            if (!el.dataset.name.includes(search) && !el.dataset.description.includes(search))
+              return false;
+          }
+          // Category
+          if (currentFilters.category && el.dataset.category !== currentFilters.category)
+            return false;
+          // Language
+          if (currentFilters.language && el.dataset.language !== currentFilters.language)
+            return false;
+          // License
+          if (currentFilters.license && el.dataset.license !== currentFilters.license) return false;
+          return true;
+        }); // Sort
+        filtered.sort((a, b) => {
+          const sortKey = currentFilters.sort || "name";
+          if (sortKey === "name") {
+            return a.dataset.name.localeCompare(b.dataset.name);
+          } else if (sortKey === "category") {
+            return (a.dataset.category || "").localeCompare(b.dataset.category || "");
+          } else if (sortKey === "language") {
+            return (a.dataset.language || "").localeCompare(b.dataset.language || "");
+          } else if (sortKey === "recent") {
+            const dateA = Date.parse(a.dataset.created || "") || 0;
+            const dateB = Date.parse(b.dataset.created || "") || 0;
+            return dateB - dateA;
+          }
+          return 0;
+        });
+
+        // Physically reorder elements in the DOM
+        filtered.forEach((el) => {
+          projectsGrid.appendChild(el);
+        });
+
+        emptyState.style.display = filtered.length === 0 ? "flex" : "none";
+
+        // Pagination - use filtered results count instead of total projects
+        const totalFilteredPages = Math.max(1, Math.ceil(filtered.length / projectsPerPage));
+        if (currentFilters.page > totalFilteredPages) currentFilters.page = 1;
+        const startIndex = (currentFilters.page - 1) * projectsPerPage;
+        const endIndex = Math.min(startIndex + projectsPerPage, filtered.length);
+
+        // Hide all, show only current page
+        projectWrappers.forEach((el) => (el.style.display = "none"));
+        filtered.slice(startIndex, endIndex).forEach((el) => (el.style.display = ""));
+
+        renderPagination(totalFilteredPages);
+      }
+
+      function renderPagination(totalPages) {
+        paginationContainer.innerHTML = "";
+        if (totalPages <= 1) return;
+
+        const currentPage = currentFilters.page; // Prev
+        const prevBtn = document.createElement("button");
+        prevBtn.className = `pagination-btn ${currentPage === 1 ? "disabled" : ""}`;
+        prevBtn.innerHTML = `<span class="pagination-icon"><Icon name="fa:chevron-left" /></span>Prev`;
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.addEventListener("click", () => {
+          if (currentPage > 1) {
+            currentFilters.page--;
+            renderProjects();
+            updateUrl();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }
+        });
+        paginationContainer.appendChild(prevBtn);
+
+        // Page numbers
+        const pageNumbers = document.createElement("div");
+        pageNumbers.className = "page-numbers";
+        const pagesToShow = [];
+        pagesToShow.push(1);
+        if (currentPage > 3) pagesToShow.push("ellipsis1");
+        for (
+          let i = Math.max(2, currentPage - 1);
+          i <= Math.min(totalPages - 1, currentPage + 1);
+          i++
+        )
+          pagesToShow.push(i);
+        if (currentPage < totalPages - 2) pagesToShow.push("ellipsis2");
+        if (totalPages > 1) pagesToShow.push(totalPages);
+        const uniquePages = [...new Set(pagesToShow)];
+        uniquePages.forEach((page) => {
+          if (page === "ellipsis1" || page === "ellipsis2") {
+            const ellipsis = document.createElement("span");
+            ellipsis.className = "page-ellipsis";
+            ellipsis.textContent = "...";
+            pageNumbers.appendChild(ellipsis);
+          } else {
+            const pageBtn = document.createElement("button");
+            pageBtn.className = `page-number ${page === currentPage ? "active" : ""}`;
+            pageBtn.textContent = page;
+            pageBtn.addEventListener("click", () => {
+              if (page !== currentPage) {
+                currentFilters.page = page;
+                renderProjects();
+                updateUrl();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+            });
+            pageNumbers.appendChild(pageBtn);
+          }
+        });
+        paginationContainer.appendChild(pageNumbers);
+
+        // Next
+        const nextBtn = document.createElement("button");
+        nextBtn.className = `pagination-btn ${currentPage === totalPages ? "disabled" : ""}`;
+        nextBtn.innerHTML = `Next<span class="pagination-icon"><Icon name="fa:chevron-right" /></span>`;
+        nextBtn.disabled = currentPage === totalPages;
+        nextBtn.addEventListener("click", () => {
+          if (currentPage < totalPages) {
+            currentFilters.page++;
+            renderProjects();
+            updateUrl();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }
+        });
+        paginationContainer.appendChild(nextBtn);
+      }
+
+      function debounce(func, wait) {
+        let timeout;
+        return function () {
+          const context = this;
+          const args = arguments;
+          clearTimeout(timeout);
+          timeout = setTimeout(() => {
+            func.apply(context, args);
+          }, wait);
+        };
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const toggle = document.getElementById("filters-toggle");
+      const form = document.getElementById("filters-form");
+      const closeBtn = document.getElementById("filters-close");
+      if (toggle && form) {
+        toggle.addEventListener("click", () => {
+          const isOpen = form.classList.toggle("open");
+          toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        });
+      }
+      if (closeBtn && form && toggle) {
+        closeBtn.addEventListener("click", () => {
+          form.classList.remove("open");
+          toggle.setAttribute("aria-expanded", "false");
+        });
+      }
+    });
+  </script>
+</section>
