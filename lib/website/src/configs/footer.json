@@ -7,6 +7,10 @@
   },
   "items": [
     {
+      "name": "Catalog",
+      "url": "/projects"
+    },
+    {
       "name": "Newsletter",
       "url": "/newsletter"
     },

@@ -38,8 +38,8 @@ const euCountries = [
   { name: "Iceland", code: "is" },
   { name: "Liechtenstein", code: "li" },
 ];
-// ISO date for catalog launch (18 Feb 2026 12:00 Rome = 11:00 UTC)
-const releaseDateIso = "2026-02-18T11:00:00Z";
+// ISO date for catalog launch (25 Feb 2026 12:30 Rome = 11:30 UTC)
+const releaseDateIso = "2026-02-25T12:30:00Z";
 ---
 
 <section class="hero">
@@ -47,7 +47,7 @@ const releaseDateIso = "2026-02-18T11:00:00Z";
     <h1><span class="logo-text">European OpenSource</span></h1>
     <h2>Open code, shared future!</h2>
     <div class="countdown" role="status" aria-live="polite" data-release={releaseDateIso}>
-      <div class="countdown-label">The catalog will be published in</div>
+      <div class="countdown-label">Next publication</div>
       <div class="countdown-timer" id="countdown-timer">
         <span class="segment"><span id="cd-days">0</span>d</span>
         <span class="sep">:</span>
@@ -58,7 +58,7 @@ const releaseDateIso = "2026-02-18T11:00:00Z";
         <span class="segment"><span id="cd-secs">00</span>s</span>
       </div>
     </div>
-    <Button link="/form" text="Submit Project" iconName="mdi:arrow-right" type="secondary" />
+    <Button link="/projects" text="See the Catalog" iconName="mdi:arrow-right" type="secondary" />
   </div>
   {
     euCountries.map((country, index) => {

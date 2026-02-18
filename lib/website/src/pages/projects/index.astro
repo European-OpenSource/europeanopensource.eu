@@ -1,0 +1,68 @@
+---
+import ProjectCard from "@components/Project/ProjectCard.astro";
+import ProjectFilters from "@components/Project/ProjectFilters.astro";
+import "@styles/projects.css";
+import type { ProjectEntry } from "@utils/interfaces";
+import { Button, SectionHeaderStandard } from "@walle/components";
+import { BaseLayout } from "@walle/layouts";
+import { getCollection } from "astro:content";
+
+const allProjects = await getCollection("project");
+---
+
+<BaseLayout
+  headerTitle="Projects"
+  headerDescription="Discover open-source projects developed by European maintainers and organizations"
+>
+  <!-- Page Header -->
+  <SectionHeaderStandard
+    title="Open-Source Projects"
+    subtitle="Discover open-source projects developed by European maintainers and organizations. We will publish three new projects in the catalogue every week."
+    effect={true}
+  />
+
+  <!-- Search and Filters -->
+  <ProjectFilters allProjects={allProjects} />
+
+  <!-- Results Summary -->
+  <section class="results-section">
+    <div class="container">
+      <!-- Projects Grid -->
+      <div class="projects-grid" id="projects-grid">
+        {
+          allProjects.map((project: ProjectEntry, idx) => (
+            <div
+              class="project-card-wrapper"
+              data-name={project.data.name.toLowerCase()}
+              data-description={project.data.description?.toLowerCase() || ""}
+              data-category={project.data.category}
+              data-language={project.data.source.language}
+              data-license={project.data.source.license}
+              data-created={project.data.metadata?.created_at || ""}
+              data-index={idx}
+              style="display:none"
+            >
+              <ProjectCard {...project.data} />
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- Empty State (hidden by default) -->
+      <div class="empty-state" id="empty-state" style="display: none;">
+        <h3>No projects found</h3>
+        <p>Try adjusting your search criteria or filters.</p>
+        <Button
+          id="reset-search"
+          text="Reset filters"
+          size="small"
+          outline={true}
+          type="secondary"
+        />
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination" id="pagination"></div>
+    </div>
+  </section>
+</BaseLayout>

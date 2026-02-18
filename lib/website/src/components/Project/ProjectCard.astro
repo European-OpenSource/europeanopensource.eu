@@ -1,0 +1,92 @@
+---
+/**
+ * Project card component displaying project information with badges and action buttons
+ */
+import { calculateTimeAgo, getPlatformIcon } from "@utils";
+import type { Project } from "@utils/interfaces";
+import { Badge, Button } from "@walle/components";
+import "./project-card.css";
+
+interface Props extends Project {}
+
+const data = Astro.props;
+
+const platformIcon = getPlatformIcon(data.source.platform);
+
+const timeAgo = data.metadata?.created_at ? calculateTimeAgo(data.metadata.created_at) : null;
+---
+
+<article
+  class="project-card"
+  tabindex="0"
+  aria-labelledby={`project-title-${data.name.replace(/\s+/g, "-")}`}
+>
+  <header class="project-card__header">
+    <div class="project-card__name">
+      <h2 class="project-card__title" id={`project-title-${data.name.replace(/\s+/g, "-")}`}>
+        {data.name}
+      </h2>
+    </div>
+    <div class="project-card__top">
+      <Badge
+        text={data.category}
+        iconName="fa:tag"
+        color="primary"
+        size="small"
+        extraClass="project-card__category"
+      />
+    </div>
+    <div>
+      <Badge text={data.source.language} iconName="fa:code" size="small" />
+      <Badge text={data.source.license} iconName="fa:balance-scale" size="small" />
+      {timeAgo && <Badge text={timeAgo} iconName="fa:calendar" size="small" />}
+    </div>
+  </header>
+
+  <div class="project-card__body">
+    <p class="project-card__description">{data.description}</p>
+    {
+      data.tags && data.tags.length > 0 && (
+        <div class="project-card__tags" aria-label="Project tags">
+          {data.tags.map((tag) => (
+            <Badge
+              text={tag}
+              iconName="fa:hashtag"
+              color="secondary"
+              size="small"
+              extraClass="project-card__tag"
+            />
+          ))}
+        </div>
+      )
+    }
+  </div>
+
+  <footer class="project-card__footer">
+    <div class={`project-card__actions${data.source.url_documentation ? " two-buttons" : ""}`}>
+      <Button
+        link={data.source.url_repository}
+        target="_blank"
+        text={data.source.platform}
+        iconName={platformIcon}
+        outline={true}
+        size="small"
+        fullWidth={true}
+      />
+      {
+        data.source.url_documentation && (
+          <Button
+            link={data.source.url_documentation}
+            target="_blank"
+            text="Docs"
+            iconName="fa:book"
+            outline={true}
+            type="secondary"
+            size="small"
+            fullWidth={true}
+          />
+        )
+      }
+    </div>
+  </footer>
+</article>
