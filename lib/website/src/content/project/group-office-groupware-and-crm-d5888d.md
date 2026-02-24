@@ -1,5 +1,5 @@
 ---
-name: Group-Office groupware and CRM
+name: Group-Office
 description: Group-Office is an open-source groupware and CRM platform that can be self-hosted or deployed on our secure European cloud infrastructure, ensuring full data privacy and control. It brings together secure file sharing, video conferencing, email, calendar and contact management, project and time tracking, quoting and invoicing, support ticketing, and the Collabora Online office suite in a single, integrated platform.
 category: saas
 country: Netherlands
