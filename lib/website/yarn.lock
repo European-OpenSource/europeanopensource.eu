@@ -1268,10 +1268,10 @@ astro-icon@^1.1.5:
     "@iconify/types" "^2.0.0"
     "@iconify/utils" "^2.1.30"
 
-astro@^5.14.7:
-  version "5.17.3"
-  resolved "https://registry.yarnpkg.com/astro/-/astro-5.17.3.tgz#dd0d3fd659b280d7ff20fc5fc37277675ebd2e82"
-  integrity sha512-69dcfPe8LsHzklwj+hl+vunWUbpMB6pmg35mACjetxbJeUNNys90JaBM8ZiwsPK689SAj/4Zqb1ayaANls9/MA==
+astro@^5.18.0:
+  version "5.18.0"
+  resolved "https://registry.yarnpkg.com/astro/-/astro-5.18.0.tgz#e3cc9aeee5dfd4f059d007fd80c01c9028a101da"
+  integrity sha512-CHiohwJIS4L0G6/IzE1Fx3dgWqXBCXus/od0eGUfxrZJD2um2pE7ehclMmgL/fXqbU7NfE1Ze2pq34h2QaA6iQ==
   dependencies:
     "@astrojs/compiler" "^2.13.0"
     "@astrojs/internal-helpers" "0.7.5"
