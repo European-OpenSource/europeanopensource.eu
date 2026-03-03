@@ -1,0 +1,21 @@
+---
+name: Neuron AI
+description: Neuron is the PHP Agentic Framework to build production-ready agentic applications. Connect components (LLMs, vector DBs, memory) to agents that can interact with your data. With its modular architecture it's best suited for building RAG, multi-agent workflows, or business process automations. We provide tools for the entire agentic application development lifecycle, from LLM interfaces, to data loading, to multi-agent orchestration, to monitoring and debugging.
+category: framework
+country: Italy
+source:
+  platform: GitHub
+  url_repository: https://github.com/neuron-core/neuron-ai
+  url_documentation: https://docs.neuron-ai.dev/
+  license: MIT-0
+  language: PHP
+owner:
+  name: Inspector SRL
+  type: organization
+  description: La società Inspector SRL è una società con sede a Napoli, fondata a Luglio del 2020 e incubata presso lacceleratore di imprese Nana Bianca di Firenze. Inspector è una piattaforma di Code Execution Monitoring che aiuta gli i team IT a scoprire problemi e malfunzionamenti nelle applicazioni software in modo completamente automatizzato. Oggi la piattaforma di monitoraggio Inspector è parte integrante dello stack tecnologico di aziende che sviluppano software in più di trenta paesi. Grazie all'integrazione con il framework Neuron AI, oggi Inspector è lo strumento di riferimento per monitoraggio e enalisi del comportamento dei sistemi agentici nell'ecosistema PHP.
+  url_website: https://inspector.dev
+  is_a_startup: true
+metadata:
+  filename: neuron-ai-5c4acd.json
+  created_at: 2026-03-03T20:09:51Z
+---

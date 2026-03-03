@@ -2,7 +2,7 @@
 /**
  * Project card component displaying project information with badges and action buttons
  */
-import { calculateTimeAgo, getPlatformIcon } from "@utils";
+import { getPlatformIcon } from "@utils";
 import type { Project } from "@utils/interfaces";
 import { Badge, Button } from "@walle/components";
 import "./project-card.css";
@@ -12,8 +12,7 @@ interface Props extends Project {}
 const data = Astro.props;
 
 const platformIcon = getPlatformIcon(data.source.platform);
-
-const timeAgo = data.metadata?.created_at ? calculateTimeAgo(data.metadata.created_at) : null;
+const createdAt = data.metadata?.created_at ?? null;
 ---
 
 <article
@@ -39,7 +38,13 @@ const timeAgo = data.metadata?.created_at ? calculateTimeAgo(data.metadata.creat
     <div>
       <Badge text={data.source.language} iconName="fa:code" size="small" />
       <Badge text={data.source.license} iconName="fa:balance-scale" size="small" />
-      {timeAgo && <Badge text={timeAgo} iconName="fa:calendar" size="small" />}
+      {
+        createdAt && (
+          <span class="project-card__timeago" data-created-at={createdAt}>
+            <Badge text="..." iconName="fa:calendar" size="small" />
+          </span>
+        )
+      }
     </div>
   </header>
 
@@ -90,3 +95,29 @@ const timeAgo = data.metadata?.created_at ? calculateTimeAgo(data.metadata.creat
     </div>
   </footer>
 </article>
+
+<script>
+  import { calculateTimeAgo } from "@utils";
+
+  const updateTimeBadges = () => {
+    const badges = document.querySelectorAll<HTMLSpanElement>(
+      ".project-card__timeago[data-created-at]"
+    );
+
+    badges.forEach((badgeWrapper) => {
+      const createdAt = badgeWrapper.dataset.createdAt;
+      const textElement = badgeWrapper.querySelector<HTMLElement>(".eos-label-text");
+
+      if (!createdAt || !textElement) return;
+
+      const timeAgo = calculateTimeAgo(createdAt);
+
+      if (timeAgo) {
+        textElement.textContent = timeAgo;
+      }
+    });
+  };
+
+  updateTimeBadges();
+  document.addEventListener("astro:page-load", updateTimeBadges);
+</script>
