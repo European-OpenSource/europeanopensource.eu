@@ -19,12 +19,12 @@
     "node": ">=22.0.0"
   },
   "dependencies": {
-    "@astrojs/mdx": "^4.3.6",
+    "@astrojs/mdx": "^5.0.1",
     "@astrojs/rss": "^4.0.11",
     "@astrojs/sitemap": "^3.6.0",
     "@iconify-json/fa": "^1.2.1",
     "@iconify-json/mdi": "^1.2.3",
-    "astro": "^5.14.7",
+    "astro": "^6.0.5",
     "astro-icon": "^1.1.5"
   },
   "devDependencies": {
