@@ -1,0 +1,187 @@
+---
+import { calculateTimeAgo, getPlatformIcon } from "@utils";
+import type { Project } from "@utils/interfaces";
+import { Badge, Button } from "@walle/components";
+
+interface Props extends Project {}
+
+const data = Astro.props;
+
+const platformIcon = getPlatformIcon(data.source.platform);
+const timeAgo = data.metadata?.created_at ? calculateTimeAgo(data.metadata.created_at) : null;
+---
+
+<article
+  class="project-detail-card"
+  tabindex="0"
+  aria-labelledby={`project-title-${data.name.replace(/\s+/g, "-")}`}
+>
+  <div class="project-detail-card__meta">
+    <div class="meta-item">
+      <span class="meta-label">Language</span>
+      <Badge text={data.source.language} iconName="fa:code" color="alternative" size="small" />
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">License</span>
+      <Badge
+        text={data.source.license}
+        iconName="fa:balance-scale"
+        color="alternative"
+        size="small"
+      />
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Platform</span>
+      <Badge text={data.source.platform} iconName={platformIcon} color="alternative" size="small" />
+    </div>
+    {
+      timeAgo && (
+        <div class="meta-item">
+          <span class="meta-label">Added</span>
+          <Badge text={timeAgo} iconName="fa:calendar" color="alternative" size="small" />
+        </div>
+      )
+    }
+  </div>
+
+  <div class="project-detail-card__body">
+    <p class="description-lead" id={`project-title-${data.name.replace(/\s+/g, "-")}`}>
+      {data.description}
+    </p>
+
+    {
+      data.tags && data.tags.length > 0 && (
+        <div class="project-detail-card__tags" aria-label="Project tags">
+          <span class="tags-label">Tags</span>
+          <div class="tags-container">
+            {data.tags.map((tag) => (
+              <Badge
+                text={tag}
+                iconName="fa:hashtag"
+                color="secondary"
+                size="small"
+                iconPosition="start"
+              />
+            ))}
+          </div>
+        </div>
+      )
+    }
+  </div>
+
+  <footer class="project-detail-card__footer">
+    <Button
+      link={data.source.url_repository}
+      target="_blank"
+      text="View Repository"
+      iconName={platformIcon}
+      outline={true}
+      size="medium"
+    />
+    {
+      data.source.url_documentation && (
+        <Button
+          link={data.source.url_documentation}
+          target="_blank"
+          text="Documentation"
+          iconName="fa:book"
+          type="secondary"
+          outline={true}
+          size="medium"
+        />
+      )
+    }
+  </footer>
+</article>
+
+<style>
+  .project-detail-card {
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--gray);
+    box-shadow: var(--box-shadow);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .project-detail-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xl);
+    padding: var(--space-lg) var(--space-xl);
+    background: var(--gray-light);
+    border-bottom: 1px solid var(--gray);
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .meta-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gray-dark);
+  }
+
+  .project-detail-card__body {
+    padding: var(--space-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .description-lead {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: var(--gray-darker);
+    margin: 0;
+  }
+
+  .project-detail-card__tags {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .tags-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gray-dark);
+  }
+
+  .tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+
+  .project-detail-card__footer {
+    padding: var(--space-lg) var(--space-xl);
+    border-top: 1px solid var(--gray);
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 600px) {
+    .project-detail-card__meta {
+      gap: var(--space-lg);
+    }
+
+    .project-detail-card__body,
+    .project-detail-card__footer {
+      padding: var(--space-lg);
+    }
+
+    .project-detail-card__footer {
+      flex-direction: column;
+    }
+  }
+</style>

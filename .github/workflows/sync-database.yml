@@ -16,7 +16,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v5
 
-      - uses: extractions/setup-just@v3
+      - uses: extractions/setup-just@v4
 
       - name: Load env
         id: env
@@ -71,10 +71,10 @@ jobs:
         with:
           token: ${{ secrets.GH_ACTION_WORKFLOWS }}
           branch: ${{ steps.env.outputs.pr_branch_name }}
-          title: "feat(website): sync database"
+          title: 'feat(website): sync database'
           body: ${{ steps.env.outputs.pr_body }}
-          commit-message: "feat(website): sync database"
-          author: "FabrizioCafolla <${{ secrets.GH_ACTION_MAIL }}>"
+          commit-message: 'feat(website): sync database'
+          author: 'FabrizioCafolla <${{ secrets.GH_ACTION_MAIL }}>'
           add-paths: |
             lib/website/src/content/*
 

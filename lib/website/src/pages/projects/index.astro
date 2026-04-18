@@ -1,5 +1,5 @@
 ---
-import ProjectCard from "@components/Project/ProjectCard.astro";
+import ProjectCardV2 from "@components/Project/ProjectCardV2.astro";
 import ProjectFilters from "@components/Project/ProjectFilters.astro";
 import "@styles/projects.css";
 import type { ProjectEntry } from "@utils/interfaces";
@@ -42,7 +42,7 @@ const allProjects = await getCollection("project");
               data-index={idx}
               style="display:none"
             >
-              <ProjectCard {...project.data} />
+              <ProjectCardV2 {...project.data} projectDetailUrl={`/projects/${project.id}`} />
             </div>
           ))
         }
