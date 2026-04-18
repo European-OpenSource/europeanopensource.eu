@@ -1,6 +1,6 @@
 ---
 name: OpenProject
-description: 
+description: OpenProject is an open-source project management and team collaboration platform made in Berlin, Germany. It supports classical and agile workflows, Gantt charts, time tracking, Scrum/Kanban boards, wikis, and budgeting. GPL-3.0 licensed and self-hostable, used by public administrations and enterprises across Europe.
 category: app
 country: Germany
 source:

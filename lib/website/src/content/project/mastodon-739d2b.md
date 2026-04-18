@@ -1,6 +1,6 @@
 ---
 name: Mastodon
-description: 
+description: Mastodon is a free, open-source, decentralized social network built on the ActivityPub protocol. Self-hostable and federated, it allows anyone to run their own server while communicating across the Fediverse. Developed by Mastodon gGmbH in Berlin, it prioritizes user privacy, data portability, and freedom from algorithmic manipulation.
 category: app
 country: Germany
 source:
