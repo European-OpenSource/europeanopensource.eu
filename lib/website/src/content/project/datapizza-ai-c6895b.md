@@ -1,6 +1,6 @@
 ---
 name: datapizza-ai
-description: 
+description: datapizza-ai is a Python GenAI framework for building agents from development to production with minimal abstraction. It supports multi-provider LLMs (OpenAI, Anthropic, Gemini, Mistral), built-in OpenTelemetry tracing, modular RAG pipelines, and multi-agent orchestration. Built by the Italian Data & AI community Datapizza.
 category: ai
 country: Italy
 source:

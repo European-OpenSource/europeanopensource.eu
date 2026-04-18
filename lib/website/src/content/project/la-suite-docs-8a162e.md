@@ -1,6 +1,6 @@
 ---
 name: La Suite docs
-description: 
+description: Docs is an open-source collaborative documentation and wiki platform developed by France's DINUM as part of La Suite numérique, the French government's digital sovereignty workspace. It supports real-time co-editing, version history, comments, export to PDF/ODT/Word, and an AI assistant. Used by 500,000+ public agents.
 category: app
 country: France
 source:

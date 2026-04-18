@@ -1,6 +1,6 @@
 ---
 name: Synapse
-description: 
+description: Synapse is the reference Matrix homeserver maintained by Element, powering federated, end-to-end encrypted real-time communications including messaging, VoIP, and file sharing. It underpins deployments across European governments and healthcare, including Germany's TI-Messenger and France's Tchap national messaging platform.
 category: app
 country: United Kingdom
 source:

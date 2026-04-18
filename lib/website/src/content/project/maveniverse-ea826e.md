@@ -1,6 +1,6 @@
 ---
 name: Maveniverse
-description: 
+description: Maveniverse MIMA is a lightweight Java library that makes Apache Maven Resolver reusable as a standalone component — both inside Maven plugins and outside Maven. It transparently handles environment setup, user settings, and runtime wiring, letting any Java application leverage Maven's full dependency resolution engine. Maintained by Apache Maven PMC member Tamas Cservenak.
 category: library
 country: Denmark
 source:

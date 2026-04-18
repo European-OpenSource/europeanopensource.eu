@@ -1,6 +1,6 @@
 ---
 name: MidPoint
-description: 
+description: MidPoint is the leading open-source identity governance and administration platform, engineered in Slovakia and recognized by Gartner and KuppingerCole. It automates the full identity lifecycle — provisioning, governance, compliance, and access management — with no license fees, flexible deployment, and EUPL-1.2 licensing.
 category: app
 country: Slovakia
 source:

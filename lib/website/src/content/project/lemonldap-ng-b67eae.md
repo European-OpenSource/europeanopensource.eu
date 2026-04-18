@@ -1,6 +1,6 @@
 ---
 name: LemonLDAP-NG
-description: 
+description: LemonLDAP::NG is a mature, open-source Web SSO and access management platform trusted by French government ministries since 2004. It supports CAS, SAML, and OpenID Connect federation, multi-factor authentication via TOTP, WebAuthn, and email MFA, and integrates with LDAP, databases, and NoSQL backends.
 category: app
 country: France
 source:
