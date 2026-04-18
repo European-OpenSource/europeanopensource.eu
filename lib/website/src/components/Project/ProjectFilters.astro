@@ -90,7 +90,7 @@ const allLicenses = [
               <option value="name">Name</option>
               <option value="category">Category</option>
               <option value="language">Language</option>
-              <option value="recent" selected>Most Recent</option>
+              <option value="recent">Most Recent</option>
             </select>
             <Icon name="fa:chevron-down" class="select-icon" size={13} />
           </div>
@@ -135,7 +135,7 @@ const allLicenses = [
       const initialCategory = urlParams.get("category") || "";
       const initialLanguage = urlParams.get("language") || "";
       const initialLicense = urlParams.get("license") || "";
-      const initialSort = urlParams.get("sort") || "recent";
+      const initialSort = urlParams.get("sort") || "name";
       const initialPage = parseInt(urlParams.get("page") || "1");
 
       const searchInput = document.getElementById("search");
@@ -225,7 +225,7 @@ const allLicenses = [
             category: categorySelect.value,
             language: languageSelect.value,
             license: licenseSelect.value,
-            sort: sortSelect.value || "recent",
+            sort: sortSelect.value || "name",
             page: 1,
           };
           renderProjects();
@@ -243,14 +243,14 @@ const allLicenses = [
         categorySelect.value = "";
         languageSelect.value = "";
         licenseSelect.value = "";
-        sortSelect.value = "recent";
+        sortSelect.value = "name";
         currentFilters = {
           page: 1,
           search: "",
           category: "",
           language: "",
           license: "",
-          sort: "recent",
+          sort: "name",
         };
         updateClearSearchButtonVisibility();
         renderProjects();
@@ -299,7 +299,7 @@ const allLicenses = [
           return true;
         }); // Sort
         filtered.sort((a, b) => {
-          const sortKey = currentFilters.sort || "recent";
+          const sortKey = currentFilters.sort || "name";
           if (sortKey === "name") {
             return a.dataset.name.localeCompare(b.dataset.name);
           } else if (sortKey === "category") {

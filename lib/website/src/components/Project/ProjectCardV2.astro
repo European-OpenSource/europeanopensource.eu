@@ -1,19 +1,16 @@
 ---
 /**
- * Project card component displaying project information with badges and action buttons
+ * Alternative project card variant with simplified layout and detail link
  */
-import { calculateTimeAgo, getPlatformIcon } from "@utils";
 import type { Project } from "@utils/interfaces";
 import { Badge, Button } from "@walle/components";
 import "./project-card.css";
 
-interface Props extends Project {}
+interface Props extends Project {
+  projectDetailUrl: string;
+}
 
 const data = Astro.props;
-
-const platformIcon = getPlatformIcon(data.source.platform);
-
-const timeAgo = data.metadata?.created_at ? calculateTimeAgo(data.metadata.created_at) : null;
 ---
 
 <article
@@ -39,7 +36,6 @@ const timeAgo = data.metadata?.created_at ? calculateTimeAgo(data.metadata.creat
     <div>
       <Badge text={data.source.language} iconName="fa:code" size="small" />
       <Badge text={data.source.license} iconName="fa:balance-scale" size="small" />
-      {timeAgo && <Badge text={timeAgo} iconName="fa:calendar" size="small" />}
     </div>
   </header>
 
@@ -55,6 +51,7 @@ const timeAgo = data.metadata?.created_at ? calculateTimeAgo(data.metadata.creat
               color="secondary"
               size="small"
               extraClass="project-card__tag"
+              iconPosition="start"
             />
           ))}
         </div>
@@ -65,28 +62,13 @@ const timeAgo = data.metadata?.created_at ? calculateTimeAgo(data.metadata.creat
   <footer class="project-card__footer">
     <div class={`project-card__actions${data.source.url_documentation ? " two-buttons" : ""}`}>
       <Button
-        link={data.source.url_repository}
-        target="_blank"
-        text={data.source.platform}
-        iconName={platformIcon}
+        link={data.projectDetailUrl}
+        text="Details"
+        iconName="fa:arrow-right"
         outline={true}
-        size="small"
         fullWidth={true}
+        size="small"
       />
-      {
-        data.source.url_documentation && (
-          <Button
-            link={data.source.url_documentation}
-            target="_blank"
-            text="Docs"
-            iconName="fa:book"
-            outline={true}
-            type="secondary"
-            size="small"
-            fullWidth={true}
-          />
-        )
-      }
     </div>
   </footer>
 </article>
