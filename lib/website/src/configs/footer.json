@@ -23,6 +23,10 @@
       "url": "/terms-and-conditions"
     },
     {
+      "name": "RSS",
+      "url": "/rss.xml"
+    },
+    {
       "icon": "fa:linkedin",
       "url": "https://www.linkedin.com/company/european-opensource"
     },
