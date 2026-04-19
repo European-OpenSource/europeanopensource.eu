@@ -6,9 +6,13 @@ import config from "@walle/config";
 import { BaseLayout } from "@walle/layouts";
 import { Icon } from "astro-icon/components";
 
-interface Props extends Project {}
+interface Props extends Project {
+  id?: string;
+}
 
 const data = Astro.props;
+
+const ogImageUrl = data.id ? `${Astro.site}img/og/${data.id}.png` : undefined;
 
 const breadcrumbItems = [
   { label: "Home", url: "/" },
@@ -17,7 +21,7 @@ const breadcrumbItems = [
 ];
 ---
 
-<BaseLayout headerTitle={data.name} headerDescription={data.description}>
+<BaseLayout headerTitle={data.name} headerDescription={data.description} headerOgImage={ogImageUrl}>
   <SectionHeaderStandard title={data.name} effect={true}>
     <div class="project-detail-badges">
       <Badge text={`${data.category.toLocaleUpperCase()}`} color="primary" size="large" />
