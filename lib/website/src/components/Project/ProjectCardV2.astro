@@ -3,6 +3,7 @@
  * Alternative project card variant with simplified layout and detail link
  */
 import type { Project } from "@utils/interfaces";
+import { toSlug } from "@utils/index";
 import { Badge, Button } from "@walle/components";
 import "./project-card.css";
 
@@ -31,6 +32,7 @@ const data = Astro.props;
         color="primary"
         size="small"
         extraClass="project-card__category"
+        link={`/projects/category/${toSlug(data.category)}`}
       />
     </div>
     <div>

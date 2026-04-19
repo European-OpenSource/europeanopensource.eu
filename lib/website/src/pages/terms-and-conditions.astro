@@ -164,13 +164,15 @@ import { BaseLayout } from "@walle/layouts";
     <h4>10. Project Submission & Admission Criteria</h4>
     <h5>10.0 Public information & origin of listings</h5>
     <p>
-      Projects listed in the Catalog may be submitted via the submission form by maintainers, by
-      users, or added editorially by the European OpenSource maintainers. Information displayed is
-      sourced from public materials (repositories, registries, official project pages) and is
-      presented without alteration by European OpenSource. We are not responsible for project code
-      or security; we perform basic checks only to confirm our criteria and eligibility for
-      open-source listing. Project data may change over time and is not guaranteed to be up-to-date
-      in real time. Please report errors, abuses or non-compliance to
+      Projects listed in the Catalog are submitted publicly via GitHub Issues, either directly by
+      opening an issue on our repository or through the submission form on this website (which
+      creates a GitHub Issue asynchronously). The entire review process is transparent and takes
+      place on GitHub, where anyone can follow the discussion. Information displayed is sourced from
+      public materials (repositories, registries, official project pages) and is presented without
+      alteration by European OpenSource. We are not responsible for project code or security; we
+      perform basic checks only to confirm our criteria and eligibility for open-source listing.
+      Project data may change over time and is not guaranteed to be up-to-date in real time. Please
+      report errors, abuses or non-compliance to
       <code>support</code> [@] <code>europeanopensource</code> [.] <code>eu</code>
     </p>
     <h5>10.1 Mandatory Eligibility</h5>
@@ -198,15 +200,24 @@ import { BaseLayout } from "@walle/layouts";
     <h5>10.3 Submission Process</h5>
     <ol>
       <li>
-        <strong>Submission:</strong> Provide repository URL, declared license, contact details, impact
-        narrative, governance model and sustainability indicators.
+        <strong>Submission via GitHub Issue:</strong> Open a GitHub Issue on our public repository using
+        the project submission template, or use the submission form on this website which creates the
+        issue asynchronously (note: form submissions may take some time to appear as a GitHub Issue).
       </li>
       <li>
-        <strong>Review:</strong> Editorial & technical screening for eligibility, documentation completeness,
-        governance clarity, maintenance health.
+        <strong>Public Review:</strong> Maintainers evaluate the submission publicly on GitHub. Once the
+        project meets the eligibility and quality criteria, a maintainer applies the
+        <code>approved-submission</code> label to the issue.
       </li>
       <li>
-        <strong>Publication:</strong> Approved Projects listed; visibility may include feeds, newsletters
+        <strong>Automated Validation:</strong> Applying the label triggers an automated workflow that
+        validates the submitted project data against the catalog schema. If validation fails, a comment
+        is posted on the issue detailing the errors no pull request is created until the issues are resolved
+        and the label is re-applied. If validation passes, a pull request is opened automatically.
+      </li>
+      <li>
+        <strong>Publication:</strong> Once the pull request is reviewed and merged by a maintainer, the
+        project is added to the catalog and published on the platform. Visibility may include feeds, newsletters
         or social dissemination.
       </li>
     </ol>
@@ -224,7 +235,10 @@ import { BaseLayout } from "@walle/layouts";
         <strong>No guarantee:</strong> Compliance does not ensure publication; decisions are at our sole
         discretion.
       </li>
-      <li><strong>Communication:</strong> Submitters notified via provided contact channels.</li>
+      <li>
+        <strong>Communication:</strong> All communication regarding the submission status takes place
+        publicly on the GitHub Issue. Submitters should follow the issue for updates.
+      </li>
     </ul>
     <h5>10.5 Criteria Evolution</h5>
     <ul>

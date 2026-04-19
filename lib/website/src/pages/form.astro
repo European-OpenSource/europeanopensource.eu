@@ -8,8 +8,39 @@ import { Icon } from "astro-icon/components";
   headerDescription="Submit your open-source project to be featured on European OpenSource catalog."
   robots="noindex, nofollow"
 >
-  <script async src="https://tally.so/widgets/embed.js"></script>
-  <section class="submission-embed">
+  <section class="github-submission" role="region" aria-labelledby="github-submission-title">
+    <div class="github-card">
+      <div class="github-card-header">
+        <span class="github-badge" aria-hidden="true">
+          <Icon name="fa:github" class="github-badge-icon" aria-hidden="true" />
+        </span>
+        <div>
+          <p class="github-label">Recommended</p>
+          <h3 id="github-submission-title" class="github-title">Submit via GitHub Issue</h3>
+        </div>
+      </div>
+      <p class="github-description">
+        Open a structured issue on GitHub once a maintainer approves it, a pull request is created
+        automatically.
+      </p>
+      <a
+        href="https://github.com/European-OpenSource/awesome-european-opensource/issues/new?template=PROJECT_SUBMISSION.yml"
+        class="github-cta"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Open GitHub Issue
+      </a>
+    </div>
+  </section>
+
+  <div class="form-divider">
+    <span class="form-divider-text">or fill the form it will open a GitHub Issue automatically</span
+    >
+  </div>
+
+  <section id="submission-form" class="submission-embed">
+    <script async src="https://tally.so/widgets/embed.js"></script>
     <iframe
       class="submission-embed-frame"
       data-tally-src="https://tally.so/r/n0k9DZ?transparentBackground=1&hideTitle=1&hideLogo=1"
@@ -19,6 +50,7 @@ import { Icon } from "astro-icon/components";
     >
     </iframe>
   </section>
+
   <section class="submission-guidelines" role="region" aria-labelledby="notice-title">
     <div class="guidelines-card">
       <div class="guidelines-header">
@@ -72,6 +104,131 @@ import { Icon } from "astro-icon/components";
 </BaseLayout>
 
 <style>
+  /* ── GitHub card ─────────────────────────────────────────────────────────── */
+
+  .github-submission {
+    width: 100%;
+    margin: var(--space-3xl) auto var(--space-xl);
+    padding: 0 var(--space-md);
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+  }
+
+  .github-card {
+    width: min(100%, 64rem);
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08);
+    padding: var(--space-3xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .github-card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
+  .github-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: var(--radius-lg);
+    background: #24292e;
+    color: #fefefe;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.18);
+    flex-shrink: 0;
+  }
+
+  .github-badge-icon {
+    font-size: 1.4rem;
+  }
+
+  .github-label {
+    margin: 0 0 0.1rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--primary);
+  }
+
+  .github-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--black);
+    font-family: "Ronzino-Bold", system-ui, sans-serif;
+  }
+
+  .github-description {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--gray-darker);
+  }
+
+  .github-cta {
+    align-self: flex-start;
+    display: inline-block;
+    padding: 0.65rem 1.5rem;
+    background-color: #24292e;
+    color: #fefefe !important;
+    border-radius: var(--radius-lg);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: none !important;
+    transition:
+      background-color var(--transition),
+      box-shadow var(--transition);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.18);
+  }
+
+  .github-cta:hover {
+    background-color: #3a4047;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.28);
+    color: #fefefe !important;
+  }
+
+  .github-cta:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+  }
+
+  /* ── Divider ─────────────────────────────────────────────────────────────── */
+
+  .form-divider {
+    width: min(100%, 64rem);
+    margin: 0 auto var(--space-xl);
+    padding: 0 var(--space-md);
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
+  .form-divider::before,
+  .form-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--gray-medium);
+  }
+
+  .form-divider-text {
+    font-size: 0.875rem;
+    color: var(--gray-dark);
+    white-space: nowrap;
+  }
+
+  /* ── Tally embed ─────────────────────────────────────────────────────────── */
+
   .submission-embed {
     width: 100%;
     margin: 0 auto var(--space-4xl);
@@ -88,6 +245,8 @@ import { Icon } from "astro-icon/components";
     box-shadow: var(--box-shadow);
     background: var(--white);
   }
+
+  /* ── Guidelines ──────────────────────────────────────────────────────────── */
 
   .submission-guidelines {
     width: 100%;
@@ -258,11 +417,10 @@ import { Icon } from "astro-icon/components";
     color: var(--primary);
   }
 
-  @media (max-width: 1024px) {
-    .submission-embed {
-      padding: 0 var(--space-sm);
-    }
+  /* ── Responsive ──────────────────────────────────────────────────────────── */
 
+  @media (max-width: 1024px) {
+    .submission-embed,
     .submission-guidelines {
       padding: 0 var(--space-sm);
     }
@@ -273,8 +431,23 @@ import { Icon } from "astro-icon/components";
   }
 
   @media (max-width: 768px) {
+    .github-submission,
+    .form-divider {
+      padding: 0 var(--space-sm);
+    }
+
+    .github-card {
+      padding: var(--space-xl);
+    }
+
+    .form-divider-text {
+      white-space: normal;
+      text-align: center;
+    }
+
     .submission-embed {
       margin-bottom: var(--space-3xl);
+      padding: 0 var(--space-sm);
     }
 
     .submission-embed-frame {
@@ -315,6 +488,8 @@ import { Icon } from "astro-icon/components";
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .github-cta,
+    .github-cta:hover,
     .submission-embed-frame,
     .guidelines-card,
     .guideline-card,

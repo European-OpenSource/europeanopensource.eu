@@ -7,6 +7,12 @@
   min-height: 50vh;
 }
 
+.project-count {
+  font-size: 0.9rem;
+  color: var(--gray-dark);
+  margin-bottom: 1rem;
+}
+
 .projects-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));

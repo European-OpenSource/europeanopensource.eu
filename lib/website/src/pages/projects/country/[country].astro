@@ -1,0 +1,68 @@
+---
+import ProjectCardV2 from "@components/Project/ProjectCardV2.astro";
+import type { ProjectEntry } from "@utils/interfaces";
+import { toSlug } from "@utils/index";
+import { SectionHeaderStandard } from "@walle/components";
+import { BaseLayout } from "@walle/layouts";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const allProjects = await getCollection("project");
+
+  const byCountry = allProjects.reduce<Record<string, typeof allProjects>>((acc, project) => {
+    const key = project.data.country;
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(project);
+    return acc;
+  }, {});
+
+  return Object.entries(byCountry)
+    .filter(([, projects]) => projects.length >= 2)
+    .map(([country, projects]) => ({
+      params: { country: toSlug(country) },
+      props: { country, projects },
+    }));
+}
+
+interface Props {
+  country: string;
+  projects: ProjectEntry[];
+}
+
+const { country, projects } = Astro.props;
+---
+
+<BaseLayout
+  headerTitle={`Open Source projects from ${country} | European Open Source`}
+  headerDescription={`Discover ${projects.length} open-source projects from ${country} in the European Open Source catalogue.`}
+>
+  <SectionHeaderStandard
+    title={`Projects from ${country}`}
+    subtitle={`${projects.length} open-source project${projects.length !== 1 ? "s" : ""} from ${country} in the European catalogue.`}
+    effect={true}
+  />
+
+  <section class="country-projects-section">
+    <div class="container">
+      <div class="projects-grid">
+        {
+          projects.map((project: ProjectEntry) => (
+            <ProjectCardV2 {...project.data} projectDetailUrl={`/projects/${project.id}`} />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .country-projects-section {
+    padding: var(--space-xl) 0 var(--space-4xl);
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--space-lg);
+  }
+</style>

@@ -8,6 +8,7 @@ import { BaseLayout } from "@walle/layouts";
 import { getCollection } from "astro:content";
 
 const allProjects = await getCollection("project");
+const projectCount = allProjects.length;
 ---
 
 <BaseLayout
@@ -27,6 +28,15 @@ const allProjects = await getCollection("project");
   <!-- Results Summary -->
   <section class="results-section">
     <div class="container">
+      <!-- Project Count -->
+      <p class="project-count">
+        {
+          projectCount > 0
+            ? `${projectCount} European open source projects`
+            : "No projects in the catalog yet"
+        }
+      </p>
+
       <!-- Projects Grid -->
       <div class="projects-grid" id="projects-grid">
         {
