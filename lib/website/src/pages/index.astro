@@ -7,24 +7,31 @@ import { Icon } from "astro-icon/components";
 const submissionSteps = [
   {
     number: 1,
-    title: "Submit Project",
+    title: "Open a GitHub Issue",
     description:
-      "Fill out the form with all the necessary information. The more details you provide, the faster your project will be evaluated.",
-    icon: "fa:list",
+      "Submit your project by opening a GitHub Issue directly, or via the Tally form on the submission page note that the form creates the issue asynchronously, so it may take some time to appear.",
+    icon: "fa:github",
   },
   {
     number: 2,
-    title: "Evaluation",
+    title: "Public Review",
     description:
-      "Our team ensures the project meets all the criteria to be included in the European OpenSource platform.",
-    icon: "fa:spinner",
+      "The review happens publicly on GitHub. Anyone can see the discussion. Once the project meets the criteria, we add the approved-submission label.",
+    icon: "fa:search",
   },
   {
     number: 3,
-    title: "Publication",
+    title: "Automated Validation & PR",
     description:
-      "Once approved, your project is added to the GitHub repository and published on the platform. You will be notified via email only if your project is selected. If you want to follow up with details, contact us directly (please wait at least 4 weeks after submission).",
-    icon: "fa:github",
+      "The label triggers an automated workflow that validates the project data. If validation passes, a pull request is opened automatically. If it fails, a comment is posted on the issue explaining what needs to be fixed.",
+    icon: "fa:cogs",
+  },
+  {
+    number: 4,
+    title: "Merged into the Catalog",
+    description:
+      "Once the pull request is reviewed and merged by a maintainer, the project becomes part of the European OpenSource catalog and is published on the platform.",
+    icon: "fa:check-circle",
   },
 ];
 ---

@@ -1,6 +1,7 @@
 ---
 import ProjectCardDetail from "@components/Project/ProjectCardDetail.astro";
 import type { Project } from "@utils/interfaces";
+import { toSlug } from "@utils/index";
 import { Badge, Breadcrumbs, Button, SectionHeaderStandard } from "@walle/components";
 import config from "@walle/config";
 import { BaseLayout } from "@walle/layouts";
@@ -24,13 +25,28 @@ const breadcrumbItems = [
 <BaseLayout headerTitle={data.name} headerDescription={data.description} headerOgImage={ogImageUrl}>
   <SectionHeaderStandard title={data.name} effect={true}>
     <div class="project-detail-badges">
-      <Badge text={`${data.category.toLocaleUpperCase()}`} color="primary" size="large" />
-      <Badge text={data.country} color="secondary" size="large" />
+      <Badge
+        text={`${data.category.toLocaleUpperCase()}`}
+        color="primary"
+        size="large"
+        link={`/projects/category/${toSlug(data.category)}`}
+      />
+      <Badge
+        text={data.country}
+        color="secondary"
+        size="large"
+        link={`/projects/country/${toSlug(data.country)}`}
+      />
     </div>
   </SectionHeaderStandard>
 
   <section class="project-detail-section">
     <div class="container">
+      <a href="/projects" class="back-link">
+        <Icon name="fa:arrow-left" class="back-link__icon" aria-hidden="true" />
+        Back to projects
+      </a>
+
       <Breadcrumbs items={breadcrumbItems} />
 
       <div class="project-detail-container">
@@ -100,6 +116,32 @@ const breadcrumbItems = [
 </BaseLayout>
 
 <style>
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--primary);
+    font-weight: 500;
+    font-size: 0.9rem;
+    text-decoration: none;
+    margin-bottom: var(--space-sm);
+    transition: color 0.2s ease;
+  }
+
+  .back-link:hover {
+    color: var(--primary-dark);
+  }
+
+  .back-link:hover .back-link__icon {
+    transform: translateX(-2px);
+  }
+
+  .back-link__icon {
+    width: 0.85em;
+    height: 0.85em;
+    transition: transform 0.2s ease;
+  }
+
   .project-detail-section {
     padding: var(--space-xl) 0 var(--space-4xl);
   }

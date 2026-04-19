@@ -123,14 +123,14 @@ const breadcrumbsClasses = ["breadcrumbs", extraClass].filter(Boolean).join(" ")
       font-size: 0.85rem;
     }
 
-    /* Hide intermediate elements on mobile, show only first and last */
-    .breadcrumbs li:not(:first-child):not(:last-child) {
+    /* Hide Home (first item) on mobile — back-link provides top-level navigation */
+    .breadcrumbs li:first-child {
       display: none;
     }
 
-    /* Show separator between first and last when intermediates are hidden */
-    .breadcrumbs li:first-child + li.current .separator {
-      display: flex;
+    /* Hide the leading separator on the item that becomes first visible */
+    .breadcrumbs li:first-child + li .separator {
+      display: none;
     }
   }
 
