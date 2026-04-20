@@ -1,8 +1,8 @@
 {
   "database": {
     "repository": "https://github.com/European-OpenSource/awesome-european-opensource",
-    "commit_hash": "b634106262ad376226865f92f47d7f86c83b37e5",
-    "sync_timestamp": "2026-04-19T12:35:18Z",
+    "commit_hash": "4bfa455923d336196f85b89a87dfa58a84e3f3c0",
+    "sync_timestamp": "2026-04-20T07:13:59Z",
     "requested_ref": "main"
   }
 }
