@@ -47,8 +47,8 @@ convert_json_to_md() {
 
   # Handle tags array
   if jq -e '.tags' "${json_file}" >/dev/null 2>&1; then
-    tags=$(jq -r '.tags | join(", ")' "${json_file}")
-    echo "tags: ${tags}" >>"${md_file}"
+    echo "tags:" >>"${md_file}"
+    jq -r '.tags[] | "  - " + .' "${json_file}" >>"${md_file}"
   fi
 
   echo "category: ${category}" >>"${md_file}"
