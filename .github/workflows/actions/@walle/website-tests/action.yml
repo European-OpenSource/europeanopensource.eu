@@ -4,7 +4,7 @@ description: |
   It runs linting and other checks to ensure code quality.
 
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Checkout your repository using git
       uses: actions/checkout@v5
@@ -12,7 +12,7 @@ runs:
       uses: actions/setup-node@v4
       with:
         node-version-file: lib/website/.nvmrc
-        cache: "yarn"
+        cache: 'yarn'
         cache-dependency-path: lib/website/yarn.lock
     - name: Install dependencies
       shell: bash
@@ -23,4 +23,4 @@ runs:
       shell: bash
       working-directory: lib/website
       run: |
-        yarn lint
+        yarn test:ci
