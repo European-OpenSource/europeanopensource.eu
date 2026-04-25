@@ -1,6 +1,6 @@
 ---
 name: "Medha"
-description: 'Medha is an asynchronous, high-performance semantic cache library designed specifically for Text-to-Query systems. Unlike traditional key-value caches that require exact string matches, Medha understands that "Show me the top 5 users" and "List the first five users" are the same question. It intercepts these queries and returns pre-calculated database queries (SQL, Cypher, etc.), bypassing the expensive and slow LLM generation step.'
+description: "Medha is an asynchronous, high-performance semantic cache library designed specifically for Text-to-Query systems. Unlike traditional key-value caches that require exact string matches, Medha understands that \"Show me the top 5 users\" and \"List the first five users\" are the same question. It intercepts these queries and returns pre-calculated database queries (SQL, Cypher, etc.), bypassing the expensive and slow LLM generation step."
 tags:
   - agent memory
   - semantic cache
