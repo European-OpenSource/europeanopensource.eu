@@ -1,18 +1,18 @@
 ---
-name: hetzner-k3s
-description: hetzner-k3s is a CLI tool that creates production-ready Kubernetes clusters on Hetzner Cloud in minutes, not hours. No Terraform to learn, no management cluster required, no third-party access to your credentials.
-category: cli
-country: Germany
+name: "hetzner-k3s"
+description: "hetzner-k3s is a CLI tool that creates production-ready Kubernetes clusters on Hetzner Cloud in minutes, not hours. No Terraform to learn, no management cluster required, no third-party access to your credentials."
+category: "cli"
+country: "Germany"
 source:
-  platform: GitHub
-  url_repository: https://github.com/vitobotta/hetzner-k3s
-  url_documentation: https://vitobotta.github.io/hetzner-k3s/
-  license: MIT
-  language: Other
+  platform: "GitHub"
+  url_repository: "https://github.com/vitobotta/hetzner-k3s"
+  url_documentation: "https://vitobotta.github.io/hetzner-k3s/"
+  license: "MIT"
+  language: "Other"
 owner:
-  name: Vito Botta
-  type: individual
-  url_website: https://vitobotta.com/
+  name: "Vito Botta"
+  type: "individual"
+  url_website: "https://vitobotta.com/"
 metadata:
   filename: hetzner-k3s-b3ea29.json
   created_at: 2026-04-20T07:04:17.343779+00:00

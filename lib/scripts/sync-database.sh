@@ -23,6 +23,12 @@ clean() {
   rm -rf "${ROOT_PATH}/lib/tmp/source"
 }
 
+yaml_string() {
+  local value="${1//\\/\\\\}"
+  value="${value//\"/\\\"}"
+  echo "\"${value}\""
+}
+
 convert_json_to_md() {
   local json_file="$1"
 
@@ -42,8 +48,8 @@ convert_json_to_md() {
   category=$(jq -r '.category // ""' "${json_file}")
   country=$(jq -r '.country // ""' "${json_file}")
 
-  echo "name: ${name}" >>"${md_file}"
-  echo "description: ${description}" >>"${md_file}"
+  echo "name: $(yaml_string "${name}")" >>"${md_file}"
+  echo "description: $(yaml_string "${description}")" >>"${md_file}"
 
   # Handle tags array
   if jq -e '.tags' "${json_file}" >/dev/null 2>&1; then
@@ -51,8 +57,8 @@ convert_json_to_md() {
     jq -r '.tags[] | "  - " + .' "${json_file}" >>"${md_file}"
   fi
 
-  echo "category: ${category}" >>"${md_file}"
-  echo "country: ${country}" >>"${md_file}"
+  echo "category: $(yaml_string "${category}")" >>"${md_file}"
+  echo "country: $(yaml_string "${country}")" >>"${md_file}"
 
   # Handle source object
   echo "source:" >>"${md_file}"
@@ -62,15 +68,15 @@ convert_json_to_md() {
   license=$(jq -r '.source.license // ""' "${json_file}")
   language=$(jq -r '.source.language // ""' "${json_file}")
 
-  echo "  platform: ${platform}" >>"${md_file}"
-  echo "  url_repository: ${url_repository}" >>"${md_file}"
+  echo "  platform: $(yaml_string "${platform}")" >>"${md_file}"
+  echo "  url_repository: $(yaml_string "${url_repository}")" >>"${md_file}"
 
   if [[ "${url_documentation}" != "null" && -n "${url_documentation}" ]]; then
-    echo "  url_documentation: ${url_documentation}" >>"${md_file}"
+    echo "  url_documentation: $(yaml_string "${url_documentation}")" >>"${md_file}"
   fi
 
-  echo "  license: ${license}" >>"${md_file}"
-  echo "  language: ${language}" >>"${md_file}"
+  echo "  license: $(yaml_string "${license}")" >>"${md_file}"
+  echo "  language: $(yaml_string "${language}")" >>"${md_file}"
 
   # Handle owner object if it exists
   if jq -e '.owner' "${json_file}" >/dev/null 2>&1; then
@@ -81,15 +87,15 @@ convert_json_to_md() {
     owner_url=$(jq -r '.owner.url_website // ""' "${json_file}")
     is_startup=$(jq -r '.owner.is_a_startup // ""' "${json_file}")
 
-    echo "  name: ${owner_name}" >>"${md_file}"
-    echo "  type: ${owner_type}" >>"${md_file}"
+    echo "  name: $(yaml_string "${owner_name}")" >>"${md_file}"
+    echo "  type: $(yaml_string "${owner_type}")" >>"${md_file}"
 
     if [[ "${owner_description}" != "null" && -n "${owner_description}" ]]; then
-      echo "  description: ${owner_description}" >>"${md_file}"
+      echo "  description: $(yaml_string "${owner_description}")" >>"${md_file}"
     fi
 
     if [[ "${owner_url}" != "null" && -n "${owner_url}" ]]; then
-      echo "  url_website: ${owner_url}" >>"${md_file}"
+      echo "  url_website: $(yaml_string "${owner_url}")" >>"${md_file}"
     fi
 
     if [[ "${is_startup}" != "null" && -n "${is_startup}" ]]; then

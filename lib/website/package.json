@@ -13,7 +13,8 @@
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
     "prepare": "cd ../../ && husky lib/website/.husky",
-    "test": "yarn lint:fix && yarn format:fix"
+    "test": "yarn lint:fix && yarn format:fix",
+    "test:ci": "yarn lint && yarn format && yarn build"
   },
   "engines": {
     "node": ">=22.0.0"
