@@ -18,6 +18,17 @@ jobs:
 
       - uses: extractions/setup-just@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: lib/website/.nvmrc
+          cache: 'yarn'
+          cache-dependency-path: lib/website/yarn.lock
+
+      - name: Install dependencies
+        working-directory: lib/website
+        run: yarn install --frozen-lockfile
+
       - name: Load env
         id: env
         run: |

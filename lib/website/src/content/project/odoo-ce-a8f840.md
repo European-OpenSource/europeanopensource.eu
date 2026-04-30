@@ -13,6 +13,7 @@ owner:
   name: "Odoo SA"
   type: "organization"
   url_website: "https://www.odoo.com"
+  is_a_startup: false
 metadata:
   filename: odoo-ce-a8f840.json
   created_at: 2026-04-18T10:00:00Z

@@ -13,6 +13,7 @@ owner:
   name: "Vito Botta"
   type: "individual"
   url_website: "https://vitobotta.com/"
+  is_a_startup: false
 metadata:
   filename: hetzner-k3s-b3ea29.json
   created_at: 2026-04-20T07:04:17.343779+00:00

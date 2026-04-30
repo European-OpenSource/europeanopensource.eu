@@ -21,6 +21,7 @@ owner:
   type: "individual"
   description: "CNCF is the open source, vendor-neutral hub of cloud native computing, hosting projects like Kubernetes and Prometheus to make cloud native universal and sustainable."
   url_website: "https://www.cncf.io/"
+  is_a_startup: false
 metadata:
   filename: capsule-6f5262.json
   created_at: 2026-04-25T06:27:44Z

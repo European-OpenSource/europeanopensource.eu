@@ -12,6 +12,7 @@ source:
 owner:
   name: "Fabrizio Salmi"
   type: "individual"
+  is_a_startup: false
 metadata:
   filename: certmate-3aec74.json
   created_at: 2026-03-10T11:48:54Z

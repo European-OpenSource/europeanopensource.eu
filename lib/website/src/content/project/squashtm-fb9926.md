@@ -25,6 +25,7 @@ owner:
   type: "organization"
   description: "Henix is a self-funded French software quality specialist founded in 1999. Testing is Henix's core business. The company combines a tool editing solution: SquashTM ; with hands-on QA and DevOps consulting (450 consultants entirely based in France), and professional training through its own software quality school, the EQL."
   url_website: "https://www.squashtm.com/en"
+  is_a_startup: false
 metadata:
   filename: squashtm-fb9926.json
   created_at: 2026-04-24T14:21:29Z

@@ -13,6 +13,7 @@ owner:
   name: "LemonLDAP-NG"
   type: "community"
   url_website: "https://lemonldap-ng.org"
+  is_a_startup: false
 metadata:
   filename: lemonldap-ng-b67eae.json
   created_at: 2026-04-18T10:00:00Z

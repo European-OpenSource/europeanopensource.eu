@@ -12,6 +12,7 @@ source:
 owner:
   name: "Mark Cilia Vincenti"
   type: "individual"
+  is_a_startup: false
 metadata:
   filename: asynckeyedlock-f7cb35.json
   created_at: 2026-03-10T11:48:54Z

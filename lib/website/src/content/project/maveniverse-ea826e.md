@@ -12,6 +12,7 @@ source:
 owner:
   name: "Tamas Cservenak"
   type: "individual"
+  is_a_startup: false
 metadata:
   filename: maveniverse-ea826e.json
   created_at: 2026-04-18T10:00:00Z

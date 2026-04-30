@@ -13,6 +13,7 @@ owner:
   name: "Drupal"
   type: "community"
   url_website: "https://www.drupal.org"
+  is_a_startup: false
 metadata:
   filename: drupal-99afdb.json
   created_at: 2026-04-18T10:00:00Z

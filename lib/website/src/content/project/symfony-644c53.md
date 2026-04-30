@@ -13,6 +13,7 @@ owner:
   name: "SensioLabs"
   type: "organization"
   url_website: "https://sensiolabs.com"
+  is_a_startup: false
 metadata:
   filename: symfony-644c53.json
   created_at: 2026-04-18T10:00:00Z

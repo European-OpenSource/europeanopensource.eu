@@ -12,6 +12,7 @@ owner:
   name: "Datapizza"
   type: "organization"
   url_website: "https://datapizza.tech"
+  is_a_startup: false
 metadata:
   filename: datapizza-ai-c6895b.json
   created_at: 2026-04-18T10:00:00Z

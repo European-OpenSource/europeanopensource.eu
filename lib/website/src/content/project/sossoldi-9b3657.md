@@ -13,6 +13,7 @@ owner:
   name: "RIPsters"
   type: "community"
   url_website: "https://github.com/RIP-Comm"
+  is_a_startup: false
 metadata:
   filename: sossoldi-9b3657.json
   created_at: 2026-02-18T11:04:05Z

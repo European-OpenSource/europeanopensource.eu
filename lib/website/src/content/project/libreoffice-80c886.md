@@ -14,6 +14,7 @@ owner:
   type: "organization"
   description: "The Document Foundation is a small non-profit organisation, registered in Berlin, that oversees the LibreOffice project and community."
   url_website: "https://www.documentfoundation.org"
+  is_a_startup: false
 metadata:
   filename: libreoffice-80c886.json
   created_at: 2026-02-24T18:47:14Z

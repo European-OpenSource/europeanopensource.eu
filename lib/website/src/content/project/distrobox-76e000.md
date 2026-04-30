@@ -11,6 +11,7 @@ source:
 owner:
   name: "Luca Di Maio"
   type: "individual"
+  is_a_startup: false
 metadata:
   filename: distrobox-76e000.json
   created_at: 2026-04-18T10:00:00Z
