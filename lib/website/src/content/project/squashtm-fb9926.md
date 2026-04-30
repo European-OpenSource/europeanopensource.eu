@@ -13,7 +13,8 @@ tags:
   - test cases
   - bugtracking
 category: "app"
-country: "France"
+country:
+  - France
 source:
   platform: "GitLab"
   url_repository: "https://gitlab.com/henixdevelopment/open-source/squash"

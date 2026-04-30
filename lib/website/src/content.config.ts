@@ -10,7 +10,7 @@ const project = defineCollection({
     description: z.string(),
     tags: z.array(z.string().max(24)).min(1).max(10).optional(),
     category: z.string(),
-    country: z.string(),
+    country: z.array(z.string()).min(1).max(3),
     source: z.object({
       platform: z.string(),
       url_repository: z.string().url(),

@@ -2,7 +2,8 @@
 name: "CertMate"
 description: "SSL Certificate Management System (API UI)"
 category: "framework"
-country: "Italy"
+country:
+  - Italy
 source:
   platform: "GitHub"
   url_repository: "https://github.com/fabriziosalmi/certmate"

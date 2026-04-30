@@ -2,7 +2,8 @@
 name: "kamaji"
 description: "Kamaji is an open-source Kubernetes Hosted Control Plane manager developed by Italian company Clastix and donated to the CNCF as a Sandbox project. It runs control plane components in pods rather than dedicated VMs, enabling multi-tenant managed Kubernetes at scale with significantly reduced operational overhead."
 category: "other"
-country: "Italy"
+country:
+  - Italy
 source:
   platform: "GitHub"
   url_repository: "https://github.com/clastix/kamaji"

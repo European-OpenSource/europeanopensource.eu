@@ -198,34 +198,7 @@ export interface Project {
     | "awesome-list"
     | "os"
     | "other";
-  country:
-    | "Italy"
-    | "France"
-    | "Germany"
-    | "Spain"
-    | "Poland"
-    | "Netherlands"
-    | "Belgium"
-    | "Sweden"
-    | "Austria"
-    | "Czech Republic"
-    | "Denmark"
-    | "Finland"
-    | "Greece"
-    | "Hungary"
-    | "Ireland"
-    | "Croatia"
-    | "Lithuania"
-    | "Latvia"
-    | "Slovakia"
-    | "Slovenia"
-    | "Estonia"
-    | "Portugal"
-    | "Bulgaria"
-    | "Romania"
-    | "Luxembourg"
-    | "Malta"
-    | "Cyprus";
+  country: string[];
   source: ProjectSource;
   owner: ProjectOwner;
   metadata: ProjectMetadata;

@@ -2,7 +2,8 @@
 name: "Odoo CE"
 description: "Odoo Community Edition is the open-source core of Odoo, a comprehensive Belgian-built ERP and business application suite. Licensed under LGPL-3.0, it covers CRM, sales, inventory, accounting, project management, e-commerce, and manufacturing. Self-hostable and extensible via a large ecosystem of community modules."
 category: "app"
-country: "Belgium"
+country:
+  - Belgium
 source:
   platform: "GitHub"
   url_repository: "https://github.com/odoo/odoo"

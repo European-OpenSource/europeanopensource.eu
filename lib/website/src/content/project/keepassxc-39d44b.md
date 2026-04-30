@@ -2,7 +2,8 @@
 name: "KeePassXC"
 description: "KeePassXC is a free, open-source, cross-platform password manager built as a community fork of KeePassX. It stores credentials in an AES-256 encrypted local database and supports hardware security keys (YubiKey, OnlyKey), browser integration, TOTP, and SSH agent. A privacy-first alternative to cloud-based password managers."
 category: "app"
-country: "Germany"
+country:
+  - Germany
 source:
   platform: "GitHub"
   url_repository: "https://github.com/keepassxreboot/keepassxc"

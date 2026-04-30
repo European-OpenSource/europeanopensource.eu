@@ -31,15 +31,21 @@ const timeAgo = data.metadata?.created_at ? calculateTimeAgo(data.metadata.creat
       <Badge
         text={data.category}
         iconName="fa:tag"
+        iconPosition="start"
         color="primary"
         size="small"
         extraClass="project-card__category"
       />
     </div>
     <div>
-      <Badge text={data.source.language} iconName="fa:code" size="small" />
-      <Badge text={data.source.license} iconName="fa:balance-scale" size="small" />
-      {timeAgo && <Badge text={timeAgo} iconName="fa:calendar" size="small" />}
+      <Badge text={data.source.language} iconName="fa:code" iconPosition="start" size="small" />
+      <Badge
+        text={data.source.license}
+        iconName="fa:balance-scale"
+        iconPosition="start"
+        size="small"
+      />
+      {timeAgo && <Badge text={timeAgo} iconName="fa:calendar" iconPosition="start" size="small" />}
     </div>
   </header>
 
@@ -48,10 +54,11 @@ const timeAgo = data.metadata?.created_at ? calculateTimeAgo(data.metadata.creat
     {
       data.tags && data.tags.length > 0 && (
         <div class="project-card__tags" aria-label="Project tags">
-          {data.tags.map((tag) => (
+          {data.tags.slice(0, 3).map((tag) => (
             <Badge
               text={tag}
               iconName="fa:hashtag"
+              iconPosition="start"
               color="secondary"
               size="small"
               extraClass="project-card__tag"

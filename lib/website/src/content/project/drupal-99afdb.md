@@ -2,7 +2,8 @@
 name: "Drupal"
 description: "Drupal is a free, open-source content management framework written in PHP, used to build websites, portals, and digital experiences at any scale. Founded in Belgium by Dries Buytaert, it powers millions of sites worldwide including government, enterprise, and educational platforms, with a vast ecosystem of modules and themes."
 category: "framework"
-country: "Belgium"
+country:
+  - Belgium
 source:
   platform: "GitLab"
   url_repository: "https://git.drupalcode.org/project/drupal"

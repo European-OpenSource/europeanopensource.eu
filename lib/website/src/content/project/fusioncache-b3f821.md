@@ -2,7 +2,8 @@
 name: "FusionCache"
 description: "FusionCache is an easy to use, fast and robust hybrid cache with advanced resiliency features."
 category: "library"
-country: "Italy"
+country:
+  - Italy
 source:
   platform: "GitHub"
   url_repository: "https://github.com/ZiggyCreatures/FusionCache"

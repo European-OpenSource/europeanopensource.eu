@@ -2,7 +2,8 @@
 name: "Aleph Cloud"
 description: "Aleph Cloud is a decentralized SuperCloud that provides compute, storage, and frontend hosting on independent infrastructure. It enables projects to run high-availability backends and verifiable, censorship-resistant frontends, acting as a resilient alternative or backup to centralized clouds like AWS or Cloudflare. Aleph Cloud is used by Web3 and also web2 companies, DeFi, and AI projects to improve resilience, decentralization, and trust, with pay-as-you-go usage and blockchain-native integrations."
 category: "ai"
-country: "France"
+country:
+  - France
 source:
   platform: "GitHub"
   url_repository: "https://github.com/aleph-im"

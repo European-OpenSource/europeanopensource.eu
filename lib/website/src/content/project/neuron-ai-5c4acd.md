@@ -2,7 +2,8 @@
 name: "Neuron AI"
 description: "Neuron is the PHP Agentic Framework to build production-ready agentic applications. Connect components (LLMs, vector DBs, memory) to agents that can interact with your data. With its modular architecture it's best suited for building RAG, multi-agent workflows, or business process automations. We provide tools for the entire agentic application development lifecycle, from LLM interfaces, to data loading, to multi-agent orchestration, to monitoring and debugging."
 category: "framework"
-country: "Italy"
+country:
+  - Italy
 source:
   platform: "GitHub"
   url_repository: "https://github.com/neuron-core/neuron-ai"

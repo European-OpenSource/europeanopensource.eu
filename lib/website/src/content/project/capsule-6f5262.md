@@ -9,7 +9,8 @@ tags:
   - tenant
   - namespaces
 category: "framework"
-country: "Italy"
+country:
+  - Italy
 source:
   platform: "GitHub"
   url_repository: "https://github.com/projectcapsule/capsule"

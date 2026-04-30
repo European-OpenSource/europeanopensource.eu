@@ -48,6 +48,9 @@ const projectCount = allProjects.length;
               data-category={project.data.category}
               data-language={project.data.source.language}
               data-license={project.data.source.license}
+              data-country={project.data.country
+                .map((c) => c.toLowerCase().replace(/\s+/g, "-"))
+                .join(",")}
               data-created={project.data.metadata?.created_at || ""}
               data-index={idx}
               style="display:none"

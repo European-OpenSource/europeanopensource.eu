@@ -2,7 +2,8 @@
 name: "Demo Time"
 description: "A Visual Studio Code extension to help you script your demos. Demo Time empowers you to script flawless coding demonstrations and present slides seamlessly within Visual Studio Code. Eliminate typos and missteps, ensuring engaging and stress-free presentations."
 category: "app"
-country: "Belgium"
+country:
+  - Belgium
 source:
   platform: "GitHub"
   url_repository: "https://github.com/estruyf/vscode-demo-time"

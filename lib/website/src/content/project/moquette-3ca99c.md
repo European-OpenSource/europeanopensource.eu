@@ -2,7 +2,8 @@
 name: "Moquette"
 description: "Moquette is a lightweight broker compliant with MQTT 5 and MQTT 3, easily encapsulated in other applications. The broker supports QoS 0, QoS 1 and QoS 2."
 category: "library"
-country: "Italy"
+country:
+  - Italy
 source:
   platform: "GitHub"
   url_repository: "https://github.com/moquette-io/moquette"

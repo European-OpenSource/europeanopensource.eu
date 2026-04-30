@@ -10,14 +10,15 @@ export async function getStaticPaths() {
   const allProjects = await getCollection("project");
 
   const byCountry = allProjects.reduce<Record<string, typeof allProjects>>((acc, project) => {
-    const key = project.data.country;
-    if (!acc[key]) acc[key] = [];
-    acc[key].push(project);
+    for (const c of project.data.country) {
+      if (!acc[c]) acc[c] = [];
+      acc[c].push(project);
+    }
     return acc;
   }, {});
 
   return Object.entries(byCountry)
-    .filter(([, projects]) => projects.length >= 2)
+    .filter(([, projects]) => projects.length >= 1)
     .map(([country, projects]) => ({
       params: { country: toSlug(country) },
       props: { country, projects },

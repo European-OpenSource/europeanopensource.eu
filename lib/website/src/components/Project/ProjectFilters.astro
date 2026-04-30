@@ -6,6 +6,7 @@
 import { Icon } from "astro-icon/components";
 import { Button } from "@walle/components";
 import type { ProjectEntry } from "@utils/interfaces";
+import { toSlug } from "@utils/index";
 import "./project-filters.css";
 
 const { allProjects = [] } = Astro.props;
@@ -22,6 +23,10 @@ const allLanguages = [
 
 const allLicenses = [
   ...new Set(allProjects.map((project: ProjectEntry) => project.data.source.license)),
+].sort() as string[];
+
+const allCountries = [
+  ...new Set(allProjects.flatMap((project: ProjectEntry) => project.data.country)),
 ].sort() as string[];
 ---
 
@@ -69,6 +74,16 @@ const allLicenses = [
             <select name="language" id="language" class="filter-select">
               <option value="">All Languages</option>
               {allLanguages.map((language) => <option value={language}>{language}</option>)}
+            </select>
+            <Icon name="fa:chevron-down" class="select-icon" size={13} />
+          </div>
+        </div>
+        <div class="filter-group">
+          <label for="country">Country</label>
+          <div class="select-wrapper">
+            <select name="country" id="country" class="filter-select">
+              <option value="">All Countries</option>
+              {allCountries.map((country) => <option value={toSlug(country)}>{country}</option>)}
             </select>
             <Icon name="fa:chevron-down" class="select-icon" size={13} />
           </div>
@@ -135,6 +150,7 @@ const allLicenses = [
       const initialCategory = urlParams.get("category") || "";
       const initialLanguage = urlParams.get("language") || "";
       const initialLicense = urlParams.get("license") || "";
+      const initialCountry = urlParams.get("country") || "";
       const initialSort = urlParams.get("sort") || "name";
       const initialPage = parseInt(urlParams.get("page") || "1");
 
@@ -143,6 +159,7 @@ const allLicenses = [
       const categorySelect = document.getElementById("category");
       const languageSelect = document.getElementById("language");
       const licenseSelect = document.getElementById("license");
+      const countrySelect = document.getElementById("country");
       const sortSelect = document.getElementById("sort");
       const resetButton = document.getElementById("filters-reset");
       const resetSearchButton = document.getElementById("reset-search");
@@ -169,6 +186,7 @@ const allLicenses = [
         category: initialCategory,
         language: initialLanguage,
         license: initialLicense,
+        country: initialCountry,
         sort: initialSort,
       };
 
@@ -179,6 +197,7 @@ const allLicenses = [
       if (categorySelect) categorySelect.value = currentFilters.category;
       if (languageSelect) languageSelect.value = currentFilters.language;
       if (licenseSelect) licenseSelect.value = currentFilters.license;
+      if (countrySelect) countrySelect.value = currentFilters.country;
       if (sortSelect) sortSelect.value = currentFilters.sort;
 
       updateClearSearchButtonVisibility();
@@ -218,20 +237,23 @@ const allLicenses = [
         updateUrl();
       });
 
-      [categorySelect, languageSelect, licenseSelect, sortSelect].forEach((select) => {
-        select.addEventListener("change", () => {
-          currentFilters = {
-            ...currentFilters,
-            category: categorySelect.value,
-            language: languageSelect.value,
-            license: licenseSelect.value,
-            sort: sortSelect.value || "name",
-            page: 1,
-          };
-          renderProjects();
-          updateUrl();
-        });
-      });
+      [categorySelect, languageSelect, licenseSelect, countrySelect, sortSelect].forEach(
+        (select) => {
+          select.addEventListener("change", () => {
+            currentFilters = {
+              ...currentFilters,
+              category: categorySelect.value,
+              language: languageSelect.value,
+              license: licenseSelect.value,
+              country: countrySelect.value,
+              sort: sortSelect.value || "name",
+              page: 1,
+            };
+            renderProjects();
+            updateUrl();
+          });
+        }
+      );
 
       resetButton.addEventListener("click", resetAllFilters);
       if (resetSearchButton) {
@@ -243,6 +265,7 @@ const allLicenses = [
         categorySelect.value = "";
         languageSelect.value = "";
         licenseSelect.value = "";
+        countrySelect.value = "";
         sortSelect.value = "name";
         currentFilters = {
           page: 1,
@@ -250,6 +273,7 @@ const allLicenses = [
           category: "",
           language: "",
           license: "",
+          country: "",
           sort: "name",
         };
         updateClearSearchButtonVisibility();
@@ -296,6 +320,12 @@ const allLicenses = [
             return false;
           // License
           if (currentFilters.license && el.dataset.license !== currentFilters.license) return false;
+          // Country (OR logic: show the project if the selected country is in the array)
+          if (
+            currentFilters.country &&
+            !el.dataset.country.split(",").includes(currentFilters.country)
+          )
+            return false;
           return true;
         }); // Sort
         filtered.sort((a, b) => {
