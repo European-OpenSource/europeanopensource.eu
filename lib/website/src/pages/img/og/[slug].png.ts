@@ -152,7 +152,7 @@ export const GET: APIRoute = async ({ props }) => {
                             fontSize: "20px",
                             fontWeight: 700,
                           },
-                          children: data.country,
+                          children: data.country[0],
                         },
                       },
                     ],

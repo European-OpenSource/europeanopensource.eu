@@ -46,7 +46,6 @@ convert_json_to_md() {
   # Handle basic properties
   description=$(jq -r '.description // ""' "${json_file}")
   category=$(jq -r '.category // ""' "${json_file}")
-  country=$(jq -r '.country // ""' "${json_file}")
 
   echo "name: $(yaml_string "${name}")" >>"${md_file}"
   echo "description: $(yaml_string "${description}")" >>"${md_file}"
@@ -58,7 +57,15 @@ convert_json_to_md() {
   fi
 
   echo "category: $(yaml_string "${category}")" >>"${md_file}"
-  echo "country: $(yaml_string "${country}")" >>"${md_file}"
+
+  # Handle country: array → YAML block array; fallback to scalar for legacy data
+  if jq -e '.country | type == "array"' "${json_file}" >/dev/null 2>&1; then
+    echo "country:" >>"${md_file}"
+    jq -r '.country[] | "  - " + .' "${json_file}" >>"${md_file}"
+  else
+    country=$(jq -r '.country // ""' "${json_file}")
+    echo "country: $(yaml_string "${country}")" >>"${md_file}"
+  fi
 
   # Handle source object
   echo "source:" >>"${md_file}"

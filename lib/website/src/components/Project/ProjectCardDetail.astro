@@ -19,26 +19,45 @@ const timeAgo = data.metadata?.created_at ? calculateTimeAgo(data.metadata.creat
   <div class="project-detail-card__meta">
     <div class="meta-item">
       <span class="meta-label">Language</span>
-      <Badge text={data.source.language} iconName="fa:code" color="alternative" size="small" />
+      <Badge
+        text={data.source.language}
+        iconName="fa:code"
+        iconPosition="start"
+        color="alternative"
+        size="small"
+      />
     </div>
     <div class="meta-item">
       <span class="meta-label">License</span>
       <Badge
         text={data.source.license}
         iconName="fa:balance-scale"
+        iconPosition="start"
         color="alternative"
         size="small"
       />
     </div>
     <div class="meta-item">
       <span class="meta-label">Platform</span>
-      <Badge text={data.source.platform} iconName={platformIcon} color="alternative" size="small" />
+      <Badge
+        text={data.source.platform}
+        iconName={platformIcon}
+        iconPosition="start"
+        color="alternative"
+        size="small"
+      />
     </div>
     {
       timeAgo && (
         <div class="meta-item">
           <span class="meta-label">Added</span>
-          <Badge text={timeAgo} iconName="fa:calendar" color="alternative" size="small" />
+          <Badge
+            text={timeAgo}
+            iconName="fa:calendar"
+            iconPosition="start"
+            color="alternative"
+            size="small"
+          />
         </div>
       )
     }

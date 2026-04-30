@@ -31,12 +31,18 @@ const breadcrumbItems = [
         size="large"
         link={`/projects/category/${toSlug(data.category)}`}
       />
-      <Badge
-        text={data.country}
-        color="secondary"
-        size="large"
-        link={`/projects/country/${toSlug(data.country)}`}
-      />
+      {
+        data.country.map((c) => (
+          <Badge
+            text={c}
+            color="secondary"
+            size="large"
+            iconName="fa:globe"
+            iconPosition="start"
+            link={`/projects/country/${toSlug(c)}`}
+          />
+        ))
+      }
     </div>
   </SectionHeaderStandard>
 
