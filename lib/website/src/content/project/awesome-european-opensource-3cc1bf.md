@@ -1,8 +1,9 @@
 ---
 name: "Awesome European OpenSource"
-description: "Italia Open-Source is not just a data collection platform, but a project everyone can participate in to discover and enhance Italian open-source projects"
+description: "A curated list of the best European open-source projects. The catalog that celebrates excellence and technological innovation made in Europe."
 category: "awesome-list"
-country: "Italy"
+country:
+  - Italy
 source:
   platform: "GitHub"
   url_repository: "https://github.com/European-OpenSource/awesome-european-opensource"
@@ -11,7 +12,7 @@ source:
 owner:
   name: "European OpenSource"
   type: "community"
-  url_website: "http://europeanopensource.eu"
+  url_website: "https://europeanopensource.eu"
 metadata:
   filename: awesome-european-opensource-3cc1bf.json
   created_at: 2025-10-26T21:23:48Z

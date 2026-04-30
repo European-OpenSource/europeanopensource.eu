@@ -2,7 +2,8 @@
 name: "Cheshire Cat AI"
 description: "Python framework to build AI agents and publish them on the web. Multi-user, multi-agent, extensible via plugins, supports MCP and A2A protocols."
 category: "ai"
-country: "Italy"
+country:
+  - Italy
 source:
   platform: "GitHub"
   url_repository: "https://github.com/cheshire-cat-ai/core"

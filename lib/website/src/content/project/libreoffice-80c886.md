@@ -2,7 +2,8 @@
 name: "LibreOffice"
 description: "LibreOffice is a free, open source and private office suite, used by millions of people around the world and the successor to OpenOffice. It is made by a worldwide community and backed by a non-profit organisation (The Document Foundation)."
 category: "app"
-country: "Germany"
+country:
+  - Germany
 source:
   platform: "Other"
   url_repository: "https://git.libreoffice.org"

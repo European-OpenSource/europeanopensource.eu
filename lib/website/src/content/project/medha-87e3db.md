@@ -6,7 +6,8 @@ tags:
   - semantic cache
   - text2query
 category: "library"
-country: "Italy"
+country:
+  - Italy
 source:
   platform: "GitHub"
   url_repository: "https://github.com/ArchAI-Labs/medha"

@@ -2,7 +2,8 @@
 name: "Synapse"
 description: "Synapse is the reference Matrix homeserver maintained by Element, powering federated, end-to-end encrypted real-time communications including messaging, VoIP, and file sharing. It underpins deployments across European governments and healthcare, including Germany's TI-Messenger and France's Tchap national messaging platform."
 category: "app"
-country: "United Kingdom"
+country:
+  - United Kingdom
 source:
   platform: "GitHub"
   url_repository: "https://github.com/element-hq/synapse"

@@ -2,7 +2,8 @@
 name: "Stackable Data Platform"
 description: "Stackable is an open-source, modular data platform for Kubernetes that enables modern data architectures including warehouses, lakehouses, and streaming pipelines. Built in Germany with a focus on data sovereignty, it provides operators for Apache Kafka, Spark, NiFi, Superset, and more, making enterprise data stacks fully self-hostable."
 category: "framework"
-country: "Germany"
+country:
+  - Germany
 source:
   platform: "GitHub"
   url_repository: "https://github.com/stackabletech/operator-rs"

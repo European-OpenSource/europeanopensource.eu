@@ -2,7 +2,8 @@
 name: "AsyncKeyedLock"
 description: "An asynchronous .NET library that allows you to lock based on a key (keyed semaphores), limiting concurrent threads sharing the same key to a specified number, with optional pooling for reducing memory allocations."
 category: "library"
-country: "Malta"
+country:
+  - Malta
 source:
   platform: "GitHub"
   url_repository: "https://github.com/MarkCiliaVincenti/AsyncKeyedLock"

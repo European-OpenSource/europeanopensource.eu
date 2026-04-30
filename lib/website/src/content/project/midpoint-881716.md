@@ -2,7 +2,8 @@
 name: "MidPoint"
 description: "MidPoint is the leading open-source identity governance and administration platform, engineered in Slovakia and recognized by Gartner and KuppingerCole. It automates the full identity lifecycle — provisioning, governance, compliance, and access management — with no license fees, flexible deployment, and EUPL-1.2 licensing."
 category: "app"
-country: "Slovakia"
+country:
+  - Slovakia
 source:
   platform: "GitHub"
   url_repository: "https://github.com/Evolveum/midpoint"
