@@ -13,6 +13,7 @@ owner:
   name: "Mastodon gGmbH"
   type: "organization"
   url_website: "https://joinmastodon.org"
+  is_a_startup: false
 metadata:
   filename: mastodon-739d2b.json
   created_at: 2026-04-18T10:00:00Z

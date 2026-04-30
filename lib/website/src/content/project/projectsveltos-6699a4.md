@@ -12,6 +12,7 @@ source:
 owner:
   name: "Gianluca Mardente"
   type: "individual"
+  is_a_startup: false
 metadata:
   filename: projectsveltos-6699a4.json
   created_at: 2026-03-03T20:09:51Z

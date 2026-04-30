@@ -85,7 +85,7 @@ convert_json_to_md() {
     owner_type=$(jq -r '.owner.type // ""' "${json_file}")
     owner_description=$(jq -r '.owner.description // ""' "${json_file}")
     owner_url=$(jq -r '.owner.url_website // ""' "${json_file}")
-    is_startup=$(jq -r '.owner.is_a_startup // ""' "${json_file}")
+    is_startup=$(jq -r 'if .owner | has("is_a_startup") then .owner.is_a_startup | tostring else "" end' "${json_file}")
 
     echo "  name: $(yaml_string "${owner_name}")" >>"${md_file}"
     echo "  type: $(yaml_string "${owner_type}")" >>"${md_file}"
@@ -104,8 +104,8 @@ convert_json_to_md() {
 
     # Handle owner tags if they exist
     if jq -e '.owner.tags' "${json_file}" >/dev/null 2>&1; then
-      owner_tags=$(jq -r '.compownerany.tags | join(", ")' "${json_file}")
-      echo "  tags: ${owner_tags}" >>"${md_file}"
+      echo "  tags:" >>"${md_file}"
+      jq -r '.owner.tags[] | "    - " + .' "${json_file}" >>"${md_file}"
     fi
   fi
 
@@ -169,6 +169,9 @@ EOF
   rm -Rf lib/website/src/content/project
   mv "${database_dir}"/* lib/website/src/content/project/
   rm -rf "${tmp_dir}" "${database_dir}"
+
+  echo "[INFO] Formatting generated files with Prettier"
+  cd "${ROOT_PATH}/lib/website" && yarn prettier --write "src/content/project/" --log-level warn
 
   echo "[INFO] Conversion complete"
   echo "[INFO] Metadata saved to: ${metadata_file}"

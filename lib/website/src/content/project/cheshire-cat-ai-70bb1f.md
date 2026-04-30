@@ -14,6 +14,7 @@ owner:
   type: "community"
   description: "AI for creativity, freedom and research."
   url_website: "https://cheshirecat.ai/"
+  is_a_startup: false
 metadata:
   filename: cheshire-cat-ai-70bb1f.json
   created_at: 2026-02-24T18:47:14Z

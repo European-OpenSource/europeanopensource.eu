@@ -14,6 +14,7 @@ owner:
   type: "organization"
   description: "Intermesh is a software development company. We develop Group-Office and tailor made modules for Group-Office."
   url_website: "https://www.group-office.com"
+  is_a_startup: false
 metadata:
   filename: group-office-groupware-and-crm-d5888d.json
   created_at: 2026-02-18T11:04:05Z

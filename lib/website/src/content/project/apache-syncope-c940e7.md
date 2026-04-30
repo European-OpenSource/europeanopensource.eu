@@ -13,6 +13,7 @@ owner:
   name: "The Apache Software Foundation"
   type: "community"
   url_website: "https://www.apache.org/"
+  is_a_startup: false
 metadata:
   filename: apache-syncope-c940e7.json
   created_at: 2026-02-24T18:47:14Z

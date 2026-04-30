@@ -13,6 +13,7 @@ owner:
   name: "KeePassXC"
   type: "community"
   url_website: "https://keepassxc.org"
+  is_a_startup: false
 metadata:
   filename: keepassxc-39d44b.json
   created_at: 2026-04-18T10:00:00Z

@@ -12,6 +12,7 @@ source:
 owner:
   name: "Andrea Selva"
   type: "individual"
+  is_a_startup: false
 metadata:
   filename: moquette-3ca99c.json
   created_at: 2026-03-10T11:48:54Z

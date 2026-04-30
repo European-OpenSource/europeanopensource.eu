@@ -13,6 +13,7 @@ owner:
   name: "DINUM"
   type: "organization"
   url_website: "https://www.numerique.gouv.fr"
+  is_a_startup: false
 metadata:
   filename: la-suite-docs-8a162e.json
   created_at: 2026-04-18T10:00:00Z

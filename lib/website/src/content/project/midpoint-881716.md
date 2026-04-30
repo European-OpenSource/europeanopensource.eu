@@ -13,6 +13,7 @@ owner:
   name: "Evolveum"
   type: "organization"
   url_website: "https://evolveum.com/"
+  is_a_startup: false
 metadata:
   filename: midpoint-881716.json
   created_at: 2026-04-18T10:00:00Z

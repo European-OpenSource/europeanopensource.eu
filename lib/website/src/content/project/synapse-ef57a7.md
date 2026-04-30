@@ -13,6 +13,7 @@ owner:
   name: "Element"
   type: "organization"
   url_website: "https://element.io"
+  is_a_startup: false
 metadata:
   filename: synapse-ef57a7.json
   created_at: 2026-04-18T10:00:00Z

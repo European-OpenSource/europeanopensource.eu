@@ -12,6 +12,7 @@ source:
 owner:
   name: "Matteo Cacciola"
   type: "individual"
+  is_a_startup: false
 metadata:
   filename: grinning-cat-9fd83d.json
   created_at: 2026-04-21T06:21:44Z

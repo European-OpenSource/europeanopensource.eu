@@ -12,6 +12,7 @@ source:
 owner:
   name: "Jody Donetti"
   type: "individual"
+  is_a_startup: false
 metadata:
   filename: fusioncache-b3f821.json
   created_at: 2026-03-03T20:09:51Z

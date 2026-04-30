@@ -17,6 +17,7 @@ owner:
   type: "community"
   description: "ArchAI-Labs is an innovation hub dedicated to bridging the gap between complex codebases and human understanding. We build autonomous agents and intelligent tools designed to automate documentation and enhance software observability."
   url_website: "https://github.com/ArchAI-Labs"
+  is_a_startup: false
 metadata:
   filename: medha-87e3db.json
   created_at: 2026-04-20T21:21:00Z
