@@ -1,0 +1,31 @@
+---
+name: "CryptPad"
+description: "CryptPad is an open-source, end-to-end encrypted collaborative office suite built in JavaScript. It offers real-time editing of documents, spreadsheets, presentations, and more with zero-knowledge encryption ensuring that neither the server nor any third party can access the content."
+tags:
+  - collaboration
+  - encryption
+  - privacy
+  - e2ee
+  - office-suite
+  - self-hosted
+  - gdpr
+  - digital-sovereignty
+category: "app"
+country:
+  - France
+source:
+  platform: "GitHub"
+  url_repository: "https://github.com/cryptpad/cryptpad"
+  url_documentation: "https://blueprints.cryptpad.org/"
+  license: "AGPL-3.0"
+  language: "JavaScript"
+owner:
+  name: "XWiki SAS"
+  type: "organization"
+  description: "XWiki SAS is a French open-source company founded in 2004, headquartered in Paris. The CryptPad team is composed of 7 people employed by XWiki SAS, led by David Benque. The project is funded by BPI France and is part of the German openDesk (Sovereign Workplace) initiative."
+  url_website: "https://www.xwiki.com"
+  is_a_startup: false
+metadata:
+  filename: cryptpad-5ef03f.json
+  created_at: 2026-04-30T21:30:35Z
+---
