@@ -1,0 +1,28 @@
+---
+import { Icon } from "astro-icon/components";
+import NavbarLink from "./NavbarLink.astro";
+import type { NavigationLink } from "@walle/config";
+
+interface Props {
+  items: Omit<NavigationLink, "dropdown">[];
+}
+
+const { items } = Astro.props;
+---
+
+<ul class="dropdown-menu" role="menu" data-component="NavbarDropdown">
+  {
+    items.map((item) => (
+      <li class="dropdown-item">
+        <NavbarLink
+          href={item.url}
+          target={item.target ?? (item.url.startsWith("http") ? "_blank" : "_self")}
+          class="dropdown-link"
+        >
+          {item.icon && <Icon name={item.icon} aria-hidden="true" size={16} />}
+          {item.name && <span>{item.name}</span>}
+        </NavbarLink>
+      </li>
+    ))
+  }
+</ul>

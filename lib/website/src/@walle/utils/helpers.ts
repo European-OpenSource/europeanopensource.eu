@@ -64,3 +64,39 @@ export function calculateReadingTime(content: string): {
     words: words,
   };
 }
+
+function getBasePath(): string {
+  return (import.meta.env.BASE_URL || "/").replace(/\/$/, "");
+}
+
+export function resolveInternalUrl(url: string): string {
+  if (!url) return url;
+
+  const isExternalLike = /^(?:[a-z]+:)?\/\//i.test(url);
+  if (
+    isExternalLike ||
+    url.startsWith("#") ||
+    url.startsWith("mailto:") ||
+    url.startsWith("tel:")
+  ) {
+    return url;
+  }
+
+  const basePath = getBasePath();
+
+  if (url === "/") {
+    return basePath || "/";
+  }
+
+  if (url.startsWith("/")) {
+    return `${basePath}${url}`;
+  }
+
+  return url;
+}
+
+export function normalizePath(path: string): string {
+  if (!path) return "/";
+  if (path === "/") return "/";
+  return path.replace(/\/$/, "");
+}

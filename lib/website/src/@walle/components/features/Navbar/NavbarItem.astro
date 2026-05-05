@@ -1,0 +1,34 @@
+---
+import { Icon } from "astro-icon/components";
+import NavbarDropdown from "./NavbarDropdown.astro";
+import NavbarLink from "./NavbarLink.astro";
+import type { NavigationLink } from "@walle/config";
+
+interface Props {
+  item: NavigationLink;
+}
+
+const { item } = Astro.props;
+const hasDropdown = item.dropdown && item.dropdown.length > 0;
+const itemTarget = item.target ?? (item.url.startsWith("http") ? "_blank" : "_self");
+---
+
+<li class:list={["nav-item", { "has-dropdown": hasDropdown }]} data-component="NavbarItem">
+  {
+    hasDropdown ? (
+      <div class="dropdown-container">
+        <button class="nav-link dropdown-trigger" aria-expanded="false" aria-haspopup="true">
+          {item.icon && <Icon name={item.icon} aria-hidden="true" size={20} />}
+          {item.name && <span>{item.name}</span>}
+          <Icon name="fa:chevron-down" aria-hidden="true" size={12} class="dropdown-arrow" />
+        </button>
+        <NavbarDropdown items={item.dropdown!} />
+      </div>
+    ) : (
+      <NavbarLink href={item.url} target={itemTarget} class="nav-link">
+        {item.icon && <Icon name={item.icon} aria-hidden="true" size={20} />}
+        {item.name && <span>{item.name}</span>}
+      </NavbarLink>
+    )
+  }
+</li>

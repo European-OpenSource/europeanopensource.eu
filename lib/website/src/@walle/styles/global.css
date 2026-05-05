@@ -41,33 +41,13 @@
   --radius-xl: 1.5rem;
 }
 
-@font-face {
-  font-family: "Ronzino-Regular";
-  src: url("/fonts/Ronzino-Regular.woff2") format("woff2");
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Ronzino-Bold";
-  src: url("/fonts/Ronzino-Bold.woff2") format("woff2");
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-}
-
 html {
   scroll-behavior: smooth;
   height: 100%;
 }
 
 body {
-  font-family:
-    "Ronzino-Regular",
-    system-ui,
-    -apple-system,
-    sans-serif;
+  font-family: var(--font-body, system-ui, -apple-system, sans-serif);
   letter-spacing: 0.01em;
   margin: 0;
   padding: 0;
@@ -102,11 +82,7 @@ h6 {
   line-height: 1.2;
   color: var(--black);
   font-weight: 700;
-  font-family:
-    "Ronzino-Bold",
-    system-ui,
-    -apple-system,
-    sans-serif;
+  font-family: var(--font-heading, var(--font-body, system-ui, -apple-system, sans-serif));
 }
 h1 {
   font-size: clamp(2.5rem, 5vw, 3.5rem);
@@ -134,11 +110,7 @@ h5 {
 strong,
 b {
   font-weight: 700;
-  font-family:
-    "Ronzino-Bold",
-    system-ui,
-    -apple-system,
-    sans-serif;
+  font-family: var(--font-heading, var(--font-body, system-ui, -apple-system, sans-serif));
   color: var(--black);
 }
 

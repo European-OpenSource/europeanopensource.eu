@@ -2,6 +2,7 @@
 const today = new Date();
 import type { FooterConfig, NavigationLink } from "@walle/config";
 import config from "@walle/config";
+import { resolveInternalUrl } from "@walle/utils";
 import { Icon } from "astro-icon/components";
 
 const footerConfig: FooterConfig = config.footer;
@@ -21,7 +22,7 @@ const shouldShowBrand = hasLogo || hasTitle;
         {
           shouldShowBrand && (
             <a
-              href={footerConfig.logo.url}
+              href={resolveInternalUrl(footerConfig.logo.url)}
               class={`brand-link ${footerConfig.logo.cssClasses || ""}`}
             >
               {hasLogo && (
@@ -51,7 +52,11 @@ const shouldShowBrand = hasLogo || hasTitle;
 
     <div class="footer-section footer-center">
       <nav class="footer-nav">
-        {navigationLinks.map((item: NavigationLink) => <a href={item.url}>{item.name}</a>)}
+        {
+          navigationLinks.map((item: NavigationLink) => (
+            <a href={resolveInternalUrl(item.url)}>{item.name}</a>
+          ))
+        }
       </nav>
     </div>
 

@@ -22,7 +22,8 @@ export interface NavigationLink {
   name?: string;
   url: string;
   icon?: string;
-  children?: NavigationLink[];
+  target?: "_blank" | "_self";
+  dropdown?: Omit<NavigationLink, "dropdown">[];
 }
 
 export interface NavbarLogo {

@@ -27,6 +27,7 @@ const {
 ---
 
 <BaseLayout headerTitle={title} headerDescription={description} headerImage={image}>
+  <slot name="head" slot="head" />
   <slot name="before" />
   {
     draft ? (

@@ -1,7 +1,7 @@
 ---
 import { BasicCard, BlogFilters } from "@walle/components";
 import { BaseLayout } from "@walle/layouts";
-import { formatDate } from "@walle/utils";
+import { formatDate, resolveInternalUrl } from "@walle/utils";
 import { getCollection } from "astro:content";
 import type { PostsEntry } from "src/pages/blog/interfaces";
 
@@ -39,6 +39,7 @@ const allCategories: string[] = Array.from(
 ---
 
 <BaseLayout headerTitle={headerTitle}>
+  <slot name="head" slot="head" />
   <main class="blog-layout">
     <div class="blog-layout__header">
       <slot />
@@ -64,8 +65,8 @@ const allCategories: string[] = Array.from(
                 <BasicCard
                   title={post.data.title}
                   content={post.data.description}
-                  linkUrl={`/blog/${post.id}`}
-                  imageUrl={post.data.image || "/img/posts/default.jpg"}
+                  linkUrl={resolveInternalUrl(`/blog/${post.id}`)}
+                  imageUrl={resolveInternalUrl(post.data.image || "/img/posts/default.jpg")}
                   imageAlt={post.data.title}
                   badge={badge}
                   publishDate={

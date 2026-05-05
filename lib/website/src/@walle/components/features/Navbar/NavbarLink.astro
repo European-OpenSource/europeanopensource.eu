@@ -1,19 +1,27 @@
 ---
 import type { HTMLAttributes } from "astro/types";
+import { normalizePath, resolveInternalUrl } from "@walle/utils";
 
 type Props = HTMLAttributes<"a">;
 
 const { href, class: className, ...props } = Astro.props;
-const pathname = Astro.url.pathname.replace(import.meta.env.baseUrl, "");
-const subpath = pathname.match(/[^\/]+/g);
-const isActive = href === pathname || href === "/" + (subpath?.[0] || "");
+const resolvedHref = resolveInternalUrl(String(href || ""));
+const currentPath = normalizePath(Astro.url.pathname);
+const targetPath = normalizePath(resolvedHref);
+const isInternal = targetPath.startsWith("/");
+const isHome = isInternal && targetPath === normalizePath(import.meta.env.BASE_URL || "/");
+const isActive =
+  isInternal &&
+  (isHome
+    ? currentPath === targetPath
+    : currentPath === targetPath || currentPath.startsWith(`${targetPath}/`));
 ---
 
 <a
-  href={href}
+  href={resolvedHref}
   class:list={[className, { active: isActive }]}
   {...props}
-  aria-label={`Go to ${href}`}
+  aria-label={`Go to ${resolvedHref}`}
 >
   <slot />
 </a>

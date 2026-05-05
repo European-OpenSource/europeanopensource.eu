@@ -1,0 +1,17 @@
+---
+import NavbarItem from "./NavbarItem.astro";
+import type { NavigationLink } from "@walle/config";
+
+interface Props {
+  items: NavigationLink[];
+  navId: string;
+}
+
+const { items, navId } = Astro.props;
+---
+
+<div class="nav-container" id={navId}>
+  <ul class="nav-links" data-nav-level="1" data-component="NavbarLinks">
+    {items.map((item) => <NavbarItem item={item} />)}
+  </ul>
+</div>

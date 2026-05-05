@@ -5,13 +5,18 @@ import { AbstractLayout } from "@walle/layouts";
 ---
 
 <AbstractLayout {...Astro.props}>
+  <slot name="head" slot="head" />
   <header role="banner">
-    <Navbar config={config.navbar || {}} />
+    <slot name="navbar">
+      <Navbar config={config.navbar || {}} />
+    </slot>
   </header>
   <main id="main-content" tabindex="-1" role="main">
     <slot />
   </main>
   <footer role="contentinfo">
-    <Footer />
+    <slot name="footer">
+      <Footer />
+    </slot>
   </footer>
 </AbstractLayout>

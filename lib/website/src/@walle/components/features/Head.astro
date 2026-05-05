@@ -1,5 +1,6 @@
 ---
 import config from "@walle/config";
+import { resolveInternalUrl } from "@walle/utils";
 import "@walle/styles/global.css";
 
 interface Props {
@@ -24,13 +25,14 @@ const {
 
 const titleSeo = title + " | " + config.app.website.title;
 const ogImageUrl = ogImage ?? new URL(image, Astro.url);
+const resolvedFavicon = resolveInternalUrl(favicon);
 ---
 
 <!-- Global Metadata -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<link rel="icon" type="image/svg+xml" href={favicon} />
-<link rel="sitemap" href="/sitemap-index.xml" />
+<link rel="icon" type="image/svg+xml" href={resolvedFavicon} />
+<link rel="sitemap" href={resolveInternalUrl("/sitemap-index.xml")} />
 <link
   rel="alternate"
   type="application/rss+xml"
@@ -38,10 +40,6 @@ const ogImageUrl = ogImage ?? new URL(image, Astro.url);
   href={new URL("rss.xml", Astro.site)}
 />
 <meta name="generator" content={Astro.generator} />
-
-<!-- Font preloads -->
-<link rel="preload" href="/fonts/NectoMono-Regular.woff2" as="font" type="font/woff2" crossorigin />
-<link rel="preload" href="/fonts/Ronzino-Regular.woff2" as="font" type="font/woff2" crossorigin />
 
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />

@@ -148,18 +148,5 @@ const { title, steps, centered = true, type = null } = Astro.props;
 </style>
 
 <script>
-  // Animazione reveal on scroll, minimale e accessibile
-  document.addEventListener("DOMContentLoaded", () => {
-    const steps = document.querySelectorAll(".flow-step");
-    const reveal = () => {
-      steps.forEach((step, i) => {
-        const rect = step.getBoundingClientRect();
-        if (rect.top < window.innerHeight - 80) {
-          setTimeout(() => step.classList.add("visible"), i * 120);
-        }
-      });
-    };
-    reveal();
-    window.addEventListener("scroll", reveal, { passive: true });
-  });
+  import "@walle/scripts/sectionFlow.ts";
 </script>

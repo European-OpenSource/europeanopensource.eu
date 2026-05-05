@@ -7,19 +7,19 @@
   },
   "items": [
     {
-      "name": "HOME",
+      "name": "Home",
       "url": "/"
     },
     {
-      "name": "CATALOG",
+      "name": "Catalog",
       "url": "/projects"
     },
     {
-      "name": "SUBMIT PROJECT",
+      "name": "Submit Project",
       "url": "/form"
     },
     {
-      "name": "NEWSLETTER",
+      "name": "Newsletter",
       "url": "/newsletter"
     },
     {
