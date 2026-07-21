@@ -1,0 +1,4 @@
+# .harness-coding/config.yml — cli.sh config
+#
+# Precedence for the template ref used by cli.sh: --ref flag > version (below) > "main"
+version: main

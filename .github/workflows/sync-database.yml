@@ -18,16 +18,20 @@ jobs:
 
       - uses: extractions/setup-just@v4
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version-file: lib/website/.nvmrc
+          node-version-file: .nvmrc
           cache: 'yarn'
-          cache-dependency-path: lib/website/yarn.lock
+          cache-dependency-path: yarn.lock
 
       - name: Install dependencies
-        working-directory: lib/website
-        run: yarn install --frozen-lockfile
+        run: |
+          corepack prepare --activate
+          yarn install --immutable
 
       - name: Load env
         id: env
@@ -68,7 +72,7 @@ jobs:
           fi
 
           # Skip build if only metadata.json has changed and the pipeline was triggered by awesome-european-opensource
-          if [[ "${{ github.event_name }}" == "repository_dispatch" ]] && [[ "${status}" == " M lib/website/src/content/metadata.json" ]] ; then
+          if [[ "${{ github.event_name }}" == "repository_dispatch" ]] && [[ "${status}" == " M src/content/metadata.json" ]] ; then
             echo "Only metadata.json changed, skipping build"
             echo "has_changed=false" >> $GITHUB_OUTPUT
             exit 0
@@ -87,7 +91,7 @@ jobs:
           commit-message: 'feat(website): sync database'
           author: 'FabrizioCafolla <${{ secrets.GH_ACTION_MAIL }}>'
           add-paths: |
-            lib/website/src/content/*
+            src/content/*
 
       - name: Update comment
         if: ${{ success() && github.event.client_payload.slash_command.args.named.comment_id }}

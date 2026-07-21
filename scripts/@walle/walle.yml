@@ -1,0 +1,60 @@
+# walle.yml — single source of truth for what `cli.sh` writes into a consumer.
+#
+# Real YAML (yq-readable), but each entry's fields are pipe-separated so the CLI can
+# parse it with awk alone — no YAML runtime dependency (it must run as `curl | bash`).
+# Edit here to change what is MANAGED, SEED, or INJECT. The CLI reads only this file;
+# no code change is needed to add a path or a module.
+#
+#   managed:  <module> | <src, relative to walle/> | <dest, relative to consumer>
+#             Overwritten on every `update`. Consumer-read-only (@walle contract).
+#   seed:     <module> | <src> | <dest>
+#             Written once at init/add if absent; `update` never touches it again.
+#   inject:   <module> | <src block> | <dest> | <kind>
+#             A marker-bounded block kept in sync inside a file the consumer owns.
+#             kind: sh | json-object | json-array:<key> | agents (generated block)
+#
+# Seed starter files come straight from walle/website/ (the source of truth), minus the
+# paths under `website-seed-exclude` (managed zones, dev tooling, build artifacts).
+
+managed:
+  - website | website/src/@walle | src/@walle
+  - website | website/schemas | schemas
+  - website | cli | scripts/@walle
+  - website | walle.yml | scripts/@walle/walle.yml
+  - ci | ci/managed | .github/workflows/actions/@walle
+  - ai | ai/managed/skills | .claude/skills/@walle
+
+seed:
+  - ci | ci/seed/.github/workflows/test.yml | .github/workflows/test.yml
+  - ci | ci/seed/.github/workflows/deploy.yml | .github/workflows/deploy.yml
+  - backend | backend/seed/src/pages/api/health.ts | src/pages/api/health.ts
+  - backend | backend/seed/src/pages/api/echo.ts | src/pages/api/echo.ts
+  - backend | backend/seed/src/middleware.ts | src/middleware.ts
+  - infrastructure | infrastructure/seed/infrastructure/main.tf | infrastructure/main.tf
+  - infrastructure | infrastructure/seed/infrastructure/variables.tf | infrastructure/variables.tf
+  - infrastructure | infrastructure/seed/infrastructure/providers.tf | infrastructure/providers.tf
+  - infrastructure | infrastructure/seed/infrastructure/outputs.tf | infrastructure/outputs.tf
+  - infrastructure | infrastructure/seed/infrastructure/README.md | infrastructure/README.md
+  - infrastructure | infrastructure/seed/infrastructure/.gitignore | infrastructure/.gitignore
+  - harness-coding | harness-coding/seed/justfile.project | justfile.project
+  - harness-coding | harness-coding/seed/.husky/pre-commit | .husky/pre-commit
+  - harness-coding | harness-coding/seed/.husky/pre-push | .husky/pre-push
+  - harness-coding | harness-coding/seed/docker-compose.project.yml | .devcontainer/docker-compose.project.yml
+
+inject:
+  - website | harness-coding/inject/justfile.project.block | justfile.project | sh
+  - website | harness-coding/inject/vscode-settings.block.json | .vscode/settings.json | json-object
+  - website | harness-coding/inject/vscode-extensions.block.json | .vscode/extensions.json | json-array:recommendations
+  - harness-coding | harness-coding/inject/setup-devcontainer.project.block.sh | .devcontainer/scripts/setup-devcontainer.project.sh | sh
+  - ai | - | AGENTS.md | agents
+
+website-seed-exclude:
+  - src/@walle
+  - schemas
+  - astrobook
+  - tests
+  - playwright.config.ts
+  - playwright.astrobook.config.ts
+  - vitest.config.ts
+  - .gitignore
+  - .env

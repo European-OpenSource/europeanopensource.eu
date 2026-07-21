@@ -1,0 +1,8 @@
+# Walle consumer config. Modules mirror .walle/manifest.json (authoritative).
+# Add/remove modules with 'walle add <module>' or the init flags, not by hand.
+modules:
+  - website
+  - ci
+  - ai
+# Copy the walle wiki into .walle/docs/ on update. Set false to skip.
+docs: true

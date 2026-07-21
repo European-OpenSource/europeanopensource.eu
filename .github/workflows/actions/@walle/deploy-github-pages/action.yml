@@ -10,36 +10,41 @@ inputs:
   publish_dir:
     description: "Directory to publish"
     required: true
-    default: "./lib/website/dist"
+    default: "./dist"
   cname:
     description: "Custom domain for GitHub Pages"
     required: false
     default: ""
+  working_dir:
+    description: "Website working dir"
+    required: false
+    default: "."
 
 runs:
   using: "composite"
   steps:
     - name: Checkout your repository using git
-      uses: actions/checkout@v5
+      uses: actions/checkout@v7
+    # Must run before setup-node's cache: yarn — see comment in website-tests/action.yml.
+    - name: Enable Corepack
+      shell: bash
+      run: corepack enable
     - name: Set up Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
-        node-version-file: lib/website/.nvmrc
-        cache: "yarn"
-        cache-dependency-path: lib/website/yarn.lock
-    - name: Install dependencies
+        node-version-file: ${{ inputs.working_dir }}/.nvmrc
+        cache: yarn
+        cache-dependency-path: ${{ inputs.working_dir }}
+    - name: Install & Build
       shell: bash
-      working-directory: lib/website
+      working-directory: ${{ inputs.working_dir }}
       run: |
-        yarn install --frozen-lockfile
-    - name: Build Astro site
-      shell: bash
-      working-directory: lib/website
-      run: |
+        corepack prepare --activate
+        yarn install --immutable
         yarn build
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ inputs.token }}
-        publish_dir: ${{ inputs.publish_dir }}
+        publish_dir: ${{ inputs.working_dir }}/${{ inputs.publish_dir }}
         cname: ${{ inputs.cname }}

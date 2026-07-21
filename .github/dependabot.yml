@@ -8,7 +8,7 @@ updates:
       - "dependencies"
       - "dependencies-actions"
   - package-ecosystem: "npm"
-    directory: "/lib/website"
+    directory: "/"
     schedule:
       interval: "weekly"
     labels:

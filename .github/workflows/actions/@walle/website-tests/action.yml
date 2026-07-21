@@ -3,24 +3,38 @@ description: |
   This workflow tests your Astro site.
   It runs linting and other checks to ensure code quality.
 
+inputs:
+  working_dir:
+    description: "Website working dir"
+    required: false
+    default: "."
+
 runs:
   using: "composite"
   steps:
     - name: Checkout your repository using git
-      uses: actions/checkout@v5
+      uses: actions/checkout@v7
+    # Must run before setup-node's cache: yarn — that step shells out to `yarn` to resolve
+    # the cache dir, and the runner's global Yarn 1.x refuses once package.json pins
+    # packageManager: yarn@4.17.0. Enabling Corepack first makes `yarn` resolve to the
+    # pinned version via the Corepack shim.
+    - name: Enable Corepack
+      shell: bash
+      run: corepack enable
     - name: Set up Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
-        node-version-file: lib/website/.nvmrc
-        cache: "yarn"
-        cache-dependency-path: lib/website/yarn.lock
+        node-version-file: ${{ inputs.working_dir }}/.nvmrc
+        cache: yarn
+        cache-dependency-path: ${{ inputs.working_dir }}
     - name: Install dependencies
+      working-directory: ${{ inputs.working_dir }}
       shell: bash
-      working-directory: lib/website
       run: |
-        yarn install --frozen-lockfile
+        corepack prepare --activate
+        yarn install --immutable
     - name: Run Astro Lint
+      working-directory: ${{ inputs.working_dir }}
       shell: bash
-      working-directory: lib/website
       run: |
         yarn lint

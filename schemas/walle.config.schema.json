@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://walle.dev/schemas/walle.config.schema.json",
+  "title": "Walle consumer manifest (.walle/manifest.json)",
+  "version": "2.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "name", "walleVersion", "modules", "updatedAt"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": {
+      "const": 2,
+      "description": "Manifest contract version. v2 is the current format."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Consumer project name."
+    },
+    "walleVersion": {
+      "description": "Pinned semver tag (vX.Y.Z, optionally with a prerelease suffix like v1.2.3-beta) or the special value 'local' for local-source dev/test mode.",
+      "oneOf": [
+        { "type": "string", "pattern": "^v\\d+\\.\\d+\\.\\d+(-[0-9A-Za-z.]+)?$" },
+        { "const": "local" }
+      ]
+    },
+    "sourceRef": {
+      "type": "string",
+      "description": "Informational reference (path or SHA) of the source. Required when walleVersion is 'local'."
+    },
+    "modules": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["website", "ci", "ai", "backend", "infrastructure"],
+        "description": "Sync-able modules. 'website' is mandatory; any other value is an unknown-module error."
+      },
+      "contains": { "const": "website" },
+      "description": "Whitelist of modules to sync. Must include 'website'."
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "devcontainer": {
+      "type": "object",
+      "description": "Devcontainer scaffold settings.",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Seed a .devcontainer/ scaffold at init. Default: true."
+        }
+      }
+    },
+    "files": {
+      "type": "object",
+      "description": "Every path walle wrote, grouped by class then keyed by dest path → module.",
+      "additionalProperties": false,
+      "properties": {
+        "managed": { "type": "object", "additionalProperties": { "type": "string" } },
+        "seed": { "type": "object", "additionalProperties": { "type": "string" } },
+        "inject": { "type": "object", "additionalProperties": { "type": "string" } }
+      }
+    }
+  },
+  "if": {
+    "properties": { "walleVersion": { "const": "local" } }
+  },
+  "then": {
+    "required": ["sourceRef"]
+  }
+}

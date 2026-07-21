@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://walle.dev/schemas/app.schema.json",
+  "title": "Walle app config (src/configs/app.json)",
+  "version": "2.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["website", "astro"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "website": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "description"],
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "favicon": { "type": "string" },
+        "image": { "type": "string" },
+        "robots": { "type": "string" },
+        "language": { "type": "string" }
+      }
+    },
+    "astro": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["baseUrl", "basePath"],
+      "properties": {
+        "baseUrl": { "type": "string" },
+        "basePath": { "type": "string" },
+        "trailingSlash": { "enum": ["always", "never", "ignore"] },
+        "analyticsScriptContent": { "type": "string" },
+        "ssr": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Optional SSR config. Absent or enabled:false => static output (default).",
+          "properties": {
+            "enabled": { "type": "boolean", "default": false },
+            "adapter": { "enum": ["node"], "default": "node" }
+          }
+        }
+      }
+    },
+    "components": {
+      "type": "object",
+      "description": "Per-component variant selection. Absent key => 'standard'.",
+      "additionalProperties": { "type": "string" },
+      "properties": {
+        "navbar": { "type": "string", "default": "standard" },
+        "footer": { "type": "string", "default": "standard" }
+      }
+    }
+  }
+}

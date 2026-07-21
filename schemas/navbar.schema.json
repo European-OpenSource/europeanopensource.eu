@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://walle.dev/schemas/navbar.schema.json",
+  "title": "Walle navbar config (src/configs/navbar.json)",
+  "version": "2.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["logo", "items"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "logo": { "$ref": "#/definitions/logo" },
+    "items": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/navigationLink" }
+    }
+  },
+  "definitions": {
+    "logo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["url"],
+      "properties": {
+        "src": { "type": "string" },
+        "title": { "type": "string" },
+        "url": { "type": "string" },
+        "width": { "type": "number" },
+        "height": { "type": "number" },
+        "alt": { "type": "string" },
+        "cssClasses": { "type": "string" },
+        "license": { "type": "string" }
+      }
+    },
+    "navigationLink": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["url"],
+      "properties": {
+        "name": { "type": "string" },
+        "url": { "type": "string" },
+        "icon": { "type": "string" },
+        "target": { "enum": ["_blank", "_self"] },
+        "dropdown": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/dropdownLink" }
+        }
+      }
+    },
+    "dropdownLink": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["url"],
+      "properties": {
+        "name": { "type": "string" },
+        "url": { "type": "string" },
+        "icon": { "type": "string" },
+        "target": { "enum": ["_blank", "_self"] }
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+---
+import { Analytics, Head } from "@walle/components";
+import config from "@walle/config";
+import "@walle/styles/global.css";
+// Generated theme tokens (overrides walle defaults, overridden by consumer global.css).
+import "virtual:walle-theme.css";
+import "@styles/global.css";
+
+const {
+  headerTitle = "",
+  headerDescription = config.app.website.description || "",
+  headerImage = config.app.website.image || null,
+  headerOgImage = null,
+  headerRobots = config.app.website.robots || "index, follow",
+  headerLanguage = config.app.website.language || "",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang={headerLanguage}>
+  <head>
+    <Head
+      title={headerTitle}
+      description={headerDescription}
+      image={headerImage}
+      ogImage={headerOgImage}
+      robots={headerRobots}
+    />
+    <slot name="head" />
+  </head>
+  <body>
+    <slot />
+    <Analytics
+      enable={config.env.IS_PRODUCTION || false}
+      scriptContent={config.app.astro.analyticsScriptContent || ""}
+    />
+  </body>
+</html>
