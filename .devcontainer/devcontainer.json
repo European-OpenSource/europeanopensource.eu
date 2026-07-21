@@ -1,0 +1,52 @@
+{
+  "name": "Harness Coding",
+  "dockerComposeFile": [
+    "docker-compose.yml",
+    "docker-compose.project.yml",
+    "docker-compose.local.yml"
+  ],
+  "service": "devcontainer",
+  "workspaceFolder": "/workspace",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+      "moby": false
+    },
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "installOhMyZsh": true,
+      "configureZshAsDefaultShell": true,
+      "username": "devuser"
+    },
+    "ghcr.io/fabriziocafolla/harness-ai/harness-ai:0": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Anthropic.claude-code",
+        "yzhang.markdown-all-in-one",
+        "davidanson.vscode-markdownlint",
+        "bierner.markdown-mermaid",
+        "esbenp.prettier-vscode",
+        "timonwong.shellcheck",
+        "redhat.vscode-yaml",
+        "ms-vscode.vscode-typescript-next",
+        "ms-python.python",
+        "ms-python.debugpy",
+        "ms-python.vscode-python-envs",
+        "ms-vscode.makefile-tools",
+        "mechatroner.rainbow-csv",
+        "ms-azuretools.vscode-containers",
+        "eamodio.gitlens",
+        "PKief.material-icon-theme"
+      ]
+    }
+  },
+  "containerEnv": {
+    "WORKSPACE_DIR": "/workspace"
+  },
+  "initializeCommand": "[ -f .devcontainer/.env ] || touch .devcontainer/.env; grep -q LOCAL_UID .devcontainer/.env || echo LOCAL_UID=$(id -u) >> .devcontainer/.env; grep -q LOCAL_GID .devcontainer/.env || echo LOCAL_GID=$(id -g) >> .devcontainer/.env; [ -f .devcontainer/docker-compose.local.yml ] || printf 'services:\\n  devcontainer: {}\\n' > .devcontainer/docker-compose.local.yml",
+  "postCreateCommand": "harnessai install",
+  "postStartCommand": "harnessai sync && just setup",
+  "remoteUser": "devuser",
+  "shutdownAction": "stopCompose"
+}

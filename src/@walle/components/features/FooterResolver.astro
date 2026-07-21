@@ -1,0 +1,13 @@
+---
+// Resolves the footer variant selected in app.json (`components.footer`), defaulting to "standard".
+// Unknown variants are rejected at build time by assertVariants in define-config.ts.
+import config from "@walle/config";
+import Standard from "./Footer.astro";
+import Minimal from "./Footer.minimal.astro";
+
+const VARIANTS = { standard: Standard, minimal: Minimal } as const;
+const selected = config.app.components?.footer ?? "standard";
+const Variant = VARIANTS[selected as keyof typeof VARIANTS] ?? Standard;
+---
+
+<Variant />

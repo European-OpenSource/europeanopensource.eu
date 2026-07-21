@@ -1,0 +1,68 @@
+{
+  "$schema": "../schemas/walle.config.schema.json",
+  "schemaVersion": 2,
+  "name": "europeanopensource.eu",
+  "walleVersion": "v0.2.1",
+  "modules": [
+    "website",
+    "ci",
+    "ai"
+  ],
+  "devcontainer": {
+    "enabled": true
+  },
+  "files": {
+    "managed": {
+      "src/@walle": "website",
+      "schemas": "website",
+      "scripts/@walle": "website",
+      "scripts/@walle/walle.yml": "website",
+      ".github/workflows/actions/@walle": "ci",
+      ".claude/skills/@walle": "ai"
+    },
+    "seed": {
+      ".yarnrc.yml": "website",
+      "astro.config.mjs": "website",
+      ".prettierignore": "website",
+      "public/img/posts/example/img-1.jpg": "website",
+      "public/img/posts/default.jpg": "website",
+      "public/fonts/Ronzino-Regular.woff2": "website",
+      "public/fonts/NectoMono-Regular.woff2": "website",
+      "public/fonts/Ronzino-Bold.woff2": "website",
+      ".prettierrc.json": "website",
+      "package.json": "website",
+      ".nvmrc": "website",
+      "tsconfig.json": "website",
+      "eslint.config.js": "website",
+      "src/content.config.ts": "website",
+      "src/content/posts/example-2.md": "website",
+      "src/content/posts/example.md": "website",
+      "src/utils/helpers.ts": "website",
+      "src/utils/index.js": "website",
+      "src/styles/global.css": "website",
+      "src/layouts/.gitkeep": "website",
+      "src/configs/app.json": "website",
+      "src/configs/footer.json": "website",
+      "src/configs/index.js": "website",
+      "src/configs/navbar.json": "website",
+      "src/pages/index.astro": "website",
+      "src/pages/blog/index.astro": "website",
+      "src/pages/blog/[...slug].astro": "website",
+      "src/pages/blog/interfaces.ts": "website",
+      ".github/workflows/test.yml": "ci",
+      ".github/workflows/deploy.yml": "ci",
+      "justfile.project": "harness-coding",
+      ".husky/pre-commit": "harness-coding",
+      ".husky/pre-push": "harness-coding",
+      ".devcontainer/docker-compose.project.yml": "harness-coding"
+    },
+    "inject": {
+      "justfile.project": "website",
+      ".vscode/settings.json": "website",
+      ".vscode/extensions.json": "website",
+      "AGENTS.md": "ai",
+      ".devcontainer/scripts/setup-devcontainer.project.sh": "harness-coding"
+    }
+  },
+  "updatedAt": "2026-07-21T20:34:09Z"
+}

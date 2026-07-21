@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://walle.dev/schemas/theme.schema.json",
+  "title": "Walle theme tokens (src/configs/theme.json)",
+  "version": "0.1.0-beta",
+  "description": "Design tokens mapped to CSS custom properties. Every token is optional; missing tokens fall back to walle defaults. src/styles/global.css always wins. Mappings: palette.<n> → --walle-color-<n>, typography.fontFamilyBase → --walle-font-body, typography.fontFamilyHeading → --walle-font-heading, typography.fontFamilyMono → --walle-font-mono, spacing.<n> → --walle-space-<n>, radii.<n> → --walle-radius-<n>.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "palette": {
+      "type": "object",
+      "description": "Color tokens. palette.<name> => --walle-color-<name>.",
+      "additionalProperties": { "type": "string" },
+      "properties": {
+        "primary": { "type": "string" },
+        "secondary": { "type": "string" },
+        "background": { "type": "string" },
+        "foreground": { "type": "string" },
+        "accent": { "type": "string" },
+        "muted": { "type": "string" }
+      }
+    },
+    "typography": {
+      "type": "object",
+      "description": "Typography tokens. fontFamilyBase → --walle-font-body, fontFamilyHeading → --walle-font-heading, fontFamilyMono → --walle-font-mono, scale.<name> → --walle-font-size-<name>.",
+      "additionalProperties": false,
+      "properties": {
+        "fontFamilyBase": { "type": "string" },
+        "fontFamilyHeading": { "type": "string" },
+        "fontFamilyMono": { "type": "string" },
+        "scale": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    },
+    "spacing": {
+      "type": "object",
+      "description": "Spacing tokens. spacing.<name> → --walle-space-<name>.",
+      "additionalProperties": { "type": "string" }
+    },
+    "radii": {
+      "type": "object",
+      "description": "Border-radius tokens. radii.<name> → --walle-radius-<name>.",
+      "additionalProperties": { "type": "string" }
+    }
+  }
+}

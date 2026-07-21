@@ -1,0 +1,19 @@
+---
+// Resolves the navbar variant selected in app.json (`components.navbar`), defaulting to "standard",
+// forwarding the navbar config prop. Unknown variants are rejected at build time by assertVariants.
+import config from "@walle/config";
+import type { NavbarConfig } from "@walle/config";
+import Standard from "./Navbar.astro";
+import Minimal from "./Navbar.minimal.astro";
+
+export interface Props {
+  config: NavbarConfig;
+}
+
+const { config: navbarConfig } = Astro.props;
+const VARIANTS = { standard: Standard, minimal: Minimal } as const;
+const selected = config.app.components?.navbar ?? "standard";
+const Variant = VARIANTS[selected as keyof typeof VARIANTS] ?? Standard;
+---
+
+<Variant config={navbarConfig} />

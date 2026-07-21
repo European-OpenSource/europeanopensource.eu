@@ -1,0 +1,85 @@
+# justfile.tooling — template-managed (REPLACE)
+#
+# Commands for the AI/harness tooling provisioned by this template.
+# Not customized locally: put project overrides in justfile.project,
+# personal ones in justfile.local.
+
+help:
+  @just --list
+
+# ── Auth ──────────────────────────────────────────────────────────────────────
+
+[group('auth')]
+gh-login:
+  @gh auth login
+
+[group('auth')]
+claude-login:
+  @claude auth login
+
+[group('auth')]
+opencode-login:
+  @opencode auth login
+
+# ── Tools ─────────────────────────────────────────────────────────────────────
+
+[group('tools')]
+tools-update:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  command -v claude   &>/dev/null && { echo "[INFO] Updating claude-code"; claude update || true; }
+  command -v copilot  &>/dev/null && { echo "[INFO] Updating copilot"; yes | copilot update || true; }
+  command -v opencode &>/dev/null && { echo "[INFO] Updating opencode"; opencode upgrade || true; }
+  command -v openspec &>/dev/null && { echo "[INFO] Updating openspec"; openspec update --force || true; }
+
+[group('tools')]
+harness-coding *args:
+  @curl -fsSL https://raw.githubusercontent.com/FabrizioCafolla/harness-coding/main/cli.sh | bash -s -- {{args}}
+
+[group('tools')]
+harness-ai *args:
+  @curl -fsSL https://raw.githubusercontent.com/FabrizioCafolla/harness-ai/main/cli.sh | GITHUB_TOKEN=$(gh auth token || false) bash -s -- {{args}}
+
+
+[group('tools')]
+llama-server *args:
+  @llama-server {{args}}
+
+[group('tools')]
+llama-cli *args:
+  @llama-cli {{args}}
+
+[group('tools')]
+doctor:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  check() {
+    local name="$1" bin="$2" enable_var="$3" origin="$4"
+    local enabled="${!enable_var:-false}"
+    if command -v "$bin" &>/dev/null; then
+      version="$("$bin" --version 2>&1 | head -1 || true)"
+      echo "[OK]   $name — installed ($version) — origin: $origin"
+    elif [[ "$enabled" == "true" ]]; then
+      echo "[FAIL] $name — enabled but not found (origin: $origin)"
+    else
+      echo "·      $name — disabled"
+    fi
+  }
+  check "Claude Code"    claude   CLAUDE_CLI_ENABLE          "build-arg (devuser home)"
+  check "GitHub Copilot" copilot  GITHUB_COPILOT_CLI_ENABLE  "build-arg (devuser home)"
+  check "OpenCode"       opencode OPENCODE_ENABLE            "build-arg (devuser home)"
+  check "OpenSpec"       openspec OPENSPEC_ENABLE            "build-arg (npm global)"
+  check "GitHub CLI"     gh       GH_CLI_ENABLE              "build-arg (apt)"
+  check "AWS CLI"        aws      AWS_CLI_ENABLE             "build-arg (binary)"
+  check "Kind"           kind     KIND_ENABLE                "build-arg (binary)"
+  check "Terraform"      terraform TERRAFORM_ENABLE          "build-arg (tfenv)"
+  check "llama-cli"      llama-cli LLAMA_CPP_ENABLE          "build-arg (source build)"
+  # Not gated by a build ARG like the tools above: harness-ai is provisioned
+  # via the devcontainer feature, but a project may not have it configured
+  # (e.g. empty `tools:` in .harness-ai/config.yaml) — absence isn't a failure.
+  if command -v harnessai &>/dev/null; then
+    version="$(harnessai --version 2>&1 | head -1)"
+    echo "[OK]   harness-ai — installed ($version)"
+  else
+    echo "·      harness-ai — not found (devcontainer feature not run or not configured)"
+  fi

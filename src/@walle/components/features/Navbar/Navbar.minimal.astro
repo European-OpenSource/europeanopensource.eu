@@ -1,0 +1,80 @@
+---
+// Minimal navbar variant: brand + flat horizontal links, no dropdowns or mobile menu.
+// Selected via `components.navbar = "minimal"` in app.json. Resolved by NavbarResolver.astro.
+import type { NavbarConfig, NavigationLink } from "@walle/config";
+import { resolveInternalUrl } from "@walle/utils";
+
+export interface Props {
+  config: NavbarConfig;
+}
+
+const { config } = Astro.props;
+const items = Array.isArray(config.items) ? config.items : [];
+const title = config.logo?.title || "Home";
+---
+
+<header class="navbar-minimal">
+  <div class="navbar-minimal__container">
+    <a
+      class="navbar-minimal__brand"
+      href={resolveInternalUrl(config.logo?.url || "/")}
+      title={title}
+    >
+      {title}
+    </a>
+    <nav class="navbar-minimal__nav" aria-label="Main navigation">
+      <ul>
+        {
+          items.map((item: NavigationLink) => (
+            <li>
+              <a href={resolveInternalUrl(item.url)} target={item.target || "_self"}>
+                {item.name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .navbar-minimal {
+    border-bottom: 1px solid #eaeaea;
+  }
+
+  .navbar-minimal__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .navbar-minimal__brand {
+    font-weight: 700;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .navbar-minimal__nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .navbar-minimal__nav a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .navbar-minimal__nav a:hover {
+    color: var(--primary);
+  }
+</style>

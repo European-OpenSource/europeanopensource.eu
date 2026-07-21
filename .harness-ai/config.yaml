@@ -1,0 +1,5 @@
+tools: [claude]
+install:
+  openspec: true
+behavior:
+  caveman: false

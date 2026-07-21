@@ -1,0 +1,20 @@
+services:
+  devcontainer:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+      target: workspace
+    volumes:
+      # Mount project root directory
+      - ..:/workspace:cached
+      # Mount cache directories
+      - ../.devcontainer/cache/claude:/home/devuser/.claude:cached
+      - ../.devcontainer/cache/copilot:/home/devuser/.copilot:cached
+      - ../.devcontainer/cache/opencode:/home/devuser/.local/share/opencode:cached
+      - ../.devcontainer/cache/llama:/home/devuser/.llama:cached
+      # Mount config files
+      - ../.devcontainer/configs/.zshrc:/home/devuser/.zshrc:cached
+      - ../.devcontainer/configs/.aws:/home/devuser/.aws:cached
+    network_mode: host
+    privileged: true
+    command: sleep infinity

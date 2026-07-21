@@ -1,0 +1,24 @@
+# Project-specific overrides customize freely.
+# This file is NOT updated by the template update script.
+# Docs: https://docs.docker.com/compose/how-tos/multiple-compose-files/merge/
+#
+# Examples:
+#   build:
+#     dockerfile: .devcontainer/Dockerfile.local
+#   volumes:
+#     - /path/to/extra:/workspace/extra:cached
+services:
+  devcontainer:
+    build:
+      args:
+        - CLAUDE_CLI_ENABLE=false
+        - OPENCODE_ENABLE=false
+        - OPENSPEC_ENABLE=false
+        - AWS_CLI_ENABLE=false
+        - GITHUB_COPILOT_CLI_ENABLE=false
+        - GH_CLI_ENABLE=false
+        - KIND_ENABLE=false
+        - LLAMA_CPP_ENABLE=false
+        - TERRAFORM_ENABLE=false
+        - USER_UID=${LOCAL_UID:-1000}
+        - USER_GID=${LOCAL_GID:-1000}

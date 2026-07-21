@@ -1,0 +1,17 @@
+{
+  "version": "main",
+  "sha": "1207c722bb896303b3e28a2c3f6446da8ba4197a",
+  "updatedAt": "2026-07-21T20:34:09Z",
+  "files": {
+    ".devcontainer/docker-compose.yml": {"category": "replace", "sha256": "1741075cfca6a95b8479ac64109e0cff056bac1e57d71845d70efd2b2b52adee"},
+    ".devcontainer/scripts/setup-devcontainer.sh": {"category": "replace", "sha256": "0831b55042a2e2398cdcaa572d543a2dc138a7fe5faf68cdf708a44b41abee7d"},
+    "justfile.tooling": {"category": "replace", "sha256": "9a3ddded87324ee2e543190c1e2956b82683473b37861aa957ee58ad1a49522c"},
+    "AGENTS.md": {"category": "marker", "sha256": "01a8b249ae632789f5115c01cc3e4ec301859b6be9014aef6df6b6cd56d91eb4"},
+    ".pre-commit-config.yaml": {"category": "marker", "sha256": "52d956a55849ea4a80e5c40a1f890523ce096db1c1831cb58f07ffdd041c651b"},
+    ".gitignore": {"category": "marker", "sha256": "c6d255d7e96dfbcb27ddd2675ab539579be20919bcbc3d882fc4adf6dbe1454d"},
+    ".devcontainer/Dockerfile": {"category": "marker", "sha256": "6008a5738ea10d34218656a567562527f2b60017843b2274c0822264d5237042"},
+    ".devcontainer/configs/.zshrc": {"category": "marker", "sha256": "3e9f88d940bfbd6f62e4f509f0104d172a01a860302e568d5836bd511d63c75f"},
+    "justfile": {"category": "marker", "sha256": "78af5dad1b88d45cfba9bb2435a6663688c898dec0f4fd0198df64e48288e79b"},
+    ".devcontainer/devcontainer.json": {"category": "diff-only", "sha256": "2d37760e9007c779121e3fd6a111103a02bf9848662dbd5680fe268d358f5030"}
+  }
+}

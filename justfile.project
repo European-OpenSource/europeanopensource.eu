@@ -1,0 +1,72 @@
+# justfile.project — team-wide just commands
+#
+# This file is imported by justfile and is NOT managed by the template update script.
+# Committed to git: shared defaults for everyone working on this project.
+#
+# Example:
+#   [group('dev')]
+#   run:
+#     @python -m myapp
+
+# Sync the projects catalog from awesome-european-opensource into src/content.
+[group('eos')]
+sync-database:
+    ./scripts/sync-database.sh
+
+# [walle:START]
+cli_filename := "./scripts/@walle/cli.sh"
+
+# Install dependencies, wire up git hooks, and validate consumer configs
+[group('walle')]
+walle-setup:
+    just yarn install
+    #!/usr/bin/env bash
+    [ -d .git ] && [ -d .husky ] && git config core.hooksPath .husky || true
+    just validate-configs
+
+# Walle cli
+[group('walle')]
+walle *args:
+    {{cli_filename}} {{args}}
+
+# Validate the consumer against the walle manifest
+[group('walle')]
+walle-check:
+    {{cli_filename}} check
+
+# Walle update design system. Resolves the latest published tag first (never main) and
+# fetches cli.sh from that exact ref, so the CLI that runs is always the one committed at
+# the content it's about to sync — no CLI-from-main / content-from-tag skew.
+[group('walle')]
+walle-update *args:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    tag="$(git ls-remote --tags --refs https://github.com/FabrizioCafolla/harness-walle.git \
+      | sed -n 's#.*refs/tags/\(v[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)$#\1#p' | sort -V | tail -1)"
+    [ -n "$tag" ] || { echo "[ERROR] no published release tags found" >&2; exit 1; }
+    curl -fsSL "https://raw.githubusercontent.com/FabrizioCafolla/harness-walle/${tag}/walle/cli/cli.sh" -o {{cli_filename}}
+    chmod +x {{cli_filename}}
+    just walle update {{args}}
+
+# Run yarn commands
+[group('walle')]
+yarn *args:
+    yarn {{args}}
+
+# Validate consumer configs against the published JSON Schemas
+[group('walle')]
+validate-configs:
+    node ./scripts/@walle/validate-configs.mjs
+
+# Start development server
+[group('walle')]
+dev:
+    just yarn install
+    just yarn "dev --host"
+
+# Build the project
+[group('walle')]
+build:
+    just yarn install
+    just yarn build
+# [walle:END]
