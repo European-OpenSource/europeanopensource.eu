@@ -5806,9 +5806,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"satori@npm:^0.26.0":
-  version: 0.26.0
-  resolution: "satori@npm:0.26.0"
+"satori@npm:^0.28.2":
+  version: 0.28.2
+  resolution: "satori@npm:0.28.2"
   dependencies:
     "@shuding/opentype.js": "npm:1.4.0-beta.0"
     css-background-parser: "npm:^0.1.0"
@@ -5821,7 +5821,7 @@ __metadata:
     parse-css-color: "npm:^0.2.1"
     postcss-value-parser: "npm:^4.2.0"
     yoga-layout: "npm:^3.2.1"
-  checksum: 10c0/d7e671591973063d0ebfe970d3ca59c1ddca3048dec91a12a594296cd684d2356106a7f3fd5fb04e0bc3e90b11401de756804b85d3da04e9a6c0374f90818cb2
+  checksum: 10c0/b0959e203593b36af967d1dc16c8b88fdb521cde85badc960ddd79bb2b5fd30afe9594b01887fa0e073275af74334dee55e54c8712edccc09d2da48576c94ff7
   languageName: node
   linkType: hard
 
@@ -6726,7 +6726,7 @@ __metadata:
     husky: "npm:^9.1.7"
     prettier: "npm:^3.8.3"
     prettier-plugin-astro: "npm:^0.14.1"
-    satori: "npm:^0.26.0"
+    satori: "npm:^0.28.2"
     typescript: "npm:^6.0.3"
   languageName: unknown
   linkType: soft
