@@ -193,9 +193,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@astrojs/mdx@npm:^7.0.2":
-  version: 7.0.3
-  resolution: "@astrojs/mdx@npm:7.0.3"
+"@astrojs/mdx@npm:^7.0.4":
+  version: 7.0.4
+  resolution: "@astrojs/mdx@npm:7.0.4"
   dependencies:
     "@astrojs/internal-helpers": "npm:0.10.1"
     "@astrojs/markdown-remark": "npm:7.2.1"
@@ -217,7 +217,7 @@ __metadata:
   peerDependenciesMeta:
     "@astrojs/markdown-satteri":
       optional: true
-  checksum: 10c0/9ac40ce106df412f25815871eb4c4e400d7231ff5e4fd469848b2c9eafbeb1b9122d3fb64f95d43a363b0cb589c06091f91f19778e7c775bdf8a7f0775deaa42
+  checksum: 10c0/41bb0b65f40edbbe70c2e1398aae743fff770b0c1308cb8b10dfeba9d9ca652c3a4fd7c5e3674b1135df11b24f1b906f52bddcbbe0338c76a1bebf4337f4a173
   languageName: node
   linkType: hard
 
@@ -6504,7 +6504,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "website@workspace:."
   dependencies:
-    "@astrojs/mdx": "npm:^7.0.2"
+    "@astrojs/mdx": "npm:^7.0.4"
     "@astrojs/node": "npm:^11.0.2"
     "@astrojs/rss": "npm:^4.0.19"
     "@astrojs/sitemap": "npm:^3.7.3"
