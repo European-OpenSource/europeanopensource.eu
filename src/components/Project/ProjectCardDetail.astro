@@ -21,9 +21,9 @@ const timeAgo = data.metadata?.created_at ? calculateTimeAgo(data.metadata.creat
       <span class="meta-label">Language</span>
       <Badge
         text={data.source.language}
-        iconName="fa:code"
+        icon="fa:code"
         iconPosition="start"
-        color="alternative"
+        variant="alternative"
         size="small"
       />
     </div>
@@ -31,9 +31,9 @@ const timeAgo = data.metadata?.created_at ? calculateTimeAgo(data.metadata.creat
       <span class="meta-label">License</span>
       <Badge
         text={data.source.license}
-        iconName="fa:balance-scale"
+        icon="fa:balance-scale"
         iconPosition="start"
-        color="alternative"
+        variant="alternative"
         size="small"
       />
     </div>
@@ -41,9 +41,9 @@ const timeAgo = data.metadata?.created_at ? calculateTimeAgo(data.metadata.creat
       <span class="meta-label">Platform</span>
       <Badge
         text={data.source.platform}
-        iconName={platformIcon}
+        icon={platformIcon}
         iconPosition="start"
-        color="alternative"
+        variant="alternative"
         size="small"
       />
     </div>
@@ -53,9 +53,9 @@ const timeAgo = data.metadata?.created_at ? calculateTimeAgo(data.metadata.creat
           <span class="meta-label">Added</span>
           <Badge
             text={timeAgo}
-            iconName="fa:calendar"
+            icon="fa:calendar"
             iconPosition="start"
-            color="alternative"
+            variant="alternative"
             size="small"
           />
         </div>
@@ -76,8 +76,8 @@ const timeAgo = data.metadata?.created_at ? calculateTimeAgo(data.metadata.creat
             {data.tags.map((tag) => (
               <Badge
                 text={tag}
-                iconName="fa:hashtag"
-                color="secondary"
+                icon="fa:hashtag"
+                variant="secondary"
                 size="small"
                 iconPosition="start"
               />
@@ -90,21 +90,21 @@ const timeAgo = data.metadata?.created_at ? calculateTimeAgo(data.metadata.creat
 
   <footer class="project-detail-card__footer">
     <Button
-      link={data.source.url_repository}
+      href={data.source.url_repository}
       target="_blank"
       text="View Repository"
-      iconName={platformIcon}
+      icon={platformIcon}
       outline={true}
       size="medium"
     />
     {
       data.source.url_documentation && (
         <Button
-          link={data.source.url_documentation}
+          href={data.source.url_documentation}
           target="_blank"
           text="Documentation"
-          iconName="fa:book"
-          type="secondary"
+          icon="fa:book"
+          variant="secondary"
           outline={true}
           size="medium"
         />

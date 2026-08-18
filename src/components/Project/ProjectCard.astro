@@ -30,22 +30,17 @@ const timeAgo = data.metadata?.created_at ? calculateTimeAgo(data.metadata.creat
     <div class="project-card__top">
       <Badge
         text={data.category}
-        iconName="fa:tag"
+        icon="fa:tag"
         iconPosition="start"
-        color="primary"
+        variant="primary"
         size="small"
-        extraClass="project-card__category"
+        class="project-card__category"
       />
     </div>
     <div>
-      <Badge text={data.source.language} iconName="fa:code" iconPosition="start" size="small" />
-      <Badge
-        text={data.source.license}
-        iconName="fa:balance-scale"
-        iconPosition="start"
-        size="small"
-      />
-      {timeAgo && <Badge text={timeAgo} iconName="fa:calendar" iconPosition="start" size="small" />}
+      <Badge text={data.source.language} icon="fa:code" iconPosition="start" size="small" />
+      <Badge text={data.source.license} icon="fa:balance-scale" iconPosition="start" size="small" />
+      {timeAgo && <Badge text={timeAgo} icon="fa:calendar" iconPosition="start" size="small" />}
     </div>
   </header>
 
@@ -57,11 +52,11 @@ const timeAgo = data.metadata?.created_at ? calculateTimeAgo(data.metadata.creat
           {data.tags.slice(0, 3).map((tag) => (
             <Badge
               text={tag}
-              iconName="fa:hashtag"
+              icon="fa:hashtag"
               iconPosition="start"
-              color="secondary"
+              variant="secondary"
               size="small"
-              extraClass="project-card__tag"
+              class="project-card__tag"
             />
           ))}
         </div>
@@ -72,10 +67,10 @@ const timeAgo = data.metadata?.created_at ? calculateTimeAgo(data.metadata.creat
   <footer class="project-card__footer">
     <div class={`project-card__actions${data.source.url_documentation ? " two-buttons" : ""}`}>
       <Button
-        link={data.source.url_repository}
+        href={data.source.url_repository}
         target="_blank"
         text={data.source.platform}
-        iconName={platformIcon}
+        icon={platformIcon}
         outline={true}
         size="small"
         fullWidth={true}
@@ -83,12 +78,12 @@ const timeAgo = data.metadata?.created_at ? calculateTimeAgo(data.metadata.creat
       {
         data.source.url_documentation && (
           <Button
-            link={data.source.url_documentation}
+            href={data.source.url_documentation}
             target="_blank"
             text="Docs"
-            iconName="fa:book"
+            icon="fa:book"
             outline={true}
-            type="secondary"
+            variant="secondary"
             size="small"
             fullWidth={true}
           />

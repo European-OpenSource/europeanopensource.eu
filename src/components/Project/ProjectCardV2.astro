@@ -28,22 +28,17 @@ const data = Astro.props;
     <div class="project-card__top">
       <Badge
         text={data.category}
-        iconName="fa:tag"
+        icon="fa:tag"
         iconPosition="start"
-        color="primary"
+        variant="primary"
         size="small"
-        extraClass="project-card__category"
-        link={`/projects/category/${toSlug(data.category)}`}
+        class="project-card__category"
+        href={`/projects/category/${toSlug(data.category)}`}
       />
     </div>
     <div>
-      <Badge text={data.source.language} iconName="fa:code" iconPosition="start" size="small" />
-      <Badge
-        text={data.source.license}
-        iconName="fa:balance-scale"
-        iconPosition="start"
-        size="small"
-      />
+      <Badge text={data.source.language} icon="fa:code" iconPosition="start" size="small" />
+      <Badge text={data.source.license} icon="fa:balance-scale" iconPosition="start" size="small" />
     </div>
   </header>
 
@@ -55,10 +50,10 @@ const data = Astro.props;
           {data.tags.slice(0, 3).map((tag) => (
             <Badge
               text={tag}
-              iconName="fa:hashtag"
-              color="secondary"
+              icon="fa:hashtag"
+              variant="secondary"
               size="small"
-              extraClass="project-card__tag"
+              class="project-card__tag"
               iconPosition="start"
             />
           ))}
@@ -70,9 +65,9 @@ const data = Astro.props;
   <footer class="project-card__footer">
     <div class={`project-card__actions${data.source.url_documentation ? " two-buttons" : ""}`}>
       <Button
-        link={data.projectDetailUrl}
+        href={data.projectDetailUrl}
         text="Details"
-        iconName="fa:arrow-right"
+        icon="fa:arrow-right"
         outline={true}
         fullWidth={true}
         size="small"

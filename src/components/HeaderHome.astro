@@ -58,7 +58,13 @@ const releaseDateIso = "2026-03-18T12:30:00Z";
         <span class="segment"><span id="cd-secs">00</span>s</span>
       </div>
     </div>
-    <Button link="/projects" text="See the Catalog" iconName="mdi:arrow-right" type="secondary" />
+    <Button
+      href="/projects"
+      text="See the Catalog"
+      icon="mdi:arrow-right"
+      variant="secondary"
+      effects={false}
+    />
   </div>
   {
     euCountries.map((country, index) => {
@@ -107,6 +113,7 @@ const releaseDateIso = "2026-03-18T12:30:00Z";
       const sEl = document.getElementById("cd-secs");
       const timerEl = document.getElementById("countdown-timer");
       if (!dEl || !hEl || !mEl || !sEl || !timerEl) return;
+      let t;
       function pad(n) {
         return String(n).padStart(2, "0");
       }
@@ -115,7 +122,7 @@ const releaseDateIso = "2026-03-18T12:30:00Z";
         let diff = target - now;
         if (diff <= 0) {
           timerEl.textContent = "It's live!";
-          clearInterval(t);
+          if (t) clearInterval(t);
           return;
         }
         const s = Math.floor(diff / 1000) % 60;
@@ -128,7 +135,7 @@ const releaseDateIso = "2026-03-18T12:30:00Z";
         sEl.textContent = pad(s);
       }
       update();
-      const t = setInterval(update, 1000);
+      t = setInterval(update, 1000);
     })();
   </script>
 </section>

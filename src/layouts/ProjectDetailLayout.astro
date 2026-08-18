@@ -16,8 +16,8 @@ const data = Astro.props;
 const ogImageUrl = data.id ? `${Astro.site}img/og/${data.id}.png` : undefined;
 
 const breadcrumbItems = [
-  { label: "Home", url: "/" },
-  { label: "Projects", url: "/projects" },
+  { label: "Home", href: "/" },
+  { label: "Projects", href: "/projects" },
   { label: data.name },
 ];
 ---
@@ -27,19 +27,19 @@ const breadcrumbItems = [
     <div class="project-detail-badges">
       <Badge
         text={`${data.category.toLocaleUpperCase()}`}
-        color="primary"
+        variant="primary"
         size="large"
-        link={`/projects/category/${toSlug(data.category)}`}
+        href={`/projects/category/${toSlug(data.category)}`}
       />
       {
         data.country.map((c) => (
           <Badge
             text={c}
-            color="secondary"
+            variant="secondary"
             size="large"
-            iconName="fa:globe"
+            icon="fa:globe"
             iconPosition="start"
-            link={`/projects/country/${toSlug(c)}`}
+            href={`/projects/country/${toSlug(c)}`}
           />
         ))
       }
@@ -85,11 +85,11 @@ const breadcrumbItems = [
                 {data.owner.url_website && (
                   <div class="owner-footer">
                     <Button
-                      link={data.owner.url_website}
+                      href={data.owner.url_website}
                       target="_blank"
                       text="Visit Website"
-                      iconName="fa:external-link"
-                      type="secondary"
+                      icon="fa:external-link"
+                      variant="secondary"
                       outline={true}
                       size="small"
                       fullWidth={true}

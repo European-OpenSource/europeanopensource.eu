@@ -33,12 +33,7 @@ const allCountries = [
 <section class="filters-section">
   <div class="container">
     <div class="container-centered">
-      <Button
-        id="filters-toggle"
-        extraClass="visible-xs"
-        iconName="fa:sliders"
-        text="Open Filters"
-      />
+      <Button id="filters-toggle" class="visible-xs" icon="fa:sliders" text="Open Filters" />
     </div>
     <div class="filters-form" id="filters-form">
       <!-- Search Bar -->
@@ -115,21 +110,21 @@ const allCountries = [
         <Button
           id="filters-reset"
           text="Reset Filters"
-          type="secondary"
+          variant="secondary"
           outline={true}
-          iconName="fa:remove"
+          icon="fa:remove"
           size="small"
-          disableEffects={true}
+          effects={false}
         />
         <Button
           id="filters-close"
           text="Close Filters"
-          extraClass="visible-xs"
-          type="secondary"
+          class="visible-xs"
+          variant="secondary"
           outline={true}
-          iconName="fa:sliders"
+          icon="fa:sliders"
           size="small"
-          disableEffects={true}
+          effects={false}
         />
       </div>
     </div>
