@@ -30,12 +30,6 @@ seed:
   - backend | backend/seed/src/pages/api/health.ts | src/pages/api/health.ts
   - backend | backend/seed/src/pages/api/echo.ts | src/pages/api/echo.ts
   - backend | backend/seed/src/middleware.ts | src/middleware.ts
-  - infrastructure | infrastructure/seed/infrastructure/main.tf | infrastructure/main.tf
-  - infrastructure | infrastructure/seed/infrastructure/variables.tf | infrastructure/variables.tf
-  - infrastructure | infrastructure/seed/infrastructure/providers.tf | infrastructure/providers.tf
-  - infrastructure | infrastructure/seed/infrastructure/outputs.tf | infrastructure/outputs.tf
-  - infrastructure | infrastructure/seed/infrastructure/README.md | infrastructure/README.md
-  - infrastructure | infrastructure/seed/infrastructure/.gitignore | infrastructure/.gitignore
   - harness-coding | harness-coding/seed/justfile.project | justfile.project
   - harness-coding | harness-coding/seed/.husky/pre-commit | .husky/pre-commit
   - harness-coding | harness-coding/seed/.husky/pre-push | .husky/pre-push
@@ -51,6 +45,7 @@ inject:
 website-seed-exclude:
   - src/@walle
   - schemas
+  - src/pages/wiki
   - astrobook
   - tests
   - playwright.config.ts

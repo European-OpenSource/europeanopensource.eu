@@ -1,7 +1,13 @@
 ---
-import { BlogReadingProgress, BlogTableOfContents, SectionHeaderStandard } from "@walle/components";
+import {
+  BlogReadingProgress,
+  BlogTableOfContents,
+  SectionHeaderStandard,
+  StructuredData,
+} from "@walle/components";
 import { BaseLayout } from "@walle/layouts";
 import { formatDate } from "@walle/utils";
+import { articleJsonLd } from "@walle/utils/structured-data";
 
 interface Props {
   title: string;
@@ -26,8 +32,28 @@ const {
 } = Astro.props;
 ---
 
-<BaseLayout headerTitle={title} headerDescription={description} headerImage={image}>
+<BaseLayout
+  headerTitle={title}
+  headerDescription={description}
+  headerImage={image}
+  headerPublishedTime={publishDate}
+>
   <slot name="head" slot="head" />
+  {
+    !draft && (
+      <StructuredData
+        data={articleJsonLd({
+          title,
+          description,
+          url: Astro.url.href,
+          publishDate,
+          author,
+          image: image ? new URL(image, Astro.site).href : undefined,
+          tags,
+        })}
+      />
+    )
+  }
   <slot name="before" />
   {
     draft ? (
@@ -98,7 +124,7 @@ const {
   .draft-message {
     text-align: center;
     padding: 64px 0;
-    color: var(--gray-dark);
+    color: var(--text-muted);
     font-size: 18px;
   }
 
@@ -117,7 +143,7 @@ const {
 
   /* Article Styles */
   .article {
-    background: var(--white);
+    background: var(--surface);
     position: relative;
     min-height: 100vh;
   }
@@ -135,7 +161,7 @@ const {
     justify-content: center;
     gap: 1rem;
     font-size: 0.875rem;
-    color: var(--gray-dark);
+    color: var(--text-muted);
     flex-wrap: wrap;
     list-style: none;
     padding: 0;
@@ -191,7 +217,7 @@ const {
   .article-content {
     font-size: 1.125rem;
     line-height: 1.3;
-    color: var(--black);
+    color: var(--text);
     word-spacing: 0.1em;
     max-width: 65ch;
   }
@@ -203,7 +229,7 @@ const {
   .article-content :global(h5),
   .article-content :global(h6) {
     font-weight: 700;
-    color: var(--black);
+    color: var(--text);
     line-height: 1.2;
     margin: 3rem 0 1rem 0;
     letter-spacing: -0.01em;

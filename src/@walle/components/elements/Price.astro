@@ -1,0 +1,117 @@
+---
+import config from "@walle/config";
+
+export interface PriceData {
+  /**
+   * Current price amount
+   */
+  amount: number;
+
+  /**
+   * ISO 4217 currency code (e.g. "EUR", "USD")
+   */
+  currency: string;
+
+  /**
+   * Original price before discount — rendered struck-through
+   */
+  compareAt?: number;
+}
+
+export interface Props {
+  /**
+   * Price to display
+   */
+  price: PriceData;
+
+  /**
+   * BCP 47 locale for formatting
+   * @default site language from config
+   */
+  locale?: string;
+
+  /**
+   * Size
+   * @default "medium"
+   */
+  size?: "small" | "medium" | "large";
+
+  /**
+   * Accessible label announced for the discounted (current) price
+   * @default "Discounted price"
+   */
+  discountedLabel?: string;
+
+  /**
+   * Accessible label announced for the original (struck-through) price
+   * @default "Original price"
+   */
+  originalLabel?: string;
+
+  /**
+   * Additional CSS classes appended to the root element
+   */
+  class?: string;
+}
+
+const {
+  price,
+  locale = config.app.website.language || "en-US",
+  size = "medium",
+  discountedLabel = "Discounted price",
+  originalLabel = "Original price",
+  class: className = "",
+} = Astro.props;
+
+// Intl wants BCP 47 (hyphens); tolerate a POSIX-style "it_IT" so a config typo
+// can't throw a RangeError at build.
+const bcp47 = locale.replace(/_/g, "-");
+const format = (amount: number) =>
+  new Intl.NumberFormat(bcp47, { style: "currency", currency: price.currency }).format(amount);
+
+const hasDiscount = price.compareAt != null && price.compareAt > price.amount;
+const classes = ["price", `price-${size}`, className].filter(Boolean).join(" ");
+---
+
+<span class={classes} data-component="Price">
+  {
+    hasDiscount && (
+      <s class="price-compare">
+        <span class="sr-only">{originalLabel}: </span>
+        {format(price.compareAt!)}
+      </s>
+    )
+  }
+  <span class="price-current">
+    {hasDiscount && <span class="sr-only">{discountedLabel}: </span>}
+    {format(price.amount)}
+  </span>
+</span>
+
+<style>
+  .price {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5em;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .price-small {
+    font-size: 0.875rem;
+  }
+
+  .price-medium {
+    font-size: 1.125rem;
+  }
+
+  .price-large {
+    font-size: 1.5rem;
+  }
+
+  .price-compare {
+    font-weight: 400;
+    font-size: 0.85em;
+    color: var(--text-muted);
+  }
+</style>

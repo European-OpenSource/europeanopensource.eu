@@ -16,4 +16,22 @@ const selected = config.app.components?.navbar ?? "standard";
 const Variant = VARIANTS[selected as keyof typeof VARIANTS] ?? Standard;
 ---
 
-<Variant config={navbarConfig} />
+{
+  /* Astro registers slot names statically from the template: a `<slot slot="brand">`
+     token anywhere in the children marks brand as "provided" on Variant and suppresses
+     its default brand — even behind a falsy guard. So we branch instead of guarding
+     inline, keeping brand overridable by a consumer while letting the default show when
+     it isn't. `actions` has no default, so an empty forward is harmless. */
+}
+{
+  Astro.slots.has("brand") ? (
+    <Variant config={navbarConfig}>
+      <slot name="brand" slot="brand" />
+      <slot name="actions" slot="actions" />
+    </Variant>
+  ) : (
+    <Variant config={navbarConfig}>
+      <slot name="actions" slot="actions" />
+    </Variant>
+  )
+}

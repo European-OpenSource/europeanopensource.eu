@@ -34,6 +34,11 @@ walle *args:
 walle-check:
     {{cli_filename}} check
 
+# Report Walle-owned dependency drift; pass --apply to align package.json
+[group('walle')]
+walle-deps *args:
+    {{cli_filename}} deps {{args}}
+
 # Walle update design system. Resolves the latest published tag first (never main) and
 # fetches cli.sh from that exact ref, so the CLI that runs is always the one committed at
 # the content it's about to sync — no CLI-from-main / content-from-tag skew.

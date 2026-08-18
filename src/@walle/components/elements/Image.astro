@@ -1,0 +1,119 @@
+---
+import { Image as AstroImage } from "astro:assets";
+
+export interface Props {
+  /**
+   * Image source and required alt text. `src` as an `ImageMetadata` import is
+   * optimized via astro:assets; a remote URL string renders a plain `<img>`
+   * and requires explicit `width`/`height` (CLS prevention).
+   * Use `alt: ""` only for purely decorative images.
+   */
+  image: {
+    src: ImageMetadata | string;
+    alt: string;
+  };
+
+  /**
+   * Rendered width. Required for remote (string) sources.
+   */
+  width?: number;
+
+  /**
+   * Rendered height. Required for remote (string) sources.
+   */
+  height?: number;
+
+  /**
+   * Loading strategy
+   * @default "lazy"
+   */
+  loading?: "lazy" | "eager";
+
+  /**
+   * CSS aspect-ratio applied to the image (e.g. "16 / 9", "1")
+   */
+  ratio?: string;
+
+  /**
+   * `sizes` attribute forwarded to the optimized image
+   */
+  sizes?: string;
+
+  /**
+   * Candidate widths for the generated srcset (local sources only)
+   */
+  widths?: number[];
+
+  /**
+   * Additional CSS classes appended to the root element
+   */
+  class?: string;
+
+  /**
+   * Optional HTML ID
+   */
+  id?: string;
+}
+
+const {
+  image,
+  width,
+  height,
+  loading = "lazy",
+  ratio,
+  sizes,
+  widths,
+  class: className = "",
+  id,
+} = Astro.props;
+
+const isRemote = typeof image.src === "string";
+
+if (isRemote && (!width || !height)) {
+  throw new Error(
+    `@walle Image: remote sources require explicit width and height (got src="${image.src}")`
+  );
+}
+
+const classes = ["image", className].filter(Boolean).join(" ");
+const style = ratio ? `aspect-ratio: ${ratio};` : undefined;
+---
+
+{
+  isRemote ? (
+    <img
+      src={image.src as string}
+      alt={image.alt}
+      width={width}
+      height={height}
+      loading={loading}
+      class={classes}
+      style={style}
+      id={id}
+      data-component="Image"
+    />
+  ) : (
+    <AstroImage
+      src={image.src as ImageMetadata}
+      alt={image.alt}
+      width={width}
+      height={height}
+      loading={loading}
+      sizes={sizes}
+      widths={widths}
+      class={classes}
+      style={style}
+      id={id}
+      data-component="Image"
+    />
+  )
+}
+
+<style>
+  .image {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+</style>

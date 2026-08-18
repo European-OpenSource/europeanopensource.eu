@@ -1,13 +1,58 @@
 ---
 import { Footer, Navbar } from "@walle/components";
 import config from "@walle/config";
+import type { NavbarConfig } from "@walle/config";
 import { AbstractLayout } from "@walle/layouts";
+import CartMount from "@walle/commerce/CartMount.astro";
+import CartBadge from "@walle/commerce/CartBadge.astro";
+import { getCollection } from "astro:content";
+
+// Cart UI only in commerce mode; a vetrina site ships none of it. `cartInNavbar` puts
+// the trigger in the navbar, otherwise it floats bottom-right.
+const commerce = (config.app as { commerce?: { showBuyButton?: boolean; cartInNavbar?: boolean } })
+  .commerce;
+const showCart = commerce?.showBuyButton ?? false;
+const cartInNavbar = commerce?.cartInNavbar ?? false;
+
+// Optional built-in docs: if this site ships a `wiki` collection with pages (the design-system
+// showcase does; a seeded consumer — whose /wiki is seed-excluded and whose wiki collection is
+// empty — does not), surface a "Docs" link in the navbar. Defensive: a consumer that removed the
+// collection entirely just gets no link.
+//
+// getCollection() doesn't throw for a missing/empty collection — Astro's content store only
+// registers a collection once its loader writes at least one entry, so an empty/undeclared
+// `wiki` hits the same "does not exist" branch either way, which logs via console.warn instead
+// of throwing (confirmed against the astro package in node_modules; the try/catch here never
+// actually fires). That warning is expected on every request for any consumer without a wiki,
+// so it's suppressed for the duration of this one call only — anything else warning-worthy
+// during the collection read still surfaces normally.
+let navbarConfig: NavbarConfig = config.navbar || {};
+try {
+  const originalWarn = console.warn;
+  console.warn = () => {};
+  let wikiPages;
+  try {
+    wikiPages = await getCollection("wiki");
+  } finally {
+    console.warn = originalWarn;
+  }
+  if (wikiPages.length > 0) {
+    navbarConfig = {
+      ...navbarConfig,
+      items: [...(navbarConfig.items ?? []), { name: "Docs", url: "/wiki" }],
+    };
+  }
+} catch {
+  // no `wiki` collection registered in this project — no docs link
+}
 ---
 
 <AbstractLayout {...Astro.props}>
   <slot name="head" slot="head" />
   <slot name="navbar">
-    <Navbar config={config.navbar || {}} />
+    <Navbar config={navbarConfig}>
+      {showCart && cartInNavbar && <CartBadge slot="actions" floating={false} />}
+    </Navbar>
   </slot>
   <main id="main-content" tabindex="-1">
     <slot />
@@ -15,4 +60,6 @@ import { AbstractLayout } from "@walle/layouts";
   <slot name="footer">
     <Footer />
   </slot>
+  {showCart && <CartMount />}
+  {showCart && !cartInNavbar && <CartBadge floating={true} />}
 </AbstractLayout>

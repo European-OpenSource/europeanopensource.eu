@@ -1,6 +1,7 @@
 ---
-import { Analytics, Head } from "@walle/components";
+import { Analytics, Head, StructuredData } from "@walle/components";
 import config from "@walle/config";
+import { organizationJsonLd, websiteJsonLd } from "@walle/utils/structured-data";
 import "@walle/styles/global.css";
 // Generated theme tokens (overrides walle defaults, overridden by consumer global.css).
 import "virtual:walle-theme.css";
@@ -13,7 +14,16 @@ const {
   headerOgImage = null,
   headerRobots = config.app.website.robots || "index, follow",
   headerLanguage = config.app.website.language || "",
+  headerPublishedTime = null,
+  skipLinkLabel = "Skip to content",
 } = Astro.props;
+
+const siteInfo = {
+  title: config.app.website.title,
+  description: config.app.website.description,
+  url: Astro.site ? new URL(config.app.astro.basePath || "/", Astro.site).href : "",
+  image: headerImage ? new URL(headerImage, Astro.site).href : undefined,
+};
 ---
 
 <!doctype html>
@@ -25,14 +35,37 @@ const {
       image={headerImage}
       ogImage={headerOgImage}
       robots={headerRobots}
+      publishedTime={headerPublishedTime}
     />
+    <StructuredData data={[websiteJsonLd(siteInfo), organizationJsonLd(siteInfo)]} />
     <slot name="head" />
   </head>
   <body>
+    <a href="#main-content" class="skip-link">{skipLinkLabel}</a>
     <slot />
     <Analytics
       enable={config.env.IS_PRODUCTION || false}
       scriptContent={config.app.astro.analyticsScriptContent || ""}
     />
+    <script>
+      // A11y: a scrollable region (overflowing code block, wide table, …) must be reachable by
+      // keyboard so it can be scrolled (WCAG 2.1.1 / axe `scrollable-region-focusable`). We make
+      // one focusable ONLY when it actually overflows and has no focusable content of its own, so
+      // non-scrolling blocks never become spurious tab stops. Covers consumer markdown too.
+      function makeScrollRegionsFocusable() {
+        const focusable = "a[href],button,input,select,textarea,[tabindex]";
+        document.querySelectorAll<HTMLElement>("pre,table,[data-scrollable]").forEach((el) => {
+          if (el.hasAttribute("tabindex")) return;
+          const overflows = el.scrollWidth > el.clientWidth || el.scrollHeight > el.clientHeight;
+          if (overflows && !el.querySelector(focusable)) {
+            el.setAttribute("tabindex", "0");
+            el.setAttribute("role", "region");
+            if (!el.hasAttribute("aria-label")) el.setAttribute("aria-label", "Scrollable content");
+          }
+        });
+      }
+      document.addEventListener("DOMContentLoaded", makeScrollRegionsFocusable);
+      document.addEventListener("astro:page-load", makeScrollRegionsFocusable);
+    </script>
   </body>
 </html>

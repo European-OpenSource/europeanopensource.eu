@@ -1,0 +1,309 @@
+---
+/**
+ * Cart drawer + wiring (ecommerce mode only). An accessible `<dialog>` subscribed to the
+ * nanostores cart; the trigger is CartBadge (floating or in the navbar), found by
+ * `[data-cart-badge]`. Also delegates clicks on `[data-vp-add]` to `addToCart`.
+ *
+ * Mounted only when `commerce.showBuyButton` is true, so a vetrina site ships none of
+ * this markup or JS.
+ */
+---
+
+<dialog class="cart-drawer" data-cart-drawer aria-label="Shopping cart">
+  <div class="cart-drawer__head">
+    <h2>Your cart</h2>
+    <button class="cart-drawer__close" data-cart-close aria-label="Close cart">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"
+        ><path d="M18 6 6 18M6 6l12 12"></path></svg
+      >
+    </button>
+  </div>
+  <p class="cart-drawer__empty" data-cart-empty>Your cart is empty.</p>
+  <ul class="cart-drawer__lines" data-cart-lines></ul>
+  <div class="cart-drawer__foot" data-cart-foot hidden>
+    <div class="cart-drawer__subtotal">
+      <span>Subtotal</span><span data-cart-subtotal></span>
+    </div>
+    <button class="cart-checkout" data-cart-checkout>Checkout</button>
+  </div>
+</dialog>
+
+<style>
+  .cart-drawer {
+    margin: 0 0 0 auto;
+    height: 100%;
+    max-height: 100vh;
+    width: min(420px, 100vw);
+    border: none;
+    padding: 0;
+    background: var(--surface);
+    color: var(--text);
+  }
+
+  .cart-drawer::backdrop {
+    background: rgba(10, 14, 22, 0.5);
+  }
+
+  .cart-drawer__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-lg);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cart-drawer__head h2 {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+
+  .cart-drawer__close {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  .cart-drawer__close svg {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+
+  .cart-drawer__lines {
+    list-style: none;
+    margin: 0;
+    padding: var(--space-md) var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    overflow-y: auto;
+  }
+
+  .cart-drawer__empty {
+    padding: var(--space-2xl) var(--space-lg);
+    text-align: center;
+    color: var(--text-muted);
+  }
+
+  /* Cart lines are built with innerHTML in the script below, so they never get Astro's
+     scoping attribute — these rules must be :global() to match the injected DOM. */
+  :global(.cart-line) {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    gap: var(--space-md);
+    align-items: start;
+  }
+
+  :global(.cart-line img) {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    background: var(--surface-alt);
+  }
+
+  :global(.cart-line__title) {
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  :global(.cart-line__variant) {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 0.1rem;
+  }
+
+  :global(.cart-line__controls) {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-top: var(--space-xs);
+  }
+
+  /* Quantity stepper — same grouped, bordered style as the variant picker. */
+  :global(.cart-line__qty) {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  /* WCAG 2.5.8: interactive targets are at least 24x24 */
+  :global(.cart-line__qty button) {
+    width: 30px;
+    height: 30px;
+    border: none;
+    background: var(--surface);
+    color: var(--text);
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  :global(.cart-line__qty button:hover) {
+    background: var(--surface-alt);
+  }
+
+  :global(.cart-line__qty span) {
+    min-width: 2rem;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  :global(.cart-line__remove) {
+    min-height: 24px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  :global(.cart-line__remove:hover) {
+    color: var(--text);
+  }
+
+  :global(.cart-line__price) {
+    font-weight: 700;
+  }
+
+  .cart-drawer__foot {
+    padding: var(--space-lg);
+    border-top: 1px solid var(--border);
+  }
+
+  .cart-checkout {
+    appearance: none;
+    width: 100%;
+    border: none;
+    border-radius: var(--radius-md);
+    background: var(--primary);
+    color: var(--white);
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.85rem 1.25rem;
+    cursor: pointer;
+    transition: background var(--transition);
+  }
+
+  .cart-checkout:hover {
+    background: var(--primary-dark);
+  }
+
+  .cart-drawer__subtotal {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    margin-bottom: var(--space-md);
+  }
+</style>
+
+<script>
+  import {
+    cart,
+    cartOpen,
+    addToCart,
+    updateLine,
+    removeLine,
+    goToCheckout,
+  } from "@walle/commerce/cart";
+
+  function money(m: { amount: string; currencyCode: string }) {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: m.currencyCode,
+    }).format(Number(m.amount));
+  }
+
+  function initCart() {
+    const badge = document.querySelector<HTMLButtonElement>("[data-cart-badge]");
+    const drawer = document.querySelector<HTMLDialogElement>("[data-cart-drawer]");
+    if (!badge || !drawer || badge.dataset.ready) return;
+    badge.dataset.ready = "true";
+
+    const countEl = badge.querySelector<HTMLElement>("[data-cart-count]");
+    const linesEl = drawer.querySelector<HTMLElement>("[data-cart-lines]");
+    const emptyEl = drawer.querySelector<HTMLElement>("[data-cart-empty]");
+    const footEl = drawer.querySelector<HTMLElement>("[data-cart-foot]");
+    const subtotalEl = drawer.querySelector<HTMLElement>("[data-cart-subtotal]");
+
+    badge.addEventListener("click", () => cartOpen.set(true));
+    drawer.querySelector("[data-cart-close]")?.addEventListener("click", () => cartOpen.set(false));
+    drawer.addEventListener("close", () => cartOpen.set(false));
+    drawer.addEventListener("click", (e) => {
+      if (e.target === drawer) cartOpen.set(false);
+    });
+    drawer.querySelector("[data-cart-checkout]")?.addEventListener("click", () => goToCheckout());
+
+    // Add-to-cart from any VariantPicker button on the page.
+    document.addEventListener("click", (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>("[data-vp-add]");
+      if (!btn || !btn.dataset.variantId) return;
+      btn.disabled = true;
+      addToCart(btn.dataset.variantId, Number(btn.dataset.qty) || 1)
+        .then(() => cartOpen.set(true))
+        .catch((err) => alert(err.message))
+        .finally(() => (btn.disabled = false));
+    });
+
+    cartOpen.subscribe((open) => {
+      if (open && !drawer.open) drawer.showModal();
+      if (!open && drawer.open) drawer.close();
+    });
+
+    cart.subscribe((c) => {
+      const qty = c?.totalQuantity ?? 0;
+      if (countEl) countEl.textContent = String(qty);
+      // The navbar trigger stays visible (data-cart-keep); the floating one hides when empty.
+      badge.hidden = !badge.hasAttribute("data-cart-keep") && qty === 0 && !cartOpen.get();
+
+      const lines = c?.lines.nodes ?? [];
+      if (emptyEl) emptyEl.hidden = lines.length > 0;
+      if (footEl) footEl.hidden = lines.length === 0;
+      if (subtotalEl && c) subtotalEl.textContent = money(c.cost.totalAmount);
+      if (!linesEl) return;
+
+      linesEl.replaceChildren();
+      for (const line of lines) {
+        const li = document.createElement("li");
+        li.className = "cart-line";
+        const m = line.merchandise;
+        const variant = m.title && m.title !== "Default Title" ? m.title : "";
+        li.innerHTML = `
+          ${m.image ? `<img src="${m.image.url}" alt="${m.image.altText ?? ""}" width="56" height="56" />` : "<span></span>"}
+          <div class="cart-line__info">
+            <div class="cart-line__title">${m.product.title}</div>
+            ${variant ? `<div class="cart-line__variant">${variant}</div>` : ""}
+            <div class="cart-line__controls">
+              <div class="cart-line__qty">
+                <button type="button" aria-label="Decrease quantity" data-dec>&minus;</button>
+                <span>${line.quantity}</span>
+                <button type="button" aria-label="Increase quantity" data-inc>+</button>
+              </div>
+              <button type="button" class="cart-line__remove" aria-label="Remove" data-rm>Remove</button>
+            </div>
+          </div>
+          <span class="cart-line__price">${money(m.price)}</span>`;
+        li.querySelector("[data-dec]")?.addEventListener("click", () =>
+          line.quantity <= 1 ? removeLine(line.id) : updateLine(line.id, line.quantity - 1)
+        );
+        li.querySelector("[data-inc]")?.addEventListener("click", () =>
+          updateLine(line.id, line.quantity + 1)
+        );
+        li.querySelector("[data-rm]")?.addEventListener("click", () => removeLine(line.id));
+        linesEl.appendChild(li);
+      }
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", initCart);
+  document.addEventListener("astro:page-load", initCart);
+</script>

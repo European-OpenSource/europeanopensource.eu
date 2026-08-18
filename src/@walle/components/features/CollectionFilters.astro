@@ -1,0 +1,492 @@
+---
+import { Icon } from "astro-icon/components";
+
+/**
+ * Config-driven client-side filtering for any rendered collection.
+ *
+ * Items are matched via data attributes — no data prop, no re-rendering:
+ *
+ * ```astro
+ * <CollectionFilters facets={[{ key: "category", label: "Category", options: cats }]} />
+ * <div class="grid">
+ *   {items.map((item) => (
+ *     <div data-filter-item data-category={item.category} data-search={item.title}>
+ *       <BasicCard ... />
+ *     </div>
+ *   ))}
+ * </div>
+ * ```
+ *
+ * An item stays visible when, for every facet with active selections, one of
+ * its (comma-separated) `data-<key>` values is selected, and the search text
+ * matches `data-search` (falling back to the item's text content).
+ *
+ * Progressive enhancement: the filter UI is hidden until the script
+ * initializes — with JavaScript disabled every item stays visible.
+ */
+
+export interface FilterFacet {
+  /**
+   * Facet key — items carry the matching `data-<key>` attribute
+   */
+  key: string;
+
+  /**
+   * Button label for the facet dropdown
+   */
+  label: string;
+
+  /**
+   * Available options
+   */
+  options: string[];
+}
+
+export interface Props {
+  /**
+   * Facets to filter by
+   */
+  facets?: FilterFacet[];
+
+  /**
+   * CSS selector for filterable items
+   * @default "[data-filter-item]"
+   */
+  itemSelector?: string;
+
+  /**
+   * Enable the text search input
+   * @default true
+   */
+  search?: boolean;
+
+  /**
+   * UI labels — English defaults, override for localization.
+   * `{n}` in `status` is replaced with the visible-item count;
+   * `{label}` / `{n}` in facet templates with the facet label / selection count.
+   */
+  labels?: {
+    searchPlaceholder?: string;
+    searchLabel?: string;
+    clear?: string;
+    status?: string;
+    facetSelect?: string;
+    facetSelected?: string;
+  };
+
+  /**
+   * Additional CSS classes appended to the root element
+   */
+  class?: string;
+}
+
+const {
+  facets = [],
+  itemSelector = "[data-filter-item]",
+  search = true,
+  labels = {},
+  class: className = "",
+} = Astro.props;
+
+const l = {
+  searchPlaceholder: labels.searchPlaceholder ?? "Search…",
+  searchLabel: labels.searchLabel ?? "Search items",
+  clear: labels.clear ?? "Clear filters",
+  status: labels.status ?? "{n} items shown",
+  facetSelect: labels.facetSelect ?? "Select {label}",
+  facetSelected: labels.facetSelected ?? "{n} selected",
+};
+
+const classes = ["filters", className].filter(Boolean).join(" ");
+---
+
+<div
+  class={classes}
+  data-component="CollectionFilters"
+  data-item-selector={itemSelector}
+  data-label-status={l.status}
+  data-label-selected={l.facetSelected}
+  hidden
+>
+  <div class="filters__row">
+    {
+      search && (
+        <div class="filters__search">
+          <Icon name="fa:search" class="filters__icon" aria-hidden="true" />
+          <input
+            type="text"
+            class="filters__input"
+            placeholder={l.searchPlaceholder}
+            aria-label={l.searchLabel}
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            data-filter-search
+          />
+        </div>
+      )
+    }
+    {
+      facets.map((facet) => {
+        const dropdownId = `facet-${facet.key}-dropdown`;
+        return (
+          <div class="filters__facet" data-facet={facet.key}>
+            <div class="filters__dropdown">
+              <button
+                type="button"
+                class="filters__dropdown-btn"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                aria-controls={dropdownId}
+              >
+                <span data-facet-label data-default={l.facetSelect.replace("{label}", facet.label)}>
+                  {l.facetSelect.replace("{label}", facet.label)}
+                </span>
+                <Icon name="fa:chevron-down" class="filters__dropdown-icon" aria-hidden="true" />
+              </button>
+              <div
+                class="filters__dropdown-content"
+                id={dropdownId}
+                role="listbox"
+                aria-label={facet.label}
+                aria-multiselectable="true"
+              >
+                {facet.options.map((option, i) => {
+                  // Index keeps ids unique even when two options normalize to the
+                  // same slug (e.g. "C#" and "C++"), so the label `for` never collides.
+                  const optionId = `facet-${facet.key}-${i}-${option.toLowerCase().replace(/\s+/g, "-")}`;
+                  return (
+                    <label class="filters__option" for={optionId}>
+                      <input
+                        type="checkbox"
+                        class="filters__checkbox"
+                        value={option}
+                        name={facet.key}
+                        id={optionId}
+                      />
+                      <span class="filters__option-text">{option}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        );
+      })
+    }
+    <button type="button" class="filters__clear">{l.clear}</button>
+  </div>
+  <div class="filters__status" role="status" aria-live="polite" aria-atomic="true"></div>
+</div>
+
+<style>
+  .filters {
+    margin-bottom: var(--space-2xl);
+  }
+
+  .filters__row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+    flex-wrap: wrap;
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .filters__search {
+    position: relative;
+    flex: 1;
+    /* min() keeps the row from forcing horizontal overflow on narrow viewports */
+    min-width: min(280px, 100%);
+    max-width: 400px;
+  }
+
+  .filters__icon {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    color: var(--text-muted);
+    pointer-events: none;
+  }
+
+  .filters__input {
+    width: 100%;
+    padding: 12px 0 12px 28px;
+    border: none;
+    font-size: 16px; /* prevents zoom-on-focus on iOS */
+    font-family: inherit;
+    background: transparent;
+    color: var(--gray-darker);
+    -webkit-appearance: none;
+  }
+
+  .filters__input:focus {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  .filters__input::placeholder {
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .filters__facet {
+    flex-shrink: 0;
+    min-width: min(180px, 100%);
+    position: relative;
+  }
+
+  .filters__dropdown {
+    position: relative;
+  }
+
+  .filters__dropdown-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 0.9rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+
+  .filters__dropdown-btn:hover {
+    border-color: var(--primary);
+  }
+
+  .filters__dropdown-btn[aria-expanded="true"] .filters__dropdown-icon {
+    transform: rotate(180deg);
+  }
+
+  .filters__dropdown-icon {
+    width: 12px;
+    height: 12px;
+    transition: transform var(--transition);
+  }
+
+  .filters__dropdown-content {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    max-height: min(240px, 40vh);
+    overflow-y: auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--box-shadow);
+    z-index: 50;
+  }
+
+  .filters__dropdown-content.open {
+    display: block;
+  }
+
+  .filters__option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 10px 14px;
+    min-height: 44px; /* touch target */
+    cursor: pointer;
+    box-sizing: border-box;
+  }
+
+  .filters__option:hover {
+    background: var(--surface-alt);
+  }
+
+  .filters__checkbox {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary);
+  }
+
+  .filters__option-text {
+    font-size: 0.9rem;
+    color: var(--text);
+  }
+
+  .filters__clear {
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+
+  .filters__clear:hover {
+    color: var(--text);
+    border-color: var(--text-muted);
+  }
+
+  .filters__status {
+    min-height: 1.5em;
+    padding-top: var(--space-xs);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 640px) {
+    .filters__row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .filters__facet,
+    .filters__search {
+      max-width: 100%;
+    }
+  }
+</style>
+
+<script>
+  function initCollectionFilters() {
+    document
+      .querySelectorAll<HTMLElement>("[data-component='CollectionFilters']")
+      .forEach((root) => {
+        if (root.dataset.ready) return;
+        root.dataset.ready = "true";
+
+        const itemSelector = root.dataset.itemSelector || "[data-filter-item]";
+        const statusTemplate = root.dataset.labelStatus || "{n} items shown";
+        const selectedTemplate = root.dataset.labelSelected || "{n} selected";
+        const searchInput = root.querySelector<HTMLInputElement>("[data-filter-search]");
+        const status = root.querySelector<HTMLElement>(".filters__status");
+        const clear = root.querySelector<HTMLButtonElement>(".filters__clear");
+        const facets = Array.from(root.querySelectorAll<HTMLElement>("[data-facet]"));
+
+        const items = () => Array.from(document.querySelectorAll<HTMLElement>(itemSelector));
+
+        const selections = (facet: HTMLElement) =>
+          Array.from(facet.querySelectorAll<HTMLInputElement>(".filters__checkbox"))
+            .filter((cb) => cb.checked)
+            .map((cb) => cb.value.toLowerCase());
+
+        const matches = (item: HTMLElement) => {
+          const query = searchInput?.value.trim().toLowerCase() || "";
+          if (query) {
+            const haystack = (item.dataset.search || item.textContent || "").toLowerCase();
+            if (!haystack.includes(query)) return false;
+          }
+          return facets.every((facet) => {
+            const selected = selections(facet);
+            if (selected.length === 0) return true;
+            const key = facet.dataset.facet!;
+            const values = (item.dataset[key] || item.getAttribute(`data-${key}`) || "")
+              .toLowerCase()
+              .split(",")
+              .map((v) => v.trim());
+            return selected.some((s) => values.includes(s));
+          });
+        };
+
+        const apply = () => {
+          let visible = 0;
+          items().forEach((item) => {
+            const show = matches(item);
+            item.style.display = show ? "" : "none";
+            if (show) visible++;
+          });
+          if (status) status.textContent = statusTemplate.replace("{n}", String(visible));
+          facets.forEach((facet) => {
+            const label = facet.querySelector<HTMLElement>("[data-facet-label]");
+            if (!label) return;
+            const selected = selections(facet);
+            label.textContent =
+              selected.length === 0
+                ? label.dataset.default || ""
+                : selected.length === 1
+                  ? selected[0]
+                  : selectedTemplate.replace("{n}", String(selected.length));
+          });
+        };
+
+        // Dropdown open/close with ARIA + Esc + click-outside
+        facets.forEach((facet) => {
+          const btn = facet.querySelector<HTMLButtonElement>(".filters__dropdown-btn");
+          const content = facet.querySelector<HTMLElement>(".filters__dropdown-content");
+          if (!btn || !content) return;
+
+          const close = () => {
+            content.classList.remove("open");
+            btn.setAttribute("aria-expanded", "false");
+          };
+          const toggle = () => {
+            const isOpen = content.classList.contains("open");
+            // Close other facet dropdowns first
+            root.querySelectorAll(".filters__dropdown-content.open").forEach((el) => {
+              el.classList.remove("open");
+              el.parentElement
+                ?.querySelector(".filters__dropdown-btn")
+                ?.setAttribute("aria-expanded", "false");
+            });
+            if (!isOpen) {
+              content.classList.add("open");
+              btn.setAttribute("aria-expanded", "true");
+              content.querySelector<HTMLInputElement>(".filters__checkbox")?.focus();
+            }
+          };
+
+          btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            toggle();
+          });
+          facet.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+              close();
+              btn.focus();
+            }
+          });
+          content.addEventListener("click", (e) => e.stopPropagation());
+          content.addEventListener("change", apply);
+        });
+
+        document.addEventListener("click", () => {
+          root.querySelectorAll(".filters__dropdown-content.open").forEach((el) => {
+            el.classList.remove("open");
+            el.parentElement
+              ?.querySelector(".filters__dropdown-btn")
+              ?.setAttribute("aria-expanded", "false");
+          });
+        });
+
+        let debounce = 0;
+        searchInput?.addEventListener("input", () => {
+          window.clearTimeout(debounce);
+          debounce = window.setTimeout(apply, 150);
+        });
+
+        clear?.addEventListener("click", () => {
+          if (searchInput) searchInput.value = "";
+          root
+            .querySelectorAll<HTMLInputElement>(".filters__checkbox")
+            .forEach((cb) => (cb.checked = false));
+          apply();
+        });
+
+        // Progressive enhancement: reveal the UI only once functional
+        root.hidden = false;
+        apply();
+      });
+  }
+
+  document.addEventListener("DOMContentLoaded", initCollectionFilters);
+  document.addEventListener("astro:page-load", initCollectionFilters);
+</script>

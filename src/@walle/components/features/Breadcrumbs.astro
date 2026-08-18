@@ -10,12 +10,12 @@ export interface BreadcrumbItem {
   /**
    * Destination URL
    */
-  url?: string;
+  href?: string;
 
   /**
    * Icon name (optional)
    */
-  iconName?: string;
+  icon?: string;
 }
 
 export interface Props {
@@ -30,14 +30,14 @@ export interface Props {
   separator?: string;
 
   /**
-   * Additional CSS classes
+   * Additional CSS classes appended to the root element
    */
-  extraClass?: string;
+  class?: string;
 }
 
-const { items = [], extraClass = "" } = Astro.props;
+const { items = [], class: className = "" } = Astro.props;
 
-const breadcrumbsClasses = ["breadcrumbs", extraClass].filter(Boolean).join(" ");
+const breadcrumbsClasses = ["breadcrumbs", className].filter(Boolean).join(" ");
 ---
 
 <nav aria-label="Breadcrumb" class={breadcrumbsClasses}>
@@ -51,14 +51,17 @@ const breadcrumbsClasses = ["breadcrumbs", extraClass].filter(Boolean).join(" ")
             </span>
           )}
 
-          {item.url && index !== items.length - 1 ? (
-            <a href={item.url}>
-              {item.iconName && <Icon name={item.iconName} class="item-icon" aria-hidden="true" />}
+          {item.href && index !== items.length - 1 ? (
+            <a href={item.href}>
+              {item.icon && <Icon name={item.icon} class="item-icon" aria-hidden="true" />}
               <span>{item.label}</span>
             </a>
           ) : (
-            <span class="current-item">
-              {item.iconName && <Icon name={item.iconName} class="item-icon" aria-hidden="true" />}
+            <span
+              class="current-item"
+              aria-current={index === items.length - 1 ? "page" : undefined}
+            >
+              {item.icon && <Icon name={item.icon} class="item-icon" aria-hidden="true" />}
               <span>{item.label}</span>
             </span>
           )}
@@ -72,7 +75,7 @@ const breadcrumbsClasses = ["breadcrumbs", extraClass].filter(Boolean).join(" ")
   .breadcrumbs {
     margin-bottom: 1.5rem;
     font-size: 0.95rem;
-    color: var(--gray-dark);
+    color: var(--text-muted);
   }
 
   .breadcrumbs ol {
@@ -108,7 +111,7 @@ const breadcrumbsClasses = ["breadcrumbs", extraClass].filter(Boolean).join(" ")
   }
 
   .current-item {
-    color: var(--gray-dark);
+    color: var(--text-muted);
     display: flex;
     align-items: center;
     gap: 0.3rem;
@@ -117,7 +120,7 @@ const breadcrumbsClasses = ["breadcrumbs", extraClass].filter(Boolean).join(" ")
   }
 
   .separator {
-    color: var(--gray-dark);
+    color: var(--text-muted);
     display: flex;
     align-items: center;
     opacity: 0.6;

@@ -1,0 +1,454 @@
+---
+/**
+ * Vanilla (no-framework) variant selector. Renders option chips (unavailable values
+ * disabled), a live price / availability readout, an optional quantity stepper, and an
+ * add-to-cart button. Single-variant products ("Title" only) render just price + button.
+ *
+ * Every control is an option so a consumer configures the card or detail page as they
+ * like. The add button carries `data-variant-id` and `data-qty`; the cart layer
+ * (CartMount.astro) delegates its click to `addToCart`, so a vetrina build ships no JS.
+ */
+import { defaultVariant, formatMoney, isSingleVariant, type ShopifyProduct } from "./shopify";
+
+interface Props {
+  product: ShopifyProduct;
+  locale?: string;
+  /** Render the add-to-cart button (shop mode). @default false */
+  showBuyButton?: boolean;
+  /** Render a quantity stepper. @default false */
+  showQuantity?: boolean;
+  /** Tighter styling for use inside a product card. @default false */
+  compact?: boolean;
+  /** Hide the option (size) chips and add the default variant directly. @default false */
+  hideOptions?: boolean;
+  /** Add-to-cart label. @default "Add to cart" */
+  addLabel?: string;
+}
+
+const {
+  product,
+  locale = "en-US",
+  showBuyButton = false,
+  showQuantity = false,
+  compact = false,
+  hideOptions = false,
+  addLabel = "Add to cart",
+} = Astro.props;
+
+const single = isSingleVariant(product);
+const initial = defaultVariant(product);
+
+const discountPct = (v: (typeof product.variants.nodes)[number] | undefined) =>
+  v?.compareAtPrice
+    ? Math.round((1 - Number(v.price.amount) / Number(v.compareAtPrice.amount)) * 100)
+    : 0;
+const initialDiscount = discountPct(initial);
+
+const cartIcon =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>';
+
+// Which option values have at least one available variant (to disable sold-out sizes).
+const availByOption = new Map<string, Set<string>>();
+for (const opt of product.options) {
+  const set = new Set<string>();
+  for (const v of product.variants.nodes) {
+    if (!v.availableForSale) continue;
+    const val = v.selectedOptions.find((o) => o.name === opt.name)?.value;
+    if (val) set.add(val);
+  }
+  availByOption.set(opt.name, set);
+}
+
+const variantData = product.variants.nodes.map((v) => ({
+  id: v.id,
+  options: Object.fromEntries(v.selectedOptions.map((o) => [o.name, o.value])),
+  price: v.price,
+  compareAt: v.compareAtPrice,
+  available: v.availableForSale,
+}));
+
+const initialSelected = Object.fromEntries(
+  (initial?.selectedOptions ?? []).map((o) => [o.name, o.value])
+);
+---
+
+<div
+  class:list={["variant-picker", { "variant-picker--compact": compact }]}
+  data-variant-picker
+  data-locale={locale}
+  data-variants={JSON.stringify(variantData)}
+>
+  {
+    !single &&
+      !hideOptions &&
+      product.options.map((opt) => (
+        <fieldset class="vp-option">
+          <legend class="vp-legend">{opt.name}</legend>
+          <div class="vp-values">
+            {opt.optionValues.map((val) => {
+              const soldOut = !availByOption.get(opt.name)?.has(val.name);
+              return (
+                <label class:list={["vp-chip", { "vp-chip--out": soldOut }]}>
+                  <input
+                    type="radio"
+                    name={`opt-${opt.name}-${product.handle}`}
+                    value={val.name}
+                    data-option={opt.name}
+                    checked={initialSelected[opt.name] === val.name}
+                    disabled={soldOut}
+                  />
+                  <span>{val.name}</span>
+                </label>
+              );
+            })}
+          </div>
+        </fieldset>
+      ))
+  }
+
+  <p class="vp-price">
+    <span class="vp-amount">{initial ? formatMoney(initial.price, locale) : ""}</span>
+    {
+      initial?.compareAtPrice && (
+        <s class="vp-compare">{formatMoney(initial.compareAtPrice, locale)}</s>
+      )
+    }
+    <span class="vp-discount" data-vp-discount hidden={!initialDiscount}>
+      {initialDiscount ? `-${initialDiscount}%` : ""}
+    </span>
+  </p>
+
+  {
+    !compact && (
+      <p class="vp-status" data-vp-status aria-live="polite">
+        {initial?.availableForSale ? "In stock" : "Out of stock"}
+      </p>
+    )
+  }
+
+  <div class="vp-actions">
+    {
+      showQuantity && (
+        <div class="vp-qty" data-vp-qty>
+          <button type="button" data-qty-dec aria-label="Decrease quantity">
+            &minus;
+          </button>
+          <span data-qty-value aria-live="polite">
+            1
+          </span>
+          <button type="button" data-qty-inc aria-label="Increase quantity">
+            +
+          </button>
+        </div>
+      )
+    }
+
+    {
+      showBuyButton && (
+        <button
+          type="button"
+          class="vp-add"
+          data-vp-add
+          data-variant-id={initial?.id}
+          data-qty="1"
+          disabled={!initial?.availableForSale}
+        >
+          <span class="vp-add__icon" set:html={cartIcon} />
+          <span>{addLabel}</span>
+        </button>
+      )
+    }
+  </div>
+</div>
+
+<style>
+  .variant-picker {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .vp-option {
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .vp-legend {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: var(--space-xs);
+    padding: 0;
+  }
+
+  .vp-values {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+
+  .vp-chip {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .vp-chip input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .vp-chip span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.75rem;
+    height: 2.5rem;
+    padding: 0 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 0.95rem;
+    transition:
+      border-color var(--transition),
+      background var(--transition);
+  }
+
+  .vp-chip input:checked + span {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: var(--white);
+  }
+
+  .vp-chip input:focus-visible + span {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  /* Sold-out option value */
+  .vp-chip--out span {
+    color: var(--gray-dark);
+    text-decoration: line-through;
+    cursor: not-allowed;
+    background: var(--surface-alt);
+  }
+
+  .vp-price {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-sm);
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .vp-compare {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+
+  .vp-discount {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--white);
+    background: var(--secondary);
+    border-radius: var(--radius-sm);
+    padding: 0.1rem 0.4rem;
+  }
+
+  .vp-discount[hidden] {
+    display: none;
+  }
+
+  .vp-status {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--secondary);
+  }
+
+  .vp-status[data-out] {
+    color: var(--gray-dark);
+  }
+
+  .vp-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .vp-qty {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .vp-qty button {
+    width: 40px;
+    height: 44px;
+    border: none;
+    background: var(--surface);
+    color: var(--text);
+    font-size: 1.1rem;
+    cursor: pointer;
+  }
+
+  .vp-qty button:hover {
+    background: var(--surface-alt);
+  }
+
+  .vp-qty [data-qty-value] {
+    min-width: 2rem;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .vp-add {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    appearance: none;
+    border: none;
+    border-radius: var(--radius-md);
+    background: var(--primary);
+    color: var(--white);
+    font-size: 1rem;
+    font-weight: 600;
+    min-height: 44px;
+    padding: 0.6rem 1.25rem;
+    cursor: pointer;
+    transition: background var(--transition);
+  }
+
+  .vp-add__icon {
+    display: inline-flex;
+  }
+
+  .vp-add__icon :global(svg) {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+
+  .vp-add:hover:not(:disabled) {
+    background: var(--primary-dark);
+  }
+
+  .vp-add:disabled {
+    opacity: var(--disabled-opacity);
+    cursor: not-allowed;
+  }
+
+  /* Compact (inside a product card) */
+  .variant-picker--compact {
+    gap: var(--space-sm);
+  }
+  .variant-picker--compact .vp-price {
+    font-size: 1.2rem;
+  }
+  .variant-picker--compact .vp-chip span {
+    min-width: 2.25rem;
+    height: 2rem;
+    font-size: 0.85rem;
+  }
+  .variant-picker--compact .vp-status {
+    font-size: 0.8rem;
+  }
+</style>
+
+<script>
+  type V = {
+    id: string;
+    options: Record<string, string>;
+    price: { amount: string; currencyCode: string };
+    compareAt: { amount: string; currencyCode: string } | null;
+    available: boolean;
+  };
+
+  function money(m: { amount: string; currencyCode: string }, locale: string) {
+    return new Intl.NumberFormat(locale, { style: "currency", currency: m.currencyCode }).format(
+      Number(m.amount)
+    );
+  }
+
+  function initPickers() {
+    document.querySelectorAll<HTMLElement>("[data-variant-picker]").forEach((root) => {
+      if (root.dataset.ready) return;
+      root.dataset.ready = "true";
+      const locale = root.dataset.locale || "en-US";
+      const variants: V[] = JSON.parse(root.dataset.variants || "[]");
+      const amountEl = root.querySelector<HTMLElement>(".vp-amount");
+      const compareEl = root.querySelector<HTMLElement>(".vp-compare");
+      const discountEl = root.querySelector<HTMLElement>("[data-vp-discount]");
+      const statusEl = root.querySelector<HTMLElement>("[data-vp-status]");
+      const addBtn = root.querySelector<HTMLButtonElement>("[data-vp-add]");
+      const radios = Array.from(root.querySelectorAll<HTMLInputElement>('input[type="radio"]'));
+
+      // Quantity stepper
+      const qtyValueEl = root.querySelector<HTMLElement>("[data-qty-value]");
+      const setQty = (n: number) => {
+        const q = Math.max(1, n);
+        if (qtyValueEl) qtyValueEl.textContent = String(q);
+        if (addBtn) addBtn.dataset.qty = String(q);
+      };
+      root
+        .querySelector("[data-qty-dec]")
+        ?.addEventListener("click", () => setQty(Number(qtyValueEl?.textContent) - 1));
+      root
+        .querySelector("[data-qty-inc]")
+        ?.addEventListener("click", () => setQty(Number(qtyValueEl?.textContent) + 1));
+
+      const selected = () => {
+        const sel: Record<string, string> = {};
+        radios.filter((r) => r.checked).forEach((r) => (sel[r.dataset.option as string] = r.value));
+        return sel;
+      };
+
+      const match = (sel: Record<string, string>) =>
+        variants.find((v) => Object.entries(v.options).every(([k, val]) => sel[k] === val));
+
+      const update = () => {
+        const v = variants.length === 1 ? variants[0] : match(selected());
+        if (!v) {
+          if (statusEl) statusEl.textContent = "Combination not available";
+          statusEl?.setAttribute("data-out", "");
+          if (addBtn) addBtn.disabled = true;
+          return;
+        }
+        if (amountEl) amountEl.textContent = money(v.price, locale);
+        if (compareEl) compareEl.textContent = v.compareAt ? money(v.compareAt, locale) : "";
+        if (discountEl) {
+          const pct = v.compareAt
+            ? Math.round((1 - Number(v.price.amount) / Number(v.compareAt.amount)) * 100)
+            : 0;
+          discountEl.textContent = pct ? `-${pct}%` : "";
+          discountEl.hidden = !pct;
+        }
+        if (statusEl) {
+          statusEl.textContent = v.available ? "In stock" : "Out of stock";
+          v.available
+            ? statusEl.removeAttribute("data-out")
+            : statusEl.setAttribute("data-out", "");
+        }
+        if (addBtn) {
+          addBtn.disabled = !v.available;
+          addBtn.dataset.variantId = v.id;
+        }
+      };
+
+      radios.forEach((r) => r.addEventListener("change", update));
+      update();
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", initPickers);
+  document.addEventListener("astro:page-load", initPickers);
+</script>

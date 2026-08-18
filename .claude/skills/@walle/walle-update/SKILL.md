@@ -36,7 +36,7 @@ If it reports "latest published is vX.Y.Z", there is a newer release. Running `w
 just walle-update
 ```
 
-This re-syncs all MANAGED paths for the project's active modules at the pinned walle release, and regenerates the `AGENTS.md` marker block. SEED files (write-once consumer scaffolding: API routes, Terraform scaffold, workflow starters) and all consumer zones are never touched.
+This re-syncs all MANAGED paths for the project's active modules at the pinned walle release, and regenerates the `AGENTS.md` marker block. SEED files (write-once consumer scaffolding: API routes, workflow starters, middleware) and all consumer zones are never touched.
 
 ### Crossing a MAJOR version boundary
 
@@ -48,12 +48,27 @@ just walle-update --yes
 
 ## What changes vs. what is preserved
 
-| Category                                                 | Behavior                         |
-| -------------------------------------------------------- | -------------------------------- |
-| `@walle/`-namespaced paths                               | Overwritten — every managed file |
-| `AGENTS.md` marker block                                 | Regenerated from the manifest    |
-| SEED files (api routes, infra, ci workflows, middleware) | Never touched                    |
-| Consumer zones (configs, pages, styles, content)         | Never touched                    |
+| Category                                          | Behavior                         |
+| ------------------------------------------------- | -------------------------------- |
+| `@walle/`-namespaced paths                        | Overwritten — every managed file |
+| `AGENTS.md` marker block                          | Regenerated from the manifest    |
+| SEED files (api routes, ci workflows, middleware) | Never touched                    |
+| `package.json` (seed — see "Dependencies" below)  | Never touched                    |
+| Consumer zones (configs, pages, styles, content)  | Never touched                    |
+
+## Dependencies
+
+`package.json` is a SEED file, so `update` never rewrites it (that would clobber deps you added).
+After syncing, `update` prints any **Walle-owned** dependency that is behind the release's tested set.
+To align them (only the Walle-owned entries; your own deps are left alone):
+
+```bash
+just walle-deps            # read-only report of what's behind
+just walle-deps --apply    # bump the behind Walle-owned deps
+just yarn install          # update the lockfile
+```
+
+Majors are flagged in the report — read the CHANGELOG before bumping those.
 
 ## After the update
 
@@ -64,4 +79,4 @@ just walle-check   # manifest v2, version pin, configs — also checks for furth
 just build         # production build
 ```
 
-If `walle-check` reports a manifest or version mismatch, fix the pin in `.walle/manifest.json` rather than hand-editing managed files.
+If `walle-check` reports a manifest or version mismatch, fix the pin in `.harness-walle/manifest.json` rather than hand-editing managed files.

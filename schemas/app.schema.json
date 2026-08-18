@@ -49,6 +49,30 @@
         "navbar": { "type": "string", "default": "standard" },
         "footer": { "type": "string", "default": "standard" }
       }
+    },
+    "commerce": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Shopify headless catalog. showBuyButton:false => vetrina (catalog only, no cart/checkout).",
+      "properties": {
+        "showBuyButton": { "type": "boolean", "default": false },
+        "cartInNavbar": {
+          "type": "boolean",
+          "default": false,
+          "description": "true => cart trigger lives in the navbar; false => floating badge."
+        },
+        "locale": { "type": "string", "default": "en-US" },
+        "addToCartLabel": {
+          "type": "string",
+          "default": "Add to cart",
+          "description": "Text on the add-to-cart button (icon is always shown alongside it)."
+        },
+        "showAddToCartOnCards": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the add-to-cart button on product listing cards. false => cards link to the detail page only (add-to-cart still available there). No effect in vetrina mode."
+        }
+      }
     }
   }
 }

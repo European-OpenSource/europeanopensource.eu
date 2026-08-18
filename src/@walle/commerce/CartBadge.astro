@@ -1,0 +1,78 @@
+---
+/**
+ * Cart trigger. Rendered either floating (bottom-right) or inline in the navbar,
+ * chosen by `commerce.cartInNavbar` in BaseLayout. The drawer + wiring live in
+ * CartMount.astro, which finds this button by `[data-cart-badge]` wherever it sits.
+ */
+interface Props {
+  /** Floating bottom-right (default) vs inline in the navbar. @default true */
+  floating?: boolean;
+}
+const { floating = true } = Astro.props;
+---
+
+<button
+  class:list={["cart-badge", floating ? "cart-badge--floating" : "cart-badge--inline"]}
+  data-cart-badge
+  data-cart-keep={floating ? undefined : "true"}
+  aria-label="Open cart"
+  hidden={floating}
+>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+    <circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle>
+    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+  </svg>
+  <span class="cart-badge__count" data-cart-count aria-live="polite">0</span>
+</button>
+
+<style>
+  .cart-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+  }
+
+  .cart-badge svg {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+
+  .cart-badge__count {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Floating variant */
+  .cart-badge--floating {
+    position: fixed;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    z-index: 900;
+    padding: 0.7rem 0.9rem;
+    border: none;
+    border-radius: var(--radius-lg);
+    background: var(--primary);
+    color: var(--white);
+    box-shadow: var(--box-shadow);
+  }
+
+  /* Inline (navbar) variant */
+  .cart-badge--inline {
+    position: relative;
+    height: 40px;
+    padding: 0 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    color: var(--text);
+    transition:
+      border-color var(--transition),
+      color var(--transition);
+  }
+
+  .cart-badge--inline:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+</style>

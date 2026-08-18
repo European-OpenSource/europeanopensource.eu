@@ -58,6 +58,7 @@ just help
 <!-- [harness-coding:END] -->
 
 <!-- [walle:START] -->
+
 ## Walle design system (managed block)
 
 This project uses the [Walle](https://github.com/FabrizioCafolla/harness-walle)
@@ -96,4 +97,5 @@ Do not edit files inside `@walle/` directories, and do not edit the content betw
 - Update: `just walle-update`.
 - Add: `just walle add <module>`.
 - Validate: `just walle-check`.
+
 <!-- [walle:END] -->

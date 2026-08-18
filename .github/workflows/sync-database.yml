@@ -25,7 +25,7 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
-          cache: 'yarn'
+          cache: "yarn"
           cache-dependency-path: yarn.lock
 
       - name: Install dependencies
@@ -86,10 +86,10 @@ jobs:
         with:
           token: ${{ secrets.GH_ACTION_WORKFLOWS }}
           branch: ${{ steps.env.outputs.pr_branch_name }}
-          title: 'feat(website): sync database'
+          title: "feat(website): sync database"
           body: ${{ steps.env.outputs.pr_body }}
-          commit-message: 'feat(website): sync database'
-          author: 'FabrizioCafolla <${{ secrets.GH_ACTION_MAIL }}>'
+          commit-message: "feat(website): sync database"
+          author: "FabrizioCafolla <${{ secrets.GH_ACTION_MAIL }}>"
           add-paths: |
             src/content/*
 

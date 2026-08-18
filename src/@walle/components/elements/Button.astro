@@ -1,7 +1,7 @@
 ---
 import { Icon } from "astro-icon/components";
 
-type ButtonType = "primary" | "secondary" | "white";
+type ButtonVariant = "primary" | "secondary" | "white";
 type ButtonSize = "small" | "medium" | "large";
 
 export interface Props {
@@ -16,15 +16,20 @@ export interface Props {
   id?: string;
 
   /**
-   * Destination URL if the button is a link
+   * Destination URL — when set, the component renders an `<a>` styled as a button
    */
-  link?: string;
+  href?: string;
 
   /**
-   * Visual style type
+   * Link target (only used with `href`)
+   */
+  target?: "_blank" | "_self";
+
+  /**
+   * Visual variant
    * @default "primary"
    */
-  type?: ButtonType;
+  variant?: ButtonVariant;
 
   /**
    * If true, apply outline style to the button
@@ -33,14 +38,14 @@ export interface Props {
   outline?: boolean;
 
   /**
-   * Additional CSS classes
+   * Additional CSS classes appended to the root element
    */
-  extraClass?: string;
+  class?: string;
 
   /**
    * Icon name to display (astro-icon)
    */
-  iconName?: string;
+  icon?: string;
 
   /**
    * Button size
@@ -55,122 +60,77 @@ export interface Props {
   fullWidth?: boolean;
 
   /**
-   * HTML target for links (e.g. "_blank")
-   */
-  target?: string;
-
-  /**
    * If true, disable the button
    * @default false
    */
   disabled?: boolean;
 
-  disableEffects?: boolean;
+  /**
+   * If false, disable entrance/hover animations
+   * @default true
+   */
+  effects?: boolean;
 
-  buttonType?: "button" | "submit" | "reset";
+  /**
+   * Native button type (ignored when `href` is set)
+   * @default "button"
+   */
+  type?: "button" | "submit" | "reset";
 }
 
 const {
   text,
   id = null,
-  link = null,
-  type = "primary",
+  href = null,
+  target = null,
+  variant = "primary",
   outline = false,
-  extraClass = null,
-  iconName = null,
+  class: className = null,
+  icon = null,
   size = "medium",
   fullWidth = false,
-  target = null,
   disabled = false,
-  disableEffects = false,
-  buttonType = "button",
+  effects = true,
+  type = "button",
 } = Astro.props;
 
 const buttonClasses = [
-  `button-${type}`,
-  outline ? `button-outline button-${type}-outline` : "",
+  "button",
+  `button-${variant}`,
+  outline ? `button-outline button-${variant}-outline` : "",
   `button-${size}`,
   fullWidth ? "button-full-width" : "",
-  extraClass ? extraClass : "",
+  className ? className : "",
   disabled ? "button-disabled" : "",
-  disableEffects ? "no-effects" : "",
+  effects ? "" : "no-effects",
 ]
   .filter(Boolean)
   .join(" ");
 
-const isLink = link && !disabled;
+const isLink = href && !disabled;
+const Tag = isLink ? "a" : "button";
+
+const tagAttrs = isLink
+  ? { href, target, rel: target === "_blank" ? "noopener" : undefined }
+  : { type, disabled, "aria-disabled": disabled ? "true" : undefined };
 ---
 
-{
-  isLink ? (
-    <a
-      href={link}
-      target={target}
-      class={`button-link-wrapper ${fullWidth ? "button-full-width" : ""}`}
-      aria-disabled={disabled}
-      aria-label={text}
-      data-component="Button"
-      data-variant={type}
-      data-size={size}
-      data-outline={outline ? "true" : "false"}
-      data-disabled={disabled ? "true" : "false"}
-    >
-      <button
-        id={id}
-        class={buttonClasses}
-        disabled={disabled}
-        type={buttonType}
-        aria-label={text}
-        aria-disabled={disabled ? "true" : undefined}
-        data-component="Button"
-        data-variant={type}
-        data-size={size}
-        data-outline={outline ? "true" : "false"}
-        data-disabled={disabled ? "true" : "false"}
-      >
-        <span class="button-text">{text}</span>
-        {iconName && (
-          <Icon
-            name={iconName}
-            style="margin-left: 8px; vertical-align: 0.20em;"
-            class="button-icon"
-          />
-        )}
-      </button>
-    </a>
-  ) : (
-    <button
-      id={id}
-      class={buttonClasses}
-      disabled={disabled}
-      type={buttonType}
-      aria-label={text}
-      aria-disabled={disabled ? "true" : undefined}
-      data-component="Button"
-      data-variant={type}
-      data-size={size}
-      data-outline={outline ? "true" : "false"}
-      data-disabled={disabled ? "true" : "false"}
-    >
-      <span class="button-text">{text}</span>
-      {iconName && <Icon name={iconName} class="button-icon" />}
-    </button>
-  )
-}
+<Tag
+  id={id}
+  class={buttonClasses}
+  {...tagAttrs}
+  data-component="Button"
+  data-variant={variant}
+  data-size={size}
+  data-outline={outline ? "true" : "false"}
+  data-disabled={disabled ? "true" : "false"}
+>
+  <span class="button-text">{text}</span>
+  {icon && <Icon name={icon} class="button-icon" />}
+</Tag>
 
 <style>
-  .button-link-wrapper {
-    display: inline-block;
-    text-decoration: none;
-  }
-
-  .button-link-wrapper[aria-disabled="true"] {
-    pointer-events: none;
-    cursor: not-allowed;
-    opacity: 0.65;
-  }
-
-  button {
+  .button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -200,7 +160,7 @@ const isLink = link && !disabled;
     }
   }
 
-  button {
+  .button {
     opacity: 0;
     transform: translateY(12px);
     animation: fadeInUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1s forwards;
@@ -236,45 +196,45 @@ const isLink = link && !disabled;
     transform: none !important;
   }
 
-  .no-effects button:hover:not(:disabled),
-  .no-effects button:active:not(:disabled) {
+  .no-effects:hover:not(:disabled),
+  .no-effects:active:not(:disabled) {
     transform: none !important;
   }
 
-  /* Outline buttons */
+  /* Variants — flat fills, subtle hover */
   .button-primary {
-    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    background: var(--primary);
     color: var(--white);
   }
 
   .button-primary:hover:not(:disabled) {
-    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-    transform: translateY(-4px);
-    box-shadow: var(--box-shadow-hover);
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--box-shadow);
   }
 
   .button-secondary {
-    background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+    background: var(--secondary);
     color: var(--white);
   }
 
   .button-secondary:hover:not(:disabled) {
-    background: linear-gradient(135deg, var(--secondary-dark), var(--secondary));
-    transform: translateY(-4px);
-    box-shadow: var(--box-shadow-hover);
+    background: var(--secondary-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--box-shadow);
   }
 
   .button-white {
-    background: var(--white);
+    background: var(--surface);
     color: var(--primary);
-    border: 1px solid var(--gray-medium);
+    border: 1px solid var(--border);
   }
 
   .button-white:hover:not(:disabled) {
-    background: var(--gray-light);
+    background: var(--surface-alt);
     color: var(--primary-dark);
-    transform: translateY(-4px);
-    box-shadow: var(--box-shadow-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--box-shadow);
     border-color: var(--primary-light);
   }
 
@@ -317,7 +277,7 @@ const isLink = link && !disabled;
   }
 
   .button-white-outline:hover:not(:disabled) {
-    background: var(--white);
+    background: var(--surface);
     border-color: var(--white);
     color: var(--primary);
     transform: translateY(-3px);
@@ -326,7 +286,7 @@ const isLink = link && !disabled;
 
   /* Disabled state */
   .button-disabled,
-  button:disabled {
+  .button:disabled {
     opacity: 0.65;
     cursor: not-allowed;
     pointer-events: none;
@@ -366,21 +326,21 @@ const isLink = link && !disabled;
   }
 
   /* Hover effects and feedback */
-  button:active:not(:disabled) {
+  .button:active:not(:disabled) {
     transform: translateY(-1px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   }
 
   @media (prefers-reduced-motion: reduce) {
-    button {
+    .button {
       animation: none;
       opacity: 1;
       transform: translateY(0);
       transition: none;
     }
 
-    button:hover:not(:disabled),
-    button:active:not(:disabled) {
+    .button:hover:not(:disabled),
+    .button:active:not(:disabled) {
       transform: none;
     }
   }

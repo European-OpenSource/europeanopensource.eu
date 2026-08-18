@@ -59,11 +59,20 @@ SSR must be enabled for API routes to work. Check or enable it in `src/configs/a
 }
 ```
 
-### Infrastructure (Terraform/OpenTofu)
+### Commerce (Shopify headless)
 
-If your project has the `infrastructure` module, the scaffold in `infrastructure/` is yours. The walle seed provides `main.tf`, `variables.tf`, `providers.tf`, `outputs.tf`, and `.gitignore`. Edit or extend them — `walle update` never touches this directory.
+The commerce layer is config-driven from `src/configs/app.json`:
 
-To switch providers or add resources, edit `providers.tf` (uncomment and pin the provider version) and `main.tf` (declare resources).
+```json
+"commerce": { "showBuyButton": true, "cartInNavbar": true, "locale": "en-US", "addToCartLabel": "Add to cart" }
+```
+
+- `showBuyButton: false` → **vetrina** (catalog only, no cart); `true` → **shop** (add-to-cart + hosted checkout).
+- Products come from Shopify at build time via two env vars (`PUBLIC_SHOPIFY_STORE`,
+  `PUBLIC_SHOPIFY_STOREFRONT_TOKEN`); with none set, a bundled demo catalog is used — the site still
+  builds. Only the **public** Storefront token belongs in the site.
+- The catalog is baked at build, so a product change needs a rebuild. Full setup and the do/don't
+  list: see the commerce guide in the walle docs (`wiki/commerce.md`).
 
 ## When to use consumer components vs. @walle slots
 

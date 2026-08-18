@@ -1,16 +1,16 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://walle.dev/schemas/walle.config.schema.json",
-  "title": "Walle consumer manifest (.walle/manifest.json)",
-  "version": "2.0.0",
+  "title": "Walle consumer manifest (.harness-walle/manifest.json)",
+  "version": "3.0.0",
   "type": "object",
   "additionalProperties": false,
   "required": ["schemaVersion", "name", "walleVersion", "modules", "updatedAt"],
   "properties": {
     "$schema": { "type": "string" },
     "schemaVersion": {
-      "const": 2,
-      "description": "Manifest contract version. v2 is the current format."
+      "const": 3,
+      "description": "Manifest contract version. v3 groups `files` by module (v2 keyed by dest path); older manifests are migrated automatically by the CLI."
     },
     "name": {
       "type": "string",
@@ -33,7 +33,7 @@
       "minItems": 1,
       "uniqueItems": true,
       "items": {
-        "enum": ["website", "ci", "ai", "backend", "infrastructure"],
+        "enum": ["website", "ci", "ai", "backend"],
         "description": "Sync-able modules. 'website' is mandatory; any other value is an unknown-module error."
       },
       "contains": { "const": "website" },
@@ -57,12 +57,21 @@
     },
     "files": {
       "type": "object",
-      "description": "Every path walle wrote, grouped by class then keyed by dest path → module.",
+      "description": "Every path walle wrote, grouped by class (managed | seed | inject) then by module → array of dest paths.",
       "additionalProperties": false,
       "properties": {
-        "managed": { "type": "object", "additionalProperties": { "type": "string" } },
-        "seed": { "type": "object", "additionalProperties": { "type": "string" } },
-        "inject": { "type": "object", "additionalProperties": { "type": "string" } }
+        "managed": {
+          "type": "object",
+          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+        },
+        "seed": {
+          "type": "object",
+          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+        },
+        "inject": {
+          "type": "object",
+          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+        }
       }
     }
   },

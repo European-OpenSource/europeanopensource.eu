@@ -1,0 +1,110 @@
+---
+export interface Props {
+  /**
+   * Section title (optional)
+   */
+  title?: string;
+
+  /**
+   * Number of columns on wide screens; collapses to 1 on narrow viewports
+   * via CSS only
+   * @default 3
+   */
+  columns?: 2 | 3 | 4;
+
+  /**
+   * Minimum column width before wrapping (CSS length)
+   * @default "16rem"
+   */
+  minColumnWidth?: string;
+
+  /**
+   * Center the title
+   * @default false
+   */
+  centered?: boolean;
+
+  /**
+   * Visual variant
+   * @default null
+   */
+  variant?: "primary" | "gray" | null;
+
+  /**
+   * Additional CSS classes appended to the root element
+   */
+  class?: string;
+}
+
+const {
+  title,
+  columns = 3,
+  minColumnWidth = "16rem",
+  centered = false,
+  variant = null,
+  class: className = "",
+} = Astro.props;
+
+const classes = [
+  "section",
+  "section-columns",
+  variant ? `section-content-${variant}` : "",
+  centered ? "text-centered" : "",
+  className,
+]
+  .filter(Boolean)
+  .join(" ");
+---
+
+<section class={classes} data-component="SectionColumns" data-columns={columns}>
+  <div class="section-columns__inner">
+    {title && <h2 class="section-columns__title">{title}</h2>}
+    <div
+      class="section-columns__grid"
+      style={`--columns: ${columns}; --min-col: ${minColumnWidth};`}
+    >
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+  .section-columns__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-xl);
+  }
+
+  .section-columns__title {
+    margin-bottom: var(--space-2xl);
+  }
+
+  /* auto-fit + minmax: columns collapse to 1 on narrow viewports without JS
+     or breakpoint props; --columns caps the count on wide screens. */
+  .section-columns__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--min-col)), 1fr));
+    gap: var(--space-xl);
+  }
+
+  @media (min-width: 769px) {
+    .section-columns__grid {
+      grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+    }
+  }
+
+  .section-content-primary {
+    background-color: var(--primary);
+    color: var(--white);
+  }
+
+  .section-content-gray {
+    background-color: var(--surface-alt);
+  }
+
+  @media (max-width: 640px) {
+    .section-columns__inner {
+      padding: 0 var(--space-md);
+    }
+  }
+</style>

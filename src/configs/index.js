@@ -17,8 +17,7 @@ export default {
       ...AppConfig.website,
       github_awesome_project_url:
         "https://github.com/European-OpenSource/awesome-european-opensource",
-      github_website_project_url:
-        "https://github.com/European-OpenSource/europeanopensource.eu",
+      github_website_project_url: "https://github.com/European-OpenSource/europeanopensource.eu",
     },
   },
   footer: FooterConfig,

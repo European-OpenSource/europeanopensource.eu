@@ -37,9 +37,9 @@ greenfield flow). Omitted, the target is `--dir-path` itself (default: current d
 **Three outcomes depending on the target directory:**
 
 1. **Doesn't exist** → created and scaffolded, no prompt (same as today).
-2. **Exists with a `.walle/manifest.json`** → refuses to run: "already a walle project — use
+2. **Exists with a `.harness-walle/manifest.json`** → refuses to run: "already a walle project — use
    `cli.sh update` or `cli.sh add <module>` instead." Nothing is written.
-3. **Exists without a `.walle/manifest.json`** ("adoption") → prints a warning and the sync plan
+3. **Exists without a `.harness-walle/manifest.json`** ("adoption") → prints a warning and the sync plan
    (same shape as `--dry-run`), then asks `Proceed? [y/N]`. Pass `--yes` to skip the prompt
    (for scripts/CI). Declining aborts with nothing written. Seed (starter) files are written
    **only if absent** — an adoption never overwrites a file already in the directory; MANAGED
@@ -54,9 +54,8 @@ greenfield flow). Omitted, the target is `--dir-path` itself (default: current d
 5. Seeds each module's SEED paths (written once if absent).
 6. Injects walle's marker-bounded blocks into consumer-owned files.
 
-What is managed, seed, or inject is declared in `walle/walle.yml`.
-6. Writes `.walle/manifest.json`, `.walle/config.yml` (if absent), `.walle/lock`, and (unless
-   `config.yml`'s `docs: false`) `.walle/docs/`.
+What is managed, seed, or inject is declared in `walle/walle.yml`. 6. Writes `.harness-walle/manifest.json`, `.harness-walle/config.yml` (if absent), `.harness-walle/lock`, and (unless
+`config.yml`'s `docs: false`) `.harness-walle/docs/`.
 
 **`website` is always required.** Omit `--modules` to get just `website`.
 
@@ -64,12 +63,12 @@ What is managed, seed, or inject is declared in `walle/walle.yml`.
 
 **Common errors:**
 
-| Error                             | Cause                                                                                 |
-| --------------------------------- | ------------------------------------------------------------------------------------- |
-| `already a walle project`         | Target has a `.walle/manifest.json` already — use `update`/`add` instead              |
-| `aborted — no files were written` | Adoption prompt declined                                                              |
-| `'website' is a mandatory module` | `--modules` specified without `website`                                               |
-| `unknown module '<m>'`            | Module name not in `website`, `ci`, `ai`, `backend`, `infrastructure`, `devcontainer` |
+| Error                             | Cause                                                                            |
+| --------------------------------- | -------------------------------------------------------------------------------- |
+| `already a walle project`         | Target has a `.harness-walle/manifest.json` already — use `update`/`add` instead |
+| `aborted — no files were written` | Adoption prompt declined                                                         |
+| `'website' is a mandatory module` | `--modules` specified without `website`                                          |
+| `unknown module '<m>'`            | Module name not in `website`, `ci`, `ai`, `backend`, `devcontainer`              |
 
 ---
 
@@ -82,30 +81,38 @@ cli.sh update \
   [-p | --project-path <path>] \
   [--walle-version vX.Y.Z | --source <path>] \
   [--dry-run] \
-  [--yes]
+  [--yes] \
+  [--no-deps-check]
 ```
 
 **Default project path:** current directory.
 
 **What it does:**
 
-1. Migrates a root `.walle.config.json` to `.walle/manifest.json` first, if found (see
-   [Migration](#migration-from-walleconfigjson) below).
-2. Reads `.walle/manifest.json` (stops if missing or v1).
+1. Migrates any older layout first (see [Migration](#migration-from-older-layouts) below): a root
+   `.walle.config.json` or an old `.walle/` folder becomes `.harness-walle/`, and a `schemaVersion: 2`
+   `files` map is reshaped to v3.
+2. Reads `.harness-walle/manifest.json` (stops if missing or unversioned).
 3. Resolves the source.
 4. Checks for a MAJOR version boundary — stops unless `--yes`.
 5. Re-syncs MANAGED paths for all declared modules, including the `.vscode/settings.json` and
    `.vscode/extensions.json` marker blocks.
 6. **Does not touch** SEED files, consumer configs, styles, pages, or content outside the
    `.vscode/` marker blocks.
-7. Rewrites `.walle/manifest.json` with the new `walleVersion` and `updatedAt`, refreshes
-   `.walle/lock` and `.walle/docs/` (unless disabled).
+7. Rewrites `.harness-walle/manifest.json` with the new `walleVersion` and `updatedAt`, refreshes
+   `.harness-walle/lock` and `.harness-walle/docs/` (unless disabled).
+8. Reports any **Walle-owned dependency drift** in `package.json` (which is seed-owned and never
+   rewritten) so you can align it — see [`deps`](#deps). Disable with `--no-deps-check`.
 
-### Migration from `.walle.config.json`
+### Migration from older layouts
 
-A consumer still on the pre-`.walle/` layout (root `.walle.config.json`, no `.walle/` folder)
-is migrated automatically, before anything else: its content is moved verbatim into
-`.walle/manifest.json` and the old file is removed. No manual action needed, no data lost.
+A consumer on any older layout is migrated automatically, before anything else — idempotent, no
+data lost, no manual action:
+
+- a root `.walle.config.json` file → `.harness-walle/manifest.json`;
+- an old `.walle/` state folder → `.harness-walle/` (dir renamed);
+- a `schemaVersion: 2` `files` map (keyed by dest path → module) → v3 (keyed by module → array of
+  dest paths), and `schemaVersion` bumped to 3.
 
 **In a consumer, prefer:**
 
@@ -115,11 +122,11 @@ just walle-update
 
 **Common errors:**
 
-| Error                               | Cause                                                                  |
-| ----------------------------------- | ---------------------------------------------------------------------- |
-| `no .walle/manifest.json found`     | Not a walle consumer or wrong `--project-path`                         |
-| `manifest predates schemaVersion 2` | Manifest is missing `schemaVersion: 2` — this format isn't supported   |
-| `crosses a MAJOR boundary`          | MAJOR version bump; re-run with `--yes` after reviewing `CHANGELOG.md` |
+| Error                                   | Cause                                                                                             |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `no .harness-walle/manifest.json found` | Not a walle consumer or wrong `--project-path`                                                    |
+| `unsupported manifest schemaVersion`    | Manifest has no `schemaVersion` (v2/v3 are supported; v2 auto-migrates) — re-scaffold with `init` |
+| `crosses a MAJOR boundary`              | MAJOR version bump; re-run with `--yes` after reviewing `CHANGELOG.md`                            |
 
 ---
 
@@ -136,10 +143,10 @@ cli.sh add <module> \
 
 **What it does:**
 
-1. Reads `.walle/manifest.json`.
+1. Reads `.harness-walle/manifest.json`.
 2. Syncs the new module's MANAGED paths.
 3. Writes the module's SEED paths if they don't exist yet (re-add leaves them intact).
-4. Appends the module to `modules` in `.walle/manifest.json`.
+4. Appends the module to `modules` in `.harness-walle/manifest.json`.
 
 If the module is already declared, `add` re-syncs its MANAGED paths without changing the module list.
 
@@ -165,7 +172,7 @@ cli.sh check [-p | --project-path <path>] [-s | --source <path>] [-v | --verbose
 
 **What it checks:**
 
-1. `.walle/manifest.json` exists and is `schemaVersion: 2`.
+1. `.harness-walle/manifest.json` exists and is `schemaVersion: 2`.
 2. `walleVersion` is a semver tag (`vX.Y.Z` or `vX.Y.Z-prerelease`) or `"local"`.
 3. When `walleVersion` is a semver tag (not `"local"`), compares it against the latest published tag on GitHub and emits a warning if the consumer is behind. Silently skipped when the remote is unreachable (no network).
 4. Manifest validates against `schemas/walle.config.schema.json`.
@@ -217,3 +224,50 @@ With `--source`:
 ```
 
 **Does not write anything.**
+
+## `deps`
+
+Report — and optionally align — **Walle-owned dependency drift** in a consumer's `package.json`.
+Inside a consumer the canonical form is `just walle-deps` (`just walle-deps --apply` to align); the
+direct `cli.sh` invocation below is for more control.
+
+```bash
+cli.sh deps \
+  [-p | --project-path <path>] \
+  [--walle-version vX.Y.Z | --source <path>] \
+  [--apply]
+```
+
+**Why it exists:** `package.json` is a SEED file (see [managed vs seed](managed-vs-seed.md)) — the
+consumer owns it and adds their own dependencies, so `update` never rewrites it. `deps` bridges that
+gap: it treats the resolved release's seed `package.json` as the reference for **Walle-owned**
+dependencies and compares the consumer's versions against it. Dependencies the consumer added (absent
+from the seed) are never reported or changed.
+
+**What it does:**
+
+- Without `--apply` (default) — read-only report. Prints each Walle-owned dependency whose declared
+  floor is **below** the seed's, flags **major** gaps (which may carry breaking changes), and lists any
+  Walle deps absent from your `package.json`. Runs automatically at the end of `update` (unless
+  `--no-deps-check`).
+- With `--apply` — rewrites only the behind Walle-owned entries in `package.json` to the seed's ranges,
+  preserving key order and leaving your own dependencies untouched. Then run `yarn install` to update
+  the lockfile.
+
+```
+$ cli.sh deps --source /path/to/harness-walle
+
+ ⚠ 2 Walle dependency(ies) in your package.json are behind the tested set
+   (Walle never rewrites package.json — it's yours):
+
+     package   yours     walle
+     astro     ^7.0.6    ^7.1.3
+     vitest    ^3.2.7    ^4.1.10   ⚠ major — check breaking changes
+
+   Align them:  yarn up astro@^7.1.3 vitest@^4.1.10
+   Or run:      walle deps --apply
+```
+
+The comparison uses the version **floor** of each range (`^7.1.3` → `7.1.3`), so it flags only genuine
+downgrades, never cosmetic range differences. Each release also records its validated dependency set in
+the [CHANGELOG](../CHANGELOG.md) `Dependencies` section.

@@ -3,37 +3,32 @@ import { Image } from "astro:assets";
 
 interface Props {
   title: string;
-  imageSrc?: string;
-  imageAlt?: string;
+  image?: {
+    src: ImageMetadata | string;
+    alt: string;
+  };
   reversed?: boolean;
   centered?: boolean;
-  type?: "primary" | "gray" | null;
+  variant?: "primary" | "gray" | null;
 }
 
-const {
-  title,
-  imageSrc = null,
-  centered = false,
-  imageAlt = null,
-  type = null,
-  reversed = false,
-} = Astro.props;
+const { title, image = null, centered = false, variant = null, reversed = false } = Astro.props;
 ---
 
 <section
-  class={`section ${type ? `section-content-${type}` : ""} ${reversed ? "reversed" : ""} ${centered ? "text-centered" : ""}`}
+  class={`section ${variant ? `section-content-${variant}` : ""} ${reversed ? "reversed" : ""} ${centered ? "text-centered" : ""}`}
 >
-  <div class={`section-content ${imageSrc ? `section-content-image` : ""}`}>
+  <div class={`section-content ${image ? `section-content-image` : ""}`}>
     <div class="text-container">
-      <h2 class={`section-title ${type ? `section-title-${type}` : ""}`}>{title}</h2>
+      <h2 class={`section-title ${variant ? `section-title-${variant}` : ""}`}>{title}</h2>
       <slot />
     </div>
     {
-      imageSrc && (
+      image && (
         <div class="image-container">
           <Image
-            src={imageSrc}
-            alt={imageAlt}
+            src={image.src}
+            alt={image.alt}
             width={500}
             height={400}
             loading="lazy"
@@ -60,8 +55,8 @@ const {
   }
 
   .section-content-gray {
-    background-color: var(--gray-light);
-    color: var(--black);
+    background-color: var(--surface-alt);
+    color: var(--text);
   }
 
   .section-content {
@@ -87,7 +82,7 @@ const {
 
   .section-title {
     margin-bottom: var(--space-2xl);
-    color: var(--black);
+    color: var(--text);
     font-size: clamp(2rem, 4vw, 2.75rem);
     font-weight: 700;
     line-height: 1.2;
@@ -98,7 +93,7 @@ const {
   }
 
   .section-title-gray {
-    color: var(--black);
+    color: var(--text);
   }
 
   .image-container {
@@ -106,7 +101,7 @@ const {
     border-radius: var(--radius-xl);
     overflow: hidden;
     box-shadow: var(--box-shadow);
-    background-color: var(--white);
+    background-color: var(--surface);
     padding: var(--space-2xl);
     display: flex;
     justify-content: center;

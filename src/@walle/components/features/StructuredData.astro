@@ -1,0 +1,30 @@
+---
+import type { JsonLd } from "@walle/utils/structured-data";
+
+/**
+ * Renders schema.org JSON-LD. Pass one object or an array; the
+ * `@context` is added automatically. Builders for the common shapes
+ * (WebSite, Organization, Article, Product) live in
+ * `@walle/utils/structured-data`.
+ */
+export interface Props {
+  data: JsonLd | JsonLd[];
+}
+
+const { data } = Astro.props;
+
+const payload = Array.isArray(data)
+  ? data.map((d) => ({ "@context": "https://schema.org", ...d }))
+  : { "@context": "https://schema.org", ...data };
+
+// The payload is JSON (not JS), so the only way an untrusted value — e.g. a
+// product name/description from a headless-commerce source — could break out of
+// the element is a literal "</script>". Escaping <, > and & to their JSON
+// unicode escapes neutralizes that while keeping the JSON valid.
+const json = JSON.stringify(payload)
+  .replace(/</g, "\\u003c")
+  .replace(/>/g, "\\u003e")
+  .replace(/&/g, "\\u0026");
+---
+
+<script type="application/ld+json" set:html={json} is:inline />

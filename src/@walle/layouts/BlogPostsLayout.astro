@@ -1,9 +1,10 @@
 ---
-import { BasicCard, BlogFilters } from "@walle/components";
+import { BasicCard, CollectionFilters } from "@walle/components";
 import { BaseLayout } from "@walle/layouts";
 import { formatDate, resolveInternalUrl } from "@walle/utils";
-import { getCollection } from "astro:content";
-import type { PostsEntry } from "src/pages/blog/interfaces";
+import { getCollection, type CollectionEntry } from "astro:content";
+
+type PostsEntry = CollectionEntry<"posts">;
 
 const {
   headerTitle = "Blog",
@@ -40,13 +41,20 @@ const allCategories: string[] = Array.from(
 
 <BaseLayout headerTitle={headerTitle}>
   <slot name="head" slot="head" />
-  <main class="blog-layout">
+  <div class="blog-layout">
     <div class="blog-layout__header">
       <slot />
     </div>
 
     <div class="blog-layout__container">
-      {showFilters && allCategories.length > 0 && <BlogFilters categories={allCategories} />}
+      {
+        showFilters && allCategories.length > 0 && (
+          <CollectionFilters
+            facets={[{ key: "category", label: "Category", options: allCategories }]}
+            labels={{ searchPlaceholder: "Search posts…", status: "{n} posts shown" }}
+          />
+        )
+      }
 
       <slot name="before" />
       {
@@ -58,22 +66,30 @@ const allCategories: string[] = Array.from(
           <div class="blog-layout__grid">
             {sortedPosts.map((post: PostsEntry) => {
               const badge = post.data.tags?.length
-                ? { text: post.data.tags[0], color: "secondary" as const }
+                ? { text: post.data.tags[0], variant: "secondary" as const }
                 : undefined;
 
               return (
-                <BasicCard
-                  title={post.data.title}
-                  content={post.data.description}
-                  linkUrl={resolveInternalUrl(`/blog/${post.id}`)}
-                  imageUrl={resolveInternalUrl(post.data.image || "/img/posts/default.jpg")}
-                  imageAlt={post.data.title}
-                  badge={badge}
-                  publishDate={
-                    post.data.publishDate ? formatDate(post.data.publishDate.toString()) : null
-                  }
-                  linkTarget="_self"
-                />
+                <div
+                  data-filter-item
+                  data-category={(post.data.tags || []).join(",")}
+                  data-search={`${post.data.title} ${post.data.description ?? ""}`}
+                >
+                  <BasicCard
+                    title={post.data.title}
+                    content={post.data.description}
+                    href={resolveInternalUrl(`/blog/${post.id}`)}
+                    image={{
+                      src: resolveInternalUrl(post.data.image || "/img/posts/default.svg"),
+                      alt: post.data.title,
+                    }}
+                    badge={badge}
+                    publishDate={
+                      post.data.publishDate ? formatDate(post.data.publishDate.toString()) : null
+                    }
+                    target="_self"
+                  />
+                </div>
               );
             })}
           </div>
@@ -81,7 +97,7 @@ const allCategories: string[] = Array.from(
       }
       <slot name="after" />
     </div>
-  </main>
+  </div>
 </BaseLayout>
 
 <style>
@@ -111,7 +127,7 @@ const allCategories: string[] = Array.from(
   .blog-layout__empty {
     text-align: center;
     padding: 80px 24px;
-    color: var(--gray-dark);
+    color: var(--text-muted);
     font-size: 18px;
   }
 

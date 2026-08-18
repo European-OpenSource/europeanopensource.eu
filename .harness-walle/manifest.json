@@ -1,0 +1,62 @@
+{
+  "$schema": "../schemas/walle.config.schema.json",
+  "schemaVersion": 3,
+  "name": "europeanopensource.eu",
+  "walleVersion": "v0.3.2",
+  "modules": ["website", "ci", "ai"],
+  "devcontainer": {
+    "enabled": true
+  },
+  "files": {
+    "managed": {
+      "website": ["schemas", "scripts/@walle", "scripts/@walle/walle.yml", "src/@walle"],
+      "ci": [".github/workflows/actions/@walle"],
+      "ai": [".claude/skills/@walle"]
+    },
+    "seed": {
+      "website": [
+        ".nvmrc",
+        ".prettierignore",
+        ".prettierrc.json",
+        ".yarnrc.yml",
+        "astro.config.mjs",
+        "eslint.config.js",
+        "package.json",
+        "public/fonts/NectoMono-Regular.woff2",
+        "public/fonts/Ronzino-Bold.woff2",
+        "public/fonts/Ronzino-Regular.woff2",
+        "public/img/posts/default.jpg",
+        "public/img/posts/example/img-1.jpg",
+        "src/configs/app.json",
+        "src/configs/footer.json",
+        "src/configs/index.js",
+        "src/configs/navbar.json",
+        "src/content.config.ts",
+        "src/content/posts/example-2.md",
+        "src/content/posts/example.md",
+        "src/layouts/.gitkeep",
+        "src/pages/blog/[...slug].astro",
+        "src/pages/blog/index.astro",
+        "src/pages/blog/interfaces.ts",
+        "src/pages/index.astro",
+        "src/styles/global.css",
+        "src/utils/helpers.ts",
+        "src/utils/index.js",
+        "tsconfig.json"
+      ],
+      "ci": [".github/workflows/deploy.yml", ".github/workflows/test.yml"],
+      "harness-coding": [
+        ".devcontainer/docker-compose.project.yml",
+        ".husky/pre-commit",
+        ".husky/pre-push",
+        "justfile.project"
+      ]
+    },
+    "inject": {
+      "website": [".vscode/extensions.json", ".vscode/settings.json", "justfile.project"],
+      "ai": ["AGENTS.md"],
+      "harness-coding": [".devcontainer/scripts/setup-devcontainer.project.sh"]
+    }
+  },
+  "updatedAt": "2026-08-18T14:30:13Z"
+}

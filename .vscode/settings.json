@@ -118,7 +118,7 @@
   "workbench.startupEditor": "welcomePage",
   "workbench.colorTheme": "Default Dark+",
   "workbench.iconTheme": "vs-seti",
-// [walle:START]
+  // [walle:START]
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
@@ -150,5 +150,5 @@
     "astro": "html"
   },
   "eslint.validate": ["javascript", "typescript", "astro"]
-// [walle:END]
+  // [walle:END]
 }

@@ -5,14 +5,17 @@ function initNavbar() {
 
   if (!hamburger || !navContainer) return;
 
+  const closeDropdown = (item: Element) => {
+    item.classList.remove("active");
+    item.querySelector(".dropdown-trigger")?.setAttribute("aria-expanded", "false");
+  };
+
   const closeAllMenus = () => {
     hamburger.classList.remove("active");
     hamburger.setAttribute("aria-expanded", "false");
     navContainer.classList.remove("show");
     document.body.classList.remove("menu-open");
-    document
-      .querySelectorAll(".nav-item.active")
-      .forEach((item) => item.classList.remove("active"));
+    document.querySelectorAll(".nav-item.active").forEach(closeDropdown);
   };
 
   const openMenu = () => {
@@ -35,10 +38,11 @@ function initNavbar() {
       const isActive = navItem?.classList.contains("active");
 
       navItem?.parentElement?.querySelectorAll(".nav-item.active").forEach((item) => {
-        if (item !== navItem) item.classList.remove("active");
+        if (item !== navItem) closeDropdown(item);
       });
 
       navItem?.classList.toggle("active", !isActive);
+      trigger.setAttribute("aria-expanded", String(!isActive));
     });
   });
 
@@ -57,8 +61,21 @@ function initNavbar() {
   });
 
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && hamburger.classList.contains("active")) {
+    if (event.key !== "Escape") return;
+
+    // Close an open dropdown first, returning focus to its trigger
+    const openItem = document.querySelector(".nav-item.active");
+    if (openItem) {
+      const trigger = openItem.querySelector<HTMLElement>(".dropdown-trigger");
+      closeDropdown(openItem);
+      trigger?.focus();
+      return;
+    }
+
+    // Then the mobile menu, returning focus to the toggle button
+    if (hamburger.classList.contains("active")) {
       closeAllMenus();
+      hamburger.focus();
     }
   });
 

@@ -32,7 +32,7 @@ const {} = Astro.props;
     margin: 0;
     font-size: 0.85rem;
     font-weight: 600;
-    color: var(--black);
+    color: var(--text);
     border-bottom: 1px solid rgba(0, 0, 0, 0.08);
     padding: 1.25rem 1.5rem;
     background: transparent;
@@ -72,7 +72,7 @@ const {} = Astro.props;
     display: flex;
     align-items: center;
     padding: 0.75rem 1.5rem;
-    color: var(--gray-dark);
+    color: var(--text-muted);
     text-decoration: none;
     font-size: 0.9rem;
     line-height: 1.5;
@@ -150,7 +150,7 @@ const {} = Astro.props;
     align-items: center;
     justify-content: center;
     padding: 2rem;
-    color: var(--gray-dark);
+    color: var(--text-muted);
     font-size: 0.875rem;
     font-style: italic;
   }
@@ -169,7 +169,7 @@ const {} = Astro.props;
 
   .progress-text {
     font-size: 0.75rem;
-    color: var(--gray-dark);
+    color: var(--text-muted);
     font-weight: 600;
     letter-spacing: 0.025em;
     font-family: "Ronzino-Bold", sans-serif;
@@ -184,7 +184,7 @@ const {} = Astro.props;
 
   .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
+    background: var(--primary);
     width: 0%;
     transition: width 0.3s ease;
     border-radius: 2px;
@@ -227,7 +227,7 @@ const {} = Astro.props;
       right: 1.5rem;
       transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       font-size: 0.7rem;
-      color: var(--gray-dark);
+      color: var(--text-muted);
       transform-origin: center;
     }
 
@@ -283,7 +283,7 @@ const {} = Astro.props;
       border-radius: 8px;
       backdrop-filter: none;
       -webkit-backdrop-filter: none;
-      background: var(--white);
+      background: var(--surface);
       margin-bottom: 1.5rem;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     }

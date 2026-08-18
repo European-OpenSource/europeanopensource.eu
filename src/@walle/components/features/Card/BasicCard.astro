@@ -2,42 +2,49 @@
 export interface Props {
   title: string;
   content: string;
-  imageUrl?: string;
-  imageAlt?: string;
-  linkUrl: string;
-  linkTarget?: "_blank" | "_self";
-  extraClass?: string;
+  image?: {
+    src: string;
+    alt: string;
+  };
+  href: string;
+  target?: "_blank" | "_self";
+  class?: string;
   publishDate?: Date | string | null;
   badge?: {
     text: string;
-    color?: "primary" | "secondary";
+    variant?: "primary" | "secondary";
   };
 }
 
 const {
   title,
   content,
-  imageUrl,
-  imageAlt = title,
-  linkUrl,
-  linkTarget = "_self",
-  extraClass = "",
+  image,
+  href,
+  target = "_self",
+  class: className = "",
   badge,
   publishDate,
 } = Astro.props;
 
-const cardClasses = ["card", extraClass].filter(Boolean).join(" ");
+const cardClasses = ["card", className].filter(Boolean).join(" ");
 
 // Truncate description to 120 characters for minimalist design
 const truncatedContent = content.length > 120 ? content.substring(0, 120) + "..." : content;
 ---
 
-<a href={linkUrl} target={linkTarget} class={cardClasses} aria-label={`Read ${title}`}>
+<a
+  href={href}
+  target={target}
+  rel={target === "_blank" ? "noopener" : undefined}
+  class={cardClasses}
+  aria-label={`Read ${title}`}
+>
   <article class="card__wrapper">
     {
-      imageUrl && (
+      image && (
         <div class="card__image">
-          <img src={imageUrl} alt={imageAlt} loading="lazy" width="120" height="120" />
+          <img src={image.src} alt={image.alt} loading="lazy" width="120" height="120" />
         </div>
       )
     }
@@ -46,7 +53,9 @@ const truncatedContent = content.length > 120 ? content.substring(0, 120) + "...
       <div class="card__meta">
         {
           badge && (
-            <span class={`card__badge card__badge--${badge.color || "primary"}`}>{badge.text}</span>
+            <span class={`card__badge card__badge--${badge.variant || "primary"}`}>
+              {badge.text}
+            </span>
           )
         }
         {publishDate && <span class="card__date">{publishDate}</span>}
@@ -79,16 +88,19 @@ const truncatedContent = content.length > 120 ? content.substring(0, 120) + "...
     height: 100%;
     min-height: 380px;
     padding: var(--card-padding);
-    border: 1px solid var(--card-border-color);
     border-radius: var(--radius-md);
-    background: var(--white);
-    transition: var(--card-transition);
+    background: var(--surface);
+    box-shadow: var(--box-shadow);
+    transition:
+      transform var(--card-transition),
+      box-shadow var(--card-transition);
     box-sizing: border-box;
+    overflow: hidden;
   }
 
   .card:hover .card__wrapper {
-    border-color: var(--card-hover-border-color);
-    box-shadow: 0 8px 16px rgba(0, 70, 173, 0.12);
+    transform: translateY(-2px);
+    box-shadow: var(--box-shadow-hover);
   }
 
   .card:focus {
@@ -98,12 +110,14 @@ const truncatedContent = content.length > 120 ? content.substring(0, 120) + "...
   }
 
   .card__image {
-    width: 100%;
+    /* Full-bleed to the card's top edges: cancel the wrapper padding so the image
+       reaches the border, with only the top corners rounded (the wrapper clips
+       them) and a square bottom. No inset, no double border. */
     aspect-ratio: 1;
     overflow: hidden;
-    border-radius: var(--radius-sm);
-    background: var(--gray-light);
-    margin-bottom: var(--space-lg);
+    background: var(--surface-alt);
+    margin: calc(var(--card-padding) * -1) calc(var(--card-padding) * -1) var(--space-lg);
+    border-radius: 0;
   }
 
   .card__image img {
@@ -154,7 +168,7 @@ const truncatedContent = content.length > 120 ? content.substring(0, 120) + "...
   .card__date {
     font-size: 12px;
     font-weight: 500;
-    color: var(--gray-dark);
+    color: var(--text-muted);
     letter-spacing: 0.3px;
   }
 
@@ -162,7 +176,7 @@ const truncatedContent = content.length > 120 ? content.substring(0, 120) + "...
     font-size: 18px;
     font-weight: 700;
     line-height: 1.3;
-    color: var(--black);
+    color: var(--text);
     margin: 0 0 var(--space-sm) 0;
     transition: color 0.2s ease;
   }
@@ -174,7 +188,7 @@ const truncatedContent = content.length > 120 ? content.substring(0, 120) + "...
   .card__description {
     font-size: 14px;
     line-height: 1.5;
-    color: var(--gray-dark);
+    color: var(--text-muted);
     margin: 0;
     flex: 1;
   }

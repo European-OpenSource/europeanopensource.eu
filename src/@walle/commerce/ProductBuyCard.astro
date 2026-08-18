@@ -1,0 +1,169 @@
+---
+/**
+ * Product card with configurable buy controls, for the commerce listing. Composes the
+ * card visual with a compact VariantPicker, so every control is a prop you can turn on
+ * or off. Accessibility: a single "stretched" link (the title) makes the whole card
+ * navigate to the detail page, while the buy controls sit above it (z-index) and stay
+ * clickable — no button nested inside a link.
+ */
+import { Badge } from "@walle/components";
+import { resolveInternalUrl } from "@walle/utils";
+import VariantPicker from "./VariantPicker.astro";
+import type { ShopifyProduct } from "./shopify";
+
+interface Props {
+  product: ShopifyProduct;
+  locale?: string;
+  /** Show the add-to-cart button. @default true */
+  showAddToCart?: boolean;
+  /** Show size/option chips (when the product has variants). @default true */
+  showSizes?: boolean;
+  /** Show a quantity stepper. @default false */
+  showQuantity?: boolean;
+  /** Add-to-cart button label. @default "Add to cart" */
+  addLabel?: string;
+  class?: string;
+}
+
+const {
+  product,
+  locale = "en-US",
+  showAddToCart = true,
+  showSizes = true,
+  showQuantity = false,
+  addLabel = "Add to cart",
+  class: className = "",
+} = Astro.props;
+
+const href = resolveInternalUrl(`/products/${product.handle}`);
+const imageUrl = (url: string) => (url.startsWith("http") ? url : resolveInternalUrl(url));
+const cover = product.featuredImage ?? product.images.nodes[0];
+const inStock = product.variants.nodes.some((v) => v.availableForSale);
+---
+
+<article class:list={["buy-card", className]} data-component="ProductBuyCard">
+  <div class="buy-card__media">
+    {
+      cover && (
+        <img
+          src={imageUrl(cover.url)}
+          alt={cover.altText ?? product.title}
+          width={cover.width ?? 800}
+          height={cover.height ?? 800}
+          loading="lazy"
+        />
+      )
+    }
+    {!inStock && <Badge text="Sold out" variant="gray" class="buy-card__badge" />}
+  </div>
+
+  <div class="buy-card__body">
+    {product.productType && <span class="buy-card__type">{product.productType}</span>}
+    {
+      /* Stretched link: the whole card navigates to the detail page via this one link,
+        while the buy controls below sit above it (z-index) and stay clickable. */
+    }
+    <h3 class="buy-card__title">
+      <a href={href}>{product.title}</a>
+    </h3>
+
+    <div class="buy-card__buy">
+      <VariantPicker
+        product={product}
+        locale={locale}
+        compact={true}
+        showBuyButton={showAddToCart}
+        showQuantity={showQuantity}
+        hideOptions={!showSizes}
+        addLabel={addLabel}
+      />
+    </div>
+  </div>
+</article>
+
+<style>
+  .buy-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
+    transition:
+      transform var(--transition),
+      box-shadow var(--transition);
+  }
+
+  /* Stretched link: the title's ::after covers the whole card. */
+  .buy-card__title a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  /* Buy controls sit above the stretched link so they stay clickable, and anchor to the
+     bottom of the card so price + add-to-cart line up across a grid of cards. */
+  .buy-card__buy {
+    position: relative;
+    z-index: 1;
+    margin-top: auto;
+  }
+
+  .buy-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--box-shadow-hover);
+  }
+
+  .buy-card__media {
+    position: relative;
+    display: block;
+    aspect-ratio: 1;
+    background: var(--surface-alt);
+  }
+
+  .buy-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .buy-card__badge {
+    position: absolute;
+    top: var(--space-sm);
+    left: var(--space-sm);
+  }
+
+  .buy-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: var(--space-lg);
+    flex: 1;
+  }
+
+  .buy-card__type {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+  }
+
+  .buy-card__title {
+    font-size: 1.1rem;
+    margin: 0;
+  }
+
+  .buy-card__title a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .buy-card__title a:hover {
+    color: var(--primary);
+  }
+</style>

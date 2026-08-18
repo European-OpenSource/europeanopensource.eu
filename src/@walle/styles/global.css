@@ -1,22 +1,38 @@
 :root {
-  /* Palette — override via theme.json palette.* → --walle-color-* */
-  --primary: var(--walle-color-primary, #0046ad);
-  --primary-light: var(--walle-color-primary-light, #0153ce);
-  --primary-dark: var(--walle-color-primary-dark, #00216e);
-  --secondary: var(--walle-color-secondary, #bd1178);
-  --secondary-light: var(--walle-color-secondary-light, #cb1482);
-  --secondary-dark: var(--walle-color-secondary-dark, #a90b6a);
-  --alternative: var(--walle-color-alternative, #ffcc00);
-  --alternative-light: var(--walle-color-alternative-light, #ffd700);
-  --alternative-dark: var(--walle-color-alternative-dark, #ffad00);
+  /* Palette — override via theme.json palette.* → --walle-color-*
+     Default: an editorial, restrained system — desaturated navy, muted teal,
+     warm gold. Deep enough that white text clears AA on every brand surface
+     (enforced by contrast.test.ts). */
+  --primary: var(--walle-color-primary, #243b6b);
+  --primary-light: var(--walle-color-primary-light, #324a80);
+  --primary-dark: var(--walle-color-primary-dark, #182848);
+  --secondary: var(--walle-color-secondary, #2f5d57);
+  --secondary-light: var(--walle-color-secondary-light, #3a726b);
+  --secondary-dark: var(--walle-color-secondary-dark, #20423e);
+  --alternative: var(--walle-color-alternative, #c99a3f);
+  --alternative-light: var(--walle-color-alternative-light, #e3c07e);
+  --alternative-dark: var(--walle-color-alternative-dark, #a97f2c);
   --white: var(--walle-color-background, #fefefe);
   --black: var(--walle-color-foreground, #161616);
-  --gray: #ebebeb;
-  --gray-light: #f5f5f5;
-  --gray-medium: #d1d5db;
-  --gray-dark: #6b7280;
-  --gray-darker: #374151;
+  --gray: #e9ebee;
+  --gray-light: #f4f5f7;
+  --gray-medium: #d3d7de;
+  --gray-dark: #5b6472;
+  --gray-darker: #333a45;
   --gray-gradient: rgba(245, 245, 245, 0.5), var(--white);
+
+  /* Semantic tokens — components reference these for neutral surfaces, text,
+     borders and focus. Consumers restyle by overriding this block. */
+  --surface: var(--white);
+  --surface-alt: var(--gray-light);
+  --text: var(--black);
+  --text-muted: var(--gray-dark);
+  --border: var(--gray-medium);
+  --link: var(--primary);
+  --link-hover: var(--primary-dark);
+  --focus-ring: var(--primary);
+  --disabled-opacity: 0.65;
+
   --box-shadow:
     0 1px 3px rgba(0, 0, 0, 0.05), 0 4px 6px rgba(0, 0, 0, 0.05), 0 10px 15px rgba(0, 0, 0, 0.05);
   --box-shadow-hover: 0 4px 12px rgba(0, 70, 173, 0.15), 0 8px 24px rgba(0, 0, 0, 0.08);
@@ -40,16 +56,34 @@
   --space-3xl: var(--walle-space-3xl, 3rem);
   --space-4xl: var(--walle-space-4xl, 4rem);
 
-  /* Radii — override via theme.json radii.* → --walle-radius-* */
-  --radius-sm: var(--walle-radius-sm, 0.5rem);
-  --radius-md: var(--walle-radius-md, 0.75rem);
-  --radius-lg: var(--walle-radius-lg, 1rem);
-  --radius-xl: var(--walle-radius-xl, 1.5rem);
+  /* Radii — override via theme.json radii.* → --walle-radius-*
+     Crisp, restrained scale. Softened corners, never pill-shaped. */
+  --radius-sm: var(--walle-radius-sm, 0.125rem);
+  --radius-md: var(--walle-radius-md, 0.25rem);
+  --radius-lg: var(--walle-radius-lg, 0.375rem);
+  --radius-xl: var(--walle-radius-xl, 0.5rem);
 }
 
 html {
   scroll-behavior: smooth;
   height: 100%;
+}
+
+/* Reduced motion: disable non-essential animation library-wide (WCAG 2.3.3).
+   Component-local rules may add finer-grained handling on top. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 body {
@@ -58,7 +92,7 @@ body {
   margin: 0;
   padding: 0;
   text-align: left;
-  background-color: var(--white);
+  background-color: var(--surface);
   word-wrap: break-word;
   overflow-wrap: break-word;
   color: var(--gray-darker);
@@ -86,7 +120,7 @@ h5,
 h6 {
   margin: 0 0 var(--space-lg) 0;
   line-height: 1.2;
-  color: var(--black);
+  color: var(--text);
   font-weight: 700;
   font-family: var(--font-heading);
 }
@@ -117,29 +151,29 @@ strong,
 b {
   font-weight: 700;
   font-family: var(--font-heading);
-  color: var(--black);
+  color: var(--text);
 }
 
 p {
   margin: 0 0 var(--space-lg) 0;
   line-height: 1.6;
-  color: var(--gray-dark);
+  color: var(--text-muted);
 }
 
 a {
-  color: var(--primary);
+  color: var(--link);
   text-decoration: none;
   transition: var(--transition);
   font-weight: 500;
 }
 
 a:hover {
-  color: var(--primary-dark);
+  color: var(--link-hover);
   text-decoration: none;
 }
 
 a:focus {
-  outline: 2px solid var(--primary);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
   border-radius: 2px;
 }
@@ -147,7 +181,7 @@ a:focus {
 p {
   margin-bottom: var(--space-lg);
   line-height: 1.6;
-  color: var(--gray-dark);
+  color: var(--text-muted);
 }
 
 .prose p {
@@ -194,11 +228,10 @@ ul.tags li::marker {
 img {
   max-width: 100%;
   height: auto;
-  border-radius: 8px;
 }
 code {
   padding: 2px 5px;
-  background-color: rgb(var(--gray-light));
+  background-color: var(--surface-alt);
   border-radius: 2px;
 }
 pre {
@@ -209,20 +242,20 @@ pre > code {
   all: unset;
 }
 blockquote {
-  border-left: 4px solid var(--primary);
+  border-left: 4px solid var(--link);
   padding: 0 0 0 20px;
   margin: 0px;
   font-size: 1.333em;
 }
 hr {
   border: none;
-  border-top: 1px solid rgb(var(--gray-light));
+  border-top: 1px solid var(--border);
 }
 
 section {
   padding: 4rem 1.5rem;
-  background-color: var(--white);
-  color: var(--black);
+  background-color: var(--surface);
+  color: var(--text);
 }
 
 @media (max-width: 768px) {
@@ -254,8 +287,8 @@ section {
   top: 0;
   left: 0;
   transform: translateY(-100%);
-  background: var(--black);
-  color: var(--white);
+  background: var(--text);
+  color: var(--surface);
   padding: 0.75rem 1rem;
   z-index: 1000;
   text-decoration: none;
@@ -275,7 +308,7 @@ a.skip-link:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 3px solid var(--primary);
+  outline: 3px solid var(--focus-ring);
   outline-offset: 3px;
   box-shadow: none;
 }

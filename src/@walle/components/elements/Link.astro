@@ -1,0 +1,114 @@
+---
+import { Icon } from "astro-icon/components";
+
+export interface Props {
+  /**
+   * Destination URL
+   */
+  href: string;
+
+  /**
+   * Link target. Defaults to `_blank` for external links, `_self` otherwise.
+   */
+  target?: "_blank" | "_self";
+
+  /**
+   * Visual variant
+   * @default "default"
+   */
+  variant?: "default" | "muted" | "unstyled";
+
+  /**
+   * Show the external-link icon on external links
+   * @default true
+   */
+  externalIcon?: boolean;
+
+  /**
+   * Link text — used when no slot content is provided
+   */
+  text?: string;
+
+  /**
+   * Additional CSS classes appended to the root element
+   */
+  class?: string;
+
+  /**
+   * Optional HTML ID
+   */
+  id?: string;
+}
+
+const {
+  href,
+  target,
+  variant = "default",
+  externalIcon = true,
+  text,
+  class: className = "",
+  id,
+} = Astro.props;
+
+// External = absolute URL pointing at a different host than the site.
+const site = Astro.site?.host;
+let isExternal = false;
+try {
+  isExternal =
+    new URL(href, Astro.site ?? "http://localhost").host !== site && /^[a-z]+:\/\//i.test(href);
+} catch {
+  isExternal = false;
+}
+
+const resolvedTarget = target ?? (isExternal ? "_blank" : "_self");
+const rel = isExternal
+  ? "noopener noreferrer"
+  : resolvedTarget === "_blank"
+    ? "noopener"
+    : undefined;
+
+const classes = ["link", `link-${variant}`, className].filter(Boolean).join(" ");
+---
+
+<a href={href} target={resolvedTarget} rel={rel} class={classes} id={id} data-component="Link">
+  <slot>{text}</slot>{
+    isExternal && externalIcon && (
+      <Icon name="mdi:open-in-new" class="link-external-icon" aria-hidden="true" />
+    )
+  }
+</a>
+
+<style>
+  .link-default {
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  .link-default:hover {
+    color: var(--link-hover);
+  }
+
+  .link-muted {
+    color: var(--text-muted);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  .link-muted:hover {
+    color: var(--text);
+  }
+
+  .link-unstyled {
+    color: inherit;
+    text-decoration: none;
+    font-weight: inherit;
+  }
+
+  .link-external-icon {
+    width: 0.85em;
+    height: 0.85em;
+    margin-left: 0.2em;
+    vertical-align: -0.08em;
+  }
+</style>

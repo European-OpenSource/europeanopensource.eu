@@ -8,15 +8,15 @@ export interface Props {
   text: string;
 
   /**
-   * Badge color
+   * Visual variant
    * @default "gray"
    */
-  color?: "primary" | "secondary" | "alternative" | "gray" | "success" | "warning" | "danger";
+  variant?: "primary" | "secondary" | "alternative" | "gray" | "success" | "warning" | "danger";
 
   /**
    * Icon name to show (astro-icon)
    */
-  iconName?: string;
+  icon?: string;
 
   /**
    * Icon position relative to text
@@ -25,19 +25,19 @@ export interface Props {
   iconPosition?: "start" | "end";
 
   /**
-   * Optional URL to make the badge clickable
+   * Destination URL — when set, the badge renders as a link
    */
-  link?: string;
+  href?: string;
 
   /**
-   * HTML target for links (e.g. "_blank")
+   * Link target (only used with `href`)
    */
-  target?: string;
+  target?: "_blank" | "_self";
 
   /**
-   * Additional CSS classes
+   * Additional CSS classes appended to the root element
    */
-  extraClass?: string;
+  class?: string;
 
   /**
    * Badge size
@@ -48,33 +48,33 @@ export interface Props {
 
 const {
   text,
-  color = "gray",
-  iconName,
+  variant = "gray",
+  icon,
   iconPosition = "end",
-  link,
+  href,
   target,
-  extraClass = "",
+  class: className = "",
   size = "medium",
 } = Astro.props;
 
 const labelClasses = [
   "eos-label",
-  `eos-label-${color}`,
+  `eos-label-${variant}`,
   `eos-label-${size}`,
-  link ? "eos-label-link" : "",
-  iconName ? `eos-label-with-icon eos-label-icon-${iconPosition}` : "",
-  extraClass,
+  href ? "eos-label-link" : "",
+  icon ? `eos-label-with-icon eos-label-icon-${iconPosition}` : "",
+  className,
 ]
   .filter(Boolean)
   .join(" ");
 
-const Element = link ? "a" : "span";
+const Element = href ? "a" : "span";
 
-const attrs = link ? { href: link, target } : {};
+const attrs = href ? { href, target, rel: target === "_blank" ? "noopener" : undefined } : {};
 ---
 
 <Element class={labelClasses} {...attrs}>
-  {iconName && <Icon name={iconName} class="eos-label-icon" aria-hidden="true" />}
+  {icon && <Icon name={icon} class="eos-label-icon" aria-hidden="true" />}
   <span class="eos-label-text">{text}</span>
 </Element>
 
@@ -83,7 +83,7 @@ const attrs = link ? { href: link, target } : {};
     display: inline-flex;
     align-items: center;
     gap: 0.4em;
-    border-radius: 2rem;
+    border-radius: var(--radius-sm);
     font-weight: 500;
     transition: all 0.2s ease;
   }
@@ -133,26 +133,26 @@ const attrs = link ? { href: link, target } : {};
 
   .eos-label-alternative {
     background-color: var(--alternative-light);
-    color: var(--black);
+    color: var(--text);
   }
 
   .eos-label-gray {
-    background-color: var(--gray-light);
-    color: var(--black);
+    background-color: var(--surface-alt);
+    color: var(--text);
   }
 
   .eos-label-success {
-    background-color: #2ecc71;
+    background-color: #1f874b;
     color: var(--white);
   }
 
   .eos-label-warning {
-    background-color: #f39c12;
+    background-color: #a36708;
     color: var(--white);
   }
 
   .eos-label-danger {
-    background-color: #e74c3c;
+    background-color: #da2d1b;
     color: var(--white);
   }
 

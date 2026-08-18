@@ -1,0 +1,211 @@
+---
+import { Breadcrumbs, SectionHeaderStandard, StructuredData } from "@walle/components";
+import type { BreadcrumbItem } from "@walle/components/features/Breadcrumbs.astro";
+import type { ProductData } from "@walle/components/features/Card/ProductCard.astro";
+import { BaseLayout } from "@walle/layouts";
+import { productJsonLd } from "@walle/utils/structured-data";
+import { Icon } from "astro-icon/components";
+
+/**
+ * Generic detail page: header (title + badges slot) over a two-column
+ * main/aside grid with breadcrumbs and an optional back link. Generalises
+ * the project-detail pattern; also serves as a product detail page when
+ * composed with ProductData content.
+ *
+ * Slots: `badges` (inside the header), default (main column), `aside`, and `below`
+ * (full-width, under the main/aside grid — e.g. a product description + recommendations
+ * that should read full-width and, on mobile, sit after the aside rather than before it).
+ */
+export interface Props {
+  /**
+   * Page title (header + document title)
+   */
+  title: string;
+
+  /**
+   * Meta description
+   */
+  description?: string;
+
+  /**
+   * Open Graph image URL
+   */
+  ogImage?: string;
+
+  /**
+   * Breadcrumb trail (last item should be the current page)
+   */
+  breadcrumbs?: BreadcrumbItem[];
+
+  /**
+   * Optional back link above the breadcrumbs
+   */
+  backLink?: {
+    href: string;
+    /**
+     * @default "Back"
+     */
+    label?: string;
+  };
+
+  /**
+   * Product rendered by this page — emits Product/Offer JSON-LD from the
+   * same object that feeds the visible content (one shape, two renderings)
+   */
+  product?: ProductData;
+}
+
+const { title, description, ogImage, breadcrumbs = [], backLink, product } = Astro.props;
+---
+
+<BaseLayout headerTitle={title} headerDescription={description} headerOgImage={ogImage}>
+  {product && <StructuredData data={productJsonLd(product, Astro.url.href)} />}
+  <SectionHeaderStandard title={title}>
+    <div class="detail-badges">
+      <slot name="badges" />
+    </div>
+  </SectionHeaderStandard>
+
+  <section class="detail-section">
+    <div class="container">
+      {
+        backLink && (
+          <a href={backLink.href} class="back-link">
+            <Icon name="fa:arrow-left" class="back-link__icon" aria-hidden="true" />
+            {backLink.label ?? "Back"}
+          </a>
+        )
+      }
+
+      {breadcrumbs.length > 0 && <Breadcrumbs items={breadcrumbs} />}
+
+      <div class="detail-container">
+        <div class="detail-main">
+          <slot />
+        </div>
+
+        <aside class="detail-aside">
+          <slot name="aside" />
+        </aside>
+      </div>
+
+      <div class="detail-below">
+        <slot name="below" />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .detail-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    align-items: center;
+  }
+
+  .detail-badges:empty {
+    display: none;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--link);
+    font-weight: 500;
+    font-size: 0.9rem;
+    text-decoration: none;
+    margin-bottom: var(--space-sm);
+    transition: color var(--transition);
+  }
+
+  .back-link:hover {
+    color: var(--link-hover);
+  }
+
+  .back-link:hover .back-link__icon {
+    transform: translateX(-2px);
+  }
+
+  .back-link__icon {
+    width: 0.85em;
+    height: 0.85em;
+    transition: transform var(--transition);
+  }
+
+  .detail-section {
+    padding: var(--space-xl) 0 var(--space-4xl);
+  }
+
+  .detail-container {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: var(--space-2xl);
+    align-items: start;
+    margin-top: var(--space-md);
+  }
+
+  .detail-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+  }
+
+  .detail-aside {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .detail-aside:empty {
+    display: none;
+  }
+
+  /* Full-width row under the main/aside grid (e.g. product description + upsell). */
+  .detail-below {
+    margin-top: var(--space-2xl);
+  }
+
+  .detail-below:empty {
+    display: none;
+  }
+
+  /* Tablet: aside moves below the main column, two cards per row */
+  @media (max-width: 900px) {
+    .detail-container {
+      grid-template-columns: 1fr;
+    }
+
+    .detail-aside {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-lg);
+    }
+
+    .detail-aside:empty {
+      display: none;
+    }
+  }
+
+  /* Mobile: single column */
+  @media (max-width: 580px) {
+    .detail-section {
+      padding: var(--space-lg) 0 var(--space-3xl);
+    }
+
+    .detail-container {
+      margin-top: var(--space-sm);
+    }
+
+    .detail-aside {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .back-link:hover .back-link__icon {
+      transform: none;
+    }
+  }
+</style>

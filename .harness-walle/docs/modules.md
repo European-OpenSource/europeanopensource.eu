@@ -1,27 +1,28 @@
 # Modules
 
-A walle consumer declares which modules it uses in `.walle/manifest.json` (part of the `.walle/` metadata folder — see below). Each module has two file classes:
+A walle consumer declares which modules it uses in `.harness-walle/manifest.json` (part of the `.harness-walle/` metadata folder — see below). Each module has two file classes:
 
 - **MANAGED** — paths that walle re-syncs on every `init`/`update`/`add`. They live under `@walle/` namespaces. Do not hand-edit them; changes are overwritten on the next update.
 - **SEED** — files written once at `init`/`add` if absent, and **never touched again by `update`**. They are yours to edit freely from the first write.
 
 `website` is mandatory. All other modules are opt-in. See [managed-vs-seed.md](managed-vs-seed.md) for a full explanation of the model.
 
-## `.walle/` metadata folder
+## `.harness-walle/` metadata folder
 
-Every consumer has a `.walle/` folder holding walle's own metadata — not a module, always
+Every consumer has a `.harness-walle/` folder holding walle's own metadata — not a module, always
 present:
 
-| Path                   | What it is                                                                                                                                                                           |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `.walle/manifest.json` | The consumer manifest (schemaVersion, name, walleVersion, modules, etc.) — same schema previously at the root `.walle.config.json`                                                   |
-| `.walle/config.yml`    | Consumer-facing setup config (currently just `docs: true/false`). Created with defaults if absent, **NEVER-TOUCH** after — yours to edit freely                                      |
-| `.walle/lock`          | Single line: the resolved source ref (a tag, or `local` when `--source` is used). Written on every `init`/`update`                                                                   |
-| `.walle/docs/`         | Curated copy of `cli.md`, `modules.md`, `managed-vs-seed.md`, `versioning.md` from the pinned release. Refreshed on every `init`/`update` unless `.walle/config.yml`'s `docs: false` |
+| Path                           | What it is                                                                                                                                                                                   |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.harness-walle/manifest.json` | The consumer manifest (schemaVersion, name, walleVersion, modules, etc.) — same schema previously at the root `.walle.config.json`                                                           |
+| `.harness-walle/config.yml`    | Consumer-facing setup config (currently just `docs: true/false`). Created with defaults if absent, **NEVER-TOUCH** after — yours to edit freely                                              |
+| `.harness-walle/lock`          | Single line: the resolved source ref (a tag, or `local` when `--source` is used). Written on every `init`/`update`                                                                           |
+| `.harness-walle/docs/`         | Curated copy of `cli.md`, `modules.md`, `managed-vs-seed.md`, `versioning.md` from the pinned release. Refreshed on every `init`/`update` unless `.harness-walle/config.yml`'s `docs: false` |
 
-A consumer still on the pre-`.walle/` layout (root `.walle.config.json`) is migrated
-automatically on the next `update`: content moved verbatim into `.walle/manifest.json`, the old
-file removed. No manual action needed.
+A consumer on an older layout — a root `.walle.config.json`, or the earlier `.walle/` folder — is
+migrated automatically on the next CLI command: the folder is renamed to `.harness-walle/`, a
+`schemaVersion: 2` `files` map is reshaped to v3 (grouped by module), and the old file is removed.
+No manual action needed.
 
 ---
 
@@ -129,33 +130,6 @@ Then enable SSR in `src/configs/app.json`:
 Seed files have `export const prerender = false` so they remain server-rendered even in hybrid output. Add your own routes under `src/pages/api/` following the same pattern. Edit `src/middleware.ts` freely — `walle update` never touches it.
 
 **Check warning:** `cli.sh check` warns if `backend` is active but `astro.ssr.enabled` is not `true`.
-
----
-
-## `infrastructure`
-
-Terraform/OpenTofu scaffolding. Seeds the starter IaC files.
-
-**Activate:**
-
-```bash
-cli.sh add infrastructure
-```
-
-**MANAGED paths:** none. All infrastructure files are consumer-owned from the first write.
-
-**SEED paths:**
-
-| Path                          | Purpose                                                   |
-| ----------------------------- | --------------------------------------------------------- |
-| `infrastructure/main.tf`      | Entry point; declare providers and resources here         |
-| `infrastructure/variables.tf` | Input variables (`project_name`, `region`, `environment`) |
-| `infrastructure/providers.tf` | Provider declarations and version constraints             |
-| `infrastructure/outputs.tf`   | Exported values for CI or other modules                   |
-| `infrastructure/README.md`    | Starter docs for the infrastructure directory             |
-| `infrastructure/.gitignore`   | Ignores `.terraform/`, plan files, `*.tfvars`             |
-
-The scaffold is Terraform ≥ 1.5.0 and OpenTofu compatible. Edit all files freely.
 
 ---
 

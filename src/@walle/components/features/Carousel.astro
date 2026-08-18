@@ -1,0 +1,453 @@
+---
+export interface Props {
+  /** Accessible name of the carousel region (required) */
+  label: string;
+  /** Slides per view on wide screens; narrow screens always show 1 @default 1 */
+  perView?: 1 | 2 | 3 | 4;
+  /** Show prev/next controls @default true */
+  controls?: boolean;
+  /** Show a visible "current / total" position counter @default false */
+  counter?: boolean;
+  /**
+   * Image sizing: "uniform" gives every image slide the same height (object-fit
+   * cover); "auto" lets each image keep its natural aspect ratio. @default "uniform"
+   */
+  fit?: "uniform" | "auto";
+  /** Height for uniform image slides (any CSS length) @default clamp(240px, 42vw, 460px) */
+  height?: string;
+  /** Enable click-to-zoom: image slides open full screen in a lightbox @default false */
+  zoom?: boolean;
+  /** Accessible label of the previous button @default "Previous slide" */
+  previousLabel?: string;
+  /** Accessible label of the next button @default "Next slide" */
+  nextLabel?: string;
+  /** Accessible label of the zoom button @default "View image full screen" */
+  zoomLabel?: string;
+  /** Accessible label of the lightbox close button @default "Close" */
+  closeLabel?: string;
+  /** Slide label template; `{i}` and `{n}` are replaced @default "{i} of {n}" */
+  slideLabel?: string;
+  /** Additional CSS classes appended to the root element */
+  class?: string;
+  /** Optional HTML ID */
+  id?: string;
+}
+
+const {
+  label,
+  perView = 1,
+  controls = true,
+  counter = false,
+  fit = "uniform",
+  height,
+  zoom = false,
+  previousLabel = "Previous slide",
+  nextLabel = "Next slide",
+  zoomLabel = "View image full screen",
+  closeLabel = "Close",
+  slideLabel = "{i} of {n}",
+  class: className = "",
+  id,
+} = Astro.props;
+
+const classes = ["carousel", className].filter(Boolean).join(" ");
+const rootStyle = height ? `--carousel-height: ${height};` : undefined;
+
+// Consistent inline stroke icons (no icon-font dependency).
+const chevronLeft =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>';
+const chevronRight =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>';
+const closeIcon =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+---
+
+<section
+  class={classes}
+  id={id}
+  style={rootStyle}
+  role="region"
+  aria-roledescription="carousel"
+  aria-label={label}
+  data-component="Carousel"
+  data-per-view={perView}
+  data-fit={fit}
+  data-slide-label={slideLabel}
+  data-zoom={zoom ? "true" : undefined}
+  data-zoom-label={zoomLabel}
+>
+  <div class="carousel-viewport">
+    <div class="carousel-track" tabindex="0">
+      <slot />
+    </div>
+
+    {
+      controls && (
+        <>
+          <button
+            type="button"
+            class="carousel-arrow carousel-prev"
+            aria-label={previousLabel}
+            disabled
+            set:html={chevronLeft}
+          />
+          <button
+            type="button"
+            class="carousel-arrow carousel-next"
+            aria-label={nextLabel}
+            set:html={chevronRight}
+          />
+        </>
+      )
+    }
+  </div>
+
+  {
+    counter && (
+      <p class="carousel-counter" data-carousel-counter aria-live="polite">
+        <span data-carousel-current>1</span> / <span data-carousel-total>1</span>
+      </p>
+    )
+  }
+
+  {
+    zoom && (
+      <dialog class="carousel-lightbox" aria-label={label}>
+        <button
+          type="button"
+          class="carousel-lightbox__close"
+          aria-label={closeLabel}
+          set:html={closeIcon}
+        />
+        <img class="carousel-lightbox__img" src="" alt="" />
+      </dialog>
+    )
+  }
+</section>
+
+<style>
+  .carousel {
+    position: relative;
+    /* The root is a <section>, which inherits the global `section { padding: 4rem 1.5rem }`.
+       A carousel is a component, not a page section — reset it so slides align with the top
+       of their column (e.g. next to a product buy box) and span the full width. */
+    padding: 0;
+    --carousel-height: clamp(240px, 42vw, 460px);
+  }
+
+  .carousel-viewport {
+    position: relative;
+  }
+
+  .carousel-track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 100%;
+    gap: var(--space-lg);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+
+  .carousel-track:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 3px;
+    border-radius: var(--radius-md);
+  }
+
+  .carousel-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .carousel-track > :global(*) {
+    scroll-snap-align: start;
+    min-width: 0;
+  }
+
+  /* Image sizing modes */
+  .carousel[data-fit="uniform"] .carousel-track :global(img) {
+    display: block;
+    width: 100%;
+    height: var(--carousel-height);
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+  }
+
+  .carousel[data-fit="auto"] .carousel-track :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-lg);
+  }
+
+  @media (min-width: 769px) {
+    .carousel[data-per-view="2"] .carousel-track {
+      grid-auto-columns: calc((100% - var(--space-lg)) / 2);
+    }
+    .carousel[data-per-view="3"] .carousel-track {
+      grid-auto-columns: calc((100% - 2 * var(--space-lg)) / 3);
+    }
+    .carousel[data-per-view="4"] .carousel-track {
+      grid-auto-columns: calc((100% - 3 * var(--space-lg)) / 4);
+    }
+  }
+
+  /* Overlay side arrows */
+  .carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    box-shadow: var(--box-shadow);
+    transition:
+      background var(--transition),
+      color var(--transition),
+      opacity var(--transition);
+  }
+
+  .carousel-prev {
+    left: var(--space-sm);
+  }
+  .carousel-next {
+    right: var(--space-sm);
+  }
+
+  .carousel-arrow:hover:not(:disabled) {
+    background: var(--primary);
+    color: var(--white);
+    border-color: var(--primary);
+  }
+
+  .carousel-arrow:disabled {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .carousel-arrow :global(svg) {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+
+  /* Position counter */
+  .carousel-counter {
+    margin: var(--space-sm) 0 0;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Zoom affordance on image slides */
+  .carousel :global(.carousel-zoom) {
+    position: absolute;
+    top: var(--space-sm);
+    right: var(--space-sm);
+    z-index: 1;
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: var(--radius-md);
+    background: rgba(16, 23, 37, 0.62);
+    color: #fff;
+    cursor: zoom-in;
+    opacity: 0;
+    transition: opacity var(--transition);
+  }
+
+  .carousel :global(.carousel-slide-zoomable) {
+    position: relative;
+  }
+
+  .carousel :global(.carousel-slide-zoomable:hover .carousel-zoom),
+  .carousel :global(.carousel-zoom:focus-visible) {
+    opacity: 1;
+  }
+
+  .carousel :global(.carousel-zoom svg) {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+
+  /* Lightbox */
+  .carousel-lightbox {
+    border: none;
+    padding: 0;
+    background: transparent;
+    max-width: 100vw;
+    max-height: 100vh;
+    overflow: visible;
+  }
+
+  .carousel-lightbox::backdrop {
+    background: rgba(10, 14, 22, 0.9);
+  }
+
+  .carousel-lightbox__img {
+    display: block;
+    max-width: 94vw;
+    max-height: 90vh;
+    width: auto;
+    height: auto;
+    border-radius: var(--radius-md);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Fixed to the viewport corner so it never overflows off-screen */
+  .carousel-lightbox__close {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+    cursor: pointer;
+    transition: background var(--transition);
+  }
+
+  .carousel-lightbox__close:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .carousel-lightbox__close :global(svg) {
+    width: 1.3rem;
+    height: 1.3rem;
+  }
+
+  @media (max-width: 480px) {
+    .carousel-arrow {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .carousel-track {
+      scroll-behavior: auto;
+    }
+  }
+</style>
+
+<script>
+  function initCarousels() {
+    document.querySelectorAll<HTMLElement>("[data-component='Carousel']").forEach((root) => {
+      const track = root.querySelector<HTMLElement>(".carousel-track");
+      if (!track || track.dataset.ready) return;
+      track.dataset.ready = "true";
+
+      const slides = Array.from(track.children) as HTMLElement[];
+      const template = root.dataset.slideLabel || "{i} of {n}";
+      slides.forEach((slide, i) => {
+        slide.setAttribute("role", "group");
+        slide.setAttribute("aria-roledescription", "slide");
+        slide.setAttribute(
+          "aria-label",
+          template.replace("{i}", String(i + 1)).replace("{n}", String(slides.length))
+        );
+      });
+
+      const step = () =>
+        (slides[0]?.getBoundingClientRect().width || track.clientWidth) +
+        (parseFloat(getComputedStyle(track).columnGap) || 0);
+
+      // Position counter
+      const currentEl = root.querySelector<HTMLElement>("[data-carousel-current]");
+      const totalEl = root.querySelector<HTMLElement>("[data-carousel-total]");
+      if (totalEl) totalEl.textContent = String(slides.length);
+
+      // Prev/next controls
+      const prev = root.querySelector<HTMLButtonElement>(".carousel-prev");
+      const next = root.querySelector<HTMLButtonElement>(".carousel-next");
+
+      const sync = () => {
+        if (prev) prev.disabled = track.scrollLeft <= 1;
+        if (next) next.disabled = track.scrollLeft >= track.scrollWidth - track.clientWidth - 1;
+        if (currentEl) {
+          const idx = Math.round(track.scrollLeft / step());
+          currentEl.textContent = String(Math.min(idx + 1, slides.length));
+        }
+      };
+
+      prev?.addEventListener("click", () => track.scrollBy({ left: -step() }));
+      next?.addEventListener("click", () => track.scrollBy({ left: step() }));
+
+      sync();
+      if ("onscrollend" in track) {
+        track.addEventListener("scrollend", sync);
+      } else {
+        let raf = 0;
+        track.addEventListener(
+          "scroll",
+          () => {
+            cancelAnimationFrame(raf);
+            raf = requestAnimationFrame(sync);
+          },
+          { passive: true }
+        );
+      }
+      window.addEventListener("resize", sync, { passive: true });
+
+      // Click-to-zoom lightbox
+      if (root.dataset.zoom === "true") {
+        const dialog = root.querySelector<HTMLDialogElement>(".carousel-lightbox");
+        const dialogImg = root.querySelector<HTMLImageElement>(".carousel-lightbox__img");
+        const closeBtn = root.querySelector<HTMLButtonElement>(".carousel-lightbox__close");
+        const zoomLabel = root.dataset.zoomLabel || "View image full screen";
+
+        if (dialog && dialogImg) {
+          const open = (img: HTMLImageElement) => {
+            dialogImg.src = img.currentSrc || img.src;
+            dialogImg.alt = img.alt || "";
+            if (typeof dialog.showModal === "function") dialog.showModal();
+          };
+
+          slides.forEach((slide) => {
+            const img = slide.querySelector<HTMLImageElement>("img");
+            if (!img) return;
+            slide.classList.add("carousel-slide-zoomable");
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "carousel-zoom";
+            btn.setAttribute("aria-label", zoomLabel);
+            btn.innerHTML =
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>';
+            btn.addEventListener("click", () => open(img));
+            slide.appendChild(btn);
+            img.style.cursor = "zoom-in";
+            img.addEventListener("click", () => open(img));
+          });
+
+          closeBtn?.addEventListener("click", () => dialog.close());
+          dialog.addEventListener("click", (e) => {
+            if (e.target === dialog) dialog.close();
+          });
+        }
+      }
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", initCarousels);
+  document.addEventListener("astro:page-load", initCarousels);
+</script>
