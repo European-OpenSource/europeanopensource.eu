@@ -232,7 +232,10 @@ const breadcrumbItems = [
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
-    color: var(--alternative-dark);
+    /* var(--alternative-dark) (#ffad00) on this light-yellow background is
+       1.73:1, well under WCAG AA's 4.5:1 minimum for text. This darker amber
+       keeps the same hue while giving 6.4:1. */
+    color: #7a5200;
     font-weight: 600;
     font-size: 0.75rem;
     background: rgba(255, 204, 0, 0.15);
