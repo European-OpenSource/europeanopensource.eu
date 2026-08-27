@@ -297,6 +297,15 @@
     justify-content: flex-start;
     padding-bottom: 0;
   }
+  /* walle's .visible-xs (used on #filters-toggle/#filters-close) switches on
+     at this same 768px breakpoint, but the toggle-able fullscreen overlay
+     below only activates at 600px. Between 601-768px that left two buttons
+     visible that did nothing: the form is already shown inline here, not
+     hidden behind a toggle. Hide them for that range only. */
+  #filters-toggle,
+  #filters-close {
+    display: none !important;
+  }
 
   /* Responsive pagination for tablets */
   .pagination {
@@ -415,6 +424,21 @@
   .filters-section {
     padding: 0.75rem 0;
   }
+  /* Re-show the toggle/close buttons hidden at 601-768px above — down here
+     the fullscreen overlay pattern is active and they're the only way in/out
+     of it. */
+  #filters-toggle,
+  #filters-close {
+    display: inline-flex !important;
+  }
+  /* .filters-section drops to z-index: 99 at the 768px breakpoint above (to
+     sit below the sticky navbar while scrolling normally). That trapped the
+     full-screen overlay inside a losing stacking context: the navbar (z-index
+     1000) painted over it regardless of the overlay's own z-index. Escalate
+     the section only while the overlay is actually open. */
+  .filters-section:has(.filters-form.open) {
+    z-index: 1001;
+  }
   .filters-form {
     position: fixed;
     top: 0;
@@ -422,7 +446,9 @@
     right: 0;
     bottom: 0;
     background-color: var(--white);
-    z-index: 1000;
+    /* One above the sticky navbar's z-index (1000) so the "Filtri" title and
+       overlay aren't visually cut off behind it when opened on mobile. */
+    z-index: 1001;
     max-height: 100vh;
     opacity: 0;
     overflow: hidden;

@@ -1,3 +1,9 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 :root {
   --primary: #0046ad;
   --primary-light: #0153ce;
@@ -52,4 +58,15 @@
     width: 3.3rem;
     padding: 0.125rem;
   }
+}
+
+/*
+ * Walle Footer's nav list has no flex-wrap, so on narrow viewports the
+ * Catalog/Newsletter/Privacy Policy/Terms & Conditions row forces the whole
+ * page to scroll horizontally. Footer.astro is @walle/-managed, so the fix
+ * lives here instead of forking the component.
+ */
+footer .footer-nav__list {
+  flex-wrap: wrap;
+  row-gap: 0.5rem;
 }
