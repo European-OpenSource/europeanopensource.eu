@@ -41,7 +41,7 @@ jobs:
             pr_body="Sync database: manualy triggered by ${{ github.actor }}"
             hash_commit="latest"
           else
-            pr_branch_name="feat/sync-database-action-${{ github.event.client_payload.hash }}"
+            pr_branch_name="feat/sync-database-action"
             pr_body="Sync database: triggered by [awesome-european-opensource](https://github.com/European-OpenSource/awesome-european-opensource) (pipeline: [${{ github.event.client_payload.run_id }}](https://github.com/European-OpenSource/awesome-european-opensource/actions/runs/${{ github.event.client_payload.run_id }}))"
             hash_commit="${{ github.event.client_payload.hash }}"
           fi
