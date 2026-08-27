@@ -1,0 +1,28 @@
+---
+name: "Krita"
+description: "Krita is a professional free and open-source digital painting application developed by the Krita Foundation in the Netherlands. Designed for illustrators, concept artists, and matte painters, it offers advanced brush engines, layer management, HDR support, and animation tools in a focused interface."
+tags:
+  - digital-painting
+  - illustration
+  - art
+  - design
+  - cross-platform
+category: "app"
+country:
+  - Netherlands
+source:
+  platform: "GitLab"
+  url_repository: "https://invent.kde.org/graphics/krita"
+  url_documentation: "https://docs.krita.org"
+  license: "GPL-3.0"
+  language: "C++"
+owner:
+  name: "Krita Foundation"
+  type: "organization"
+  description: "Dutch non-profit foundation developing the Krita professional digital painting application."
+  url_website: "https://krita.org"
+  is_a_startup: false
+metadata:
+  filename: krita-df5757.json
+  created_at: 2026-08-26T18:02:23Z
+---

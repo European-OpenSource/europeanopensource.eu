@@ -1,0 +1,29 @@
+---
+name: "Qdrant"
+description: "Qdrant is a high-performance, open-source vector similarity search engine and database built in Rust by Qdrant Solutions GmbH in Berlin. It enables fast nearest-neighbor search over dense and sparse vectors with filtering, making it core infrastructure for AI, recommendation systems, and semantic search."
+tags:
+  - vector-database
+  - search
+  - ai
+  - rust
+  - similarity-search
+  - embeddings
+category: "app"
+country:
+  - Germany
+source:
+  platform: "GitHub"
+  url_repository: "https://github.com/qdrant/qdrant"
+  url_documentation: "https://qdrant.tech/documentation"
+  license: "Apache-2.0"
+  language: "Rust"
+owner:
+  name: "Qdrant Solutions GmbH"
+  type: "organization"
+  description: "German AI infrastructure company building open-source vector search technology, based in Berlin."
+  url_website: "https://qdrant.tech"
+  is_a_startup: false
+metadata:
+  filename: qdrant-13822d.json
+  created_at: 2026-08-26T18:00:55Z
+---

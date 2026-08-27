@@ -1,0 +1,33 @@
+---
+name: "Qisutu"
+description: "Qisutu is a European free and open-source ticketing, helpdesk and service desk platform with customer and agent portals, workflow automation, SLA management, reporting, a knowledge base and an integrated CMDB. It supports eleven languages and can be operated on an organizations own infrastructure or professionally hosted. Qisutu is designed for data sovereignty, extensibility and professional support operations."
+tags:
+  - ticketing
+  - helpdesk
+  - service-desk
+  - itsm
+  - cmdb
+  - open-source
+  - self-hosted
+  - customer-support
+  - automation
+  - knowledge-base
+category: "app"
+country:
+  - France
+source:
+  platform: "GitHub"
+  url_repository: "https://github.com/qisutu/qisutu"
+  url_documentation: "https://manual.qisutu.de"
+  license: "AGPL-3.0"
+  language: "Perl"
+owner:
+  name: "Franziska Steps"
+  type: "individual"
+  description: "Franziska Steps is the founder and maintainer of Qisutu, a European open-source ticketing and service desk platform focused on data sovereignty, professional support processes and self-hosted operation."
+  url_website: "https://qisutu.de"
+  is_a_startup: false
+metadata:
+  filename: qisutu-1b3062.json
+  created_at: 2026-08-26T18:40:00Z
+---

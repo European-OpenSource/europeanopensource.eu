@@ -1,0 +1,30 @@
+---
+name: "OPNsense"
+description: "OPNsense is an open-source, FreeBSD-based firewall and routing platform developed by Deciso B.V. in Middelburg, Netherlands. Forked from pfSense, it offers a modern web UI, weekly security updates, stateful packet inspection, intrusion detection, VPN, and traffic shaping for enterprise network security."
+tags:
+  - firewall
+  - network
+  - security
+  - bsd
+  - routing
+  - vpn
+  - ids
+category: "app"
+country:
+  - Netherlands
+source:
+  platform: "GitHub"
+  url_repository: "https://github.com/opnsense/core"
+  url_documentation: "https://docs.opnsense.org"
+  license: "BSD-2-Clause"
+  language: "PHP"
+owner:
+  name: "Deciso B.V."
+  type: "organization"
+  description: "Dutch company based in Middelburg developing open-source network security solutions."
+  url_website: "https://opnsense.org"
+  is_a_startup: false
+metadata:
+  filename: opnsense-23bd0f.json
+  created_at: 2026-08-26T18:02:13Z
+---
