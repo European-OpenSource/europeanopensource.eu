@@ -48,13 +48,13 @@ just walle-update --yes
 
 ## What changes vs. what is preserved
 
-| Category                                          | Behavior                         |
-| ------------------------------------------------- | -------------------------------- |
-| `@walle/`-namespaced paths                        | Overwritten — every managed file |
-| `AGENTS.md` marker block                          | Regenerated from the manifest    |
-| SEED files (api routes, ci workflows, middleware) | Never touched                    |
-| `package.json` (seed — see "Dependencies" below)  | Never touched                    |
-| Consumer zones (configs, pages, styles, content)  | Never touched                    |
+| Category                                                 | Behavior                         |
+| -------------------------------------------------------- | -------------------------------- |
+| `@walle/`-namespaced paths                               | Overwritten — every managed file |
+| `AGENTS.md` marker block                                 | Regenerated from the manifest    |
+| SEED files (api routes, ci workflows, middleware)        | Never touched                    |
+| `package.json` (seed — see "Dependencies" below)         | Never touched                    |
+| Consumer zones (configs, pages, styles, content)         | Never touched                    |
 
 ## Dependencies
 

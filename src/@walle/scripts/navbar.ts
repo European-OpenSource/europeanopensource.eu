@@ -89,7 +89,12 @@ function initNavbar() {
   const handleScroll = () => {
     header?.classList.toggle("scrolled", window.scrollY > 20);
   };
-  handleScroll();
+  // Deferred by one frame on purpose: reading window.scrollY inside the DOMContentLoaded
+  // handler forces a synchronous layout before the browser's own first layout (PageSpeed
+  // attributed a ~44 ms forced reflow to exactly this line on eventialatina.it). rAF still
+  // runs before the first paint, so a restored scroll position gets the class without a
+  // flash, but the read now happens on a page that is already laid out.
+  requestAnimationFrame(handleScroll);
   window.addEventListener("scroll", handleScroll, { passive: true });
 }
 

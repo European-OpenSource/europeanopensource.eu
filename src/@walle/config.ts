@@ -47,10 +47,39 @@ export interface FooterConfig {
   items: NavigationLink[];
 }
 
+export interface PwaIcon {
+  src: string;
+  sizes: string;
+  type?: string;
+  purpose?: string;
+}
+
+/**
+ * Progressive web app. Opt-in: absent, or `enabled: false`, and a site ships no manifest,
+ * no service worker and no registration script at all. Every other key is optional and
+ * falls back to what the site already declares (website title/description/language, theme
+ * palette), so turning it on is one line.
+ */
+export interface PwaConfig {
+  enabled?: boolean;
+  name?: string;
+  shortName?: string;
+  description?: string;
+  lang?: string;
+  themeColor?: string;
+  backgroundColor?: string;
+  display?: "standalone" | "fullscreen" | "minimal-ui" | "browser";
+  startUrl?: string;
+  scope?: string;
+  icons?: PwaIcon[];
+  appleTouchIcon?: string;
+}
+
 export interface AppConfig {
   astro: AstroConfig;
   website: WebsiteConfig;
   components?: Record<string, string>;
+  pwa?: PwaConfig;
 }
 
 export interface DefaultConfig {

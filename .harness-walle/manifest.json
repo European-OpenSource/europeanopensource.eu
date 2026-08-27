@@ -2,16 +2,29 @@
   "$schema": "../schemas/walle.config.schema.json",
   "schemaVersion": 3,
   "name": "europeanopensource.eu",
-  "walleVersion": "v0.3.2",
-  "modules": ["website", "ci", "ai"],
+  "walleVersion": "v0.4.0",
+  "modules": [
+    "website",
+    "ci",
+    "ai"
+  ],
   "devcontainer": {
     "enabled": true
   },
   "files": {
     "managed": {
-      "website": ["schemas", "scripts/@walle", "scripts/@walle/walle.yml", "src/@walle"],
-      "ci": [".github/workflows/actions/@walle"],
-      "ai": [".claude/skills/@walle"]
+      "website": [
+        "schemas",
+        "scripts/@walle",
+        "scripts/@walle/walle.yml",
+        "src/@walle"
+      ],
+      "ci": [
+        ".github/workflows/actions/@walle"
+      ],
+      "ai": [
+        ".claude/skills/@walle"
+      ]
     },
     "seed": {
       "website": [
@@ -44,7 +57,10 @@
         "src/utils/index.js",
         "tsconfig.json"
       ],
-      "ci": [".github/workflows/deploy.yml", ".github/workflows/test.yml"],
+      "ci": [
+        ".github/workflows/deploy.yml",
+        ".github/workflows/test.yml"
+      ],
       "harness-coding": [
         ".devcontainer/docker-compose.project.yml",
         ".husky/pre-commit",
@@ -53,10 +69,18 @@
       ]
     },
     "inject": {
-      "website": [".vscode/extensions.json", ".vscode/settings.json", "justfile.project"],
-      "ai": ["AGENTS.md"],
-      "harness-coding": [".devcontainer/scripts/setup-devcontainer.project.sh"]
+      "website": [
+        ".vscode/extensions.json",
+        ".vscode/settings.json",
+        "justfile.project"
+      ],
+      "ai": [
+        "AGENTS.md"
+      ],
+      "harness-coding": [
+        ".devcontainer/scripts/setup-devcontainer.project.sh"
+      ]
     }
   },
-  "updatedAt": "2026-08-18T14:30:13Z"
+  "updatedAt": "2026-08-27T14:58:58Z"
 }

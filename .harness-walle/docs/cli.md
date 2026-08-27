@@ -54,8 +54,9 @@ greenfield flow). Omitted, the target is `--dir-path` itself (default: current d
 5. Seeds each module's SEED paths (written once if absent).
 6. Injects walle's marker-bounded blocks into consumer-owned files.
 
-What is managed, seed, or inject is declared in `walle/walle.yml`. 6. Writes `.harness-walle/manifest.json`, `.harness-walle/config.yml` (if absent), `.harness-walle/lock`, and (unless
-`config.yml`'s `docs: false`) `.harness-walle/docs/`.
+What is managed, seed, or inject is declared in `walle/walle.yml`.
+6. Writes `.harness-walle/manifest.json`, `.harness-walle/config.yml` (if absent), `.harness-walle/lock`, and (unless
+   `config.yml`'s `docs: false`) `.harness-walle/docs/`.
 
 **`website` is always required.** Omit `--modules` to get just `website`.
 
@@ -63,12 +64,12 @@ What is managed, seed, or inject is declared in `walle/walle.yml`. 6. Writes `.h
 
 **Common errors:**
 
-| Error                             | Cause                                                                            |
-| --------------------------------- | -------------------------------------------------------------------------------- |
-| `already a walle project`         | Target has a `.harness-walle/manifest.json` already — use `update`/`add` instead |
-| `aborted — no files were written` | Adoption prompt declined                                                         |
-| `'website' is a mandatory module` | `--modules` specified without `website`                                          |
-| `unknown module '<m>'`            | Module name not in `website`, `ci`, `ai`, `backend`, `devcontainer`              |
+| Error                             | Cause                                                                                 |
+| --------------------------------- | ------------------------------------------------------------------------------------- |
+| `already a walle project`         | Target has a `.harness-walle/manifest.json` already — use `update`/`add` instead              |
+| `aborted — no files were written` | Adoption prompt declined                                                              |
+| `'website' is a mandatory module` | `--modules` specified without `website`                                               |
+| `unknown module '<m>'`            | Module name not in `website`, `ci`, `ai`, `backend`, `devcontainer` |
 
 ---
 
@@ -122,11 +123,11 @@ just walle-update
 
 **Common errors:**
 
-| Error                                   | Cause                                                                                             |
-| --------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| `no .harness-walle/manifest.json found` | Not a walle consumer or wrong `--project-path`                                                    |
-| `unsupported manifest schemaVersion`    | Manifest has no `schemaVersion` (v2/v3 are supported; v2 auto-migrates) — re-scaffold with `init` |
-| `crosses a MAJOR boundary`              | MAJOR version bump; re-run with `--yes` after reviewing `CHANGELOG.md`                            |
+| Error                               | Cause                                                                  |
+| ----------------------------------- | ---------------------------------------------------------------------- |
+| `no .harness-walle/manifest.json found`     | Not a walle consumer or wrong `--project-path`                         |
+| `unsupported manifest schemaVersion` | Manifest has no `schemaVersion` (v2/v3 are supported; v2 auto-migrates) — re-scaffold with `init` |
+| `crosses a MAJOR boundary`          | MAJOR version bump; re-run with `--yes` after reviewing `CHANGELOG.md` |
 
 ---
 

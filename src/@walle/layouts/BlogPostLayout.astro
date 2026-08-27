@@ -1,11 +1,9 @@
 ---
-import {
-  BlogReadingProgress,
-  BlogTableOfContents,
-  SectionHeaderStandard,
-  StructuredData,
-} from "@walle/components";
-import { BaseLayout } from "@walle/layouts";
+import BlogReadingProgress from "@walle/components/features/Blog/BlogReadingProgress.astro";
+import BlogTableOfContents from "@walle/components/features/Blog/BlogTableOfContents.astro";
+import SectionHeaderStandard from "@walle/components/features/Sections/HeaderStandard.astro";
+import StructuredData from "@walle/components/features/StructuredData.astro";
+import BaseLayout from "./BaseLayout.astro";
 import { formatDate } from "@walle/utils";
 import { articleJsonLd } from "@walle/utils/structured-data";
 

@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://walle.dev/schemas/app.schema.json",
   "title": "Walle app config (src/configs/app.json)",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "type": "object",
   "additionalProperties": false,
   "required": ["website", "astro"],
@@ -48,6 +48,51 @@
       "properties": {
         "navbar": { "type": "string", "default": "standard" },
         "footer": { "type": "string", "default": "standard" }
+      }
+    },
+    "pwa": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Progressive web app. Opt-in: absent or enabled:false => no manifest, no service worker, no registration script. Every other key falls back to the site's website/theme config.",
+      "properties": {
+        "enabled": { "type": "boolean", "default": false },
+        "name": { "type": "string", "description": "Defaults to website.title." },
+        "shortName": { "type": "string", "description": "Home-screen label. Defaults to name." },
+        "description": { "type": "string", "description": "Defaults to website.description." },
+        "lang": { "type": "string", "description": "Defaults to website.language." },
+        "themeColor": {
+          "type": "string",
+          "description": "Browser chrome color. Defaults to the theme palette's primary."
+        },
+        "backgroundColor": {
+          "type": "string",
+          "description": "Splash background. Defaults to the theme palette's background."
+        },
+        "display": {
+          "enum": ["standalone", "fullscreen", "minimal-ui", "browser"],
+          "default": "standalone"
+        },
+        "startUrl": { "type": "string", "description": "Defaults to astro.basePath." },
+        "scope": { "type": "string", "description": "Defaults to astro.basePath." },
+        "icons": {
+          "type": "array",
+          "description": "Manifest icons, served from public/. Without these a browser shows no install prompt.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["src", "sizes"],
+            "properties": {
+              "src": { "type": "string" },
+              "sizes": { "type": "string" },
+              "type": { "type": "string" },
+              "purpose": { "type": "string" }
+            }
+          }
+        },
+        "appleTouchIcon": {
+          "type": "string",
+          "description": "iOS home-screen icon. Omitted => no apple-touch-icon link."
+        }
       }
     },
     "commerce": {

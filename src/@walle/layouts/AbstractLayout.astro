@@ -1,5 +1,7 @@
 ---
-import { Analytics, Head, StructuredData } from "@walle/components";
+import Analytics from "@walle/components/features/Analytics.astro";
+import Head from "@walle/components/features/Head.astro";
+import StructuredData from "@walle/components/features/StructuredData.astro";
 import config from "@walle/config";
 import { organizationJsonLd, websiteJsonLd } from "@walle/utils/structured-data";
 import "@walle/styles/global.css";
@@ -54,18 +56,30 @@ const siteInfo = {
       // non-scrolling blocks never become spurious tab stops. Covers consumer markdown too.
       function makeScrollRegionsFocusable() {
         const focusable = "a[href],button,input,select,textarea,[tabindex]";
-        document.querySelectorAll<HTMLElement>("pre,table,[data-scrollable]").forEach((el) => {
+        const candidates = document.querySelectorAll<HTMLElement>("pre,table,[data-scrollable]");
+        // Most pages have none: bail out before touching geometry at all, so they never pay a
+        // layout for a check that cannot match anything.
+        if (candidates.length === 0) return;
+        // Read every element's geometry first, write the attributes after. Interleaving the
+        // two makes the browser re-layout once per element (layout thrashing) as soon as a
+        // page really does carry a handful of tables or code blocks.
+        const needsFocus: HTMLElement[] = [];
+        candidates.forEach((el) => {
           if (el.hasAttribute("tabindex")) return;
           const overflows = el.scrollWidth > el.clientWidth || el.scrollHeight > el.clientHeight;
-          if (overflows && !el.querySelector(focusable)) {
-            el.setAttribute("tabindex", "0");
-            el.setAttribute("role", "region");
-            if (!el.hasAttribute("aria-label")) el.setAttribute("aria-label", "Scrollable content");
-          }
+          if (overflows && !el.querySelector(focusable)) needsFocus.push(el);
+        });
+        needsFocus.forEach((el) => {
+          el.setAttribute("tabindex", "0");
+          el.setAttribute("role", "region");
+          if (!el.hasAttribute("aria-label")) el.setAttribute("aria-label", "Scrollable content");
         });
       }
-      document.addEventListener("DOMContentLoaded", makeScrollRegionsFocusable);
-      document.addEventListener("astro:page-load", makeScrollRegionsFocusable);
+      // One frame later: the geometry these reads need is only final once the page has been
+      // laid out anyway, and no tab stop has to exist before the first pixels do.
+      const scheduleScrollRegions = () => requestAnimationFrame(makeScrollRegionsFocusable);
+      document.addEventListener("DOMContentLoaded", scheduleScrollRegions);
+      document.addEventListener("astro:page-load", scheduleScrollRegions);
     </script>
   </body>
 </html>

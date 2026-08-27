@@ -1,8 +1,10 @@
 ---
-import { Breadcrumbs, SectionHeaderStandard, StructuredData } from "@walle/components";
+import Breadcrumbs from "@walle/components/features/Breadcrumbs.astro";
+import SectionHeaderStandard from "@walle/components/features/Sections/HeaderStandard.astro";
+import StructuredData from "@walle/components/features/StructuredData.astro";
 import type { BreadcrumbItem } from "@walle/components/features/Breadcrumbs.astro";
 import type { ProductData } from "@walle/components/features/Card/ProductCard.astro";
-import { BaseLayout } from "@walle/layouts";
+import BaseLayout from "./BaseLayout.astro";
 import { productJsonLd } from "@walle/utils/structured-data";
 import { Icon } from "astro-icon/components";
 

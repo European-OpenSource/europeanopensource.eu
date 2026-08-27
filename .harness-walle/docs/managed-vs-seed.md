@@ -48,14 +48,14 @@ SEED files are consumer-owned scaffolding. Walle writes them **once** at `init`/
 
 **Examples:**
 
-| Module         | SEED path                              | Description                                                                                |
-| -------------- | -------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `website`      | `README.md`                            | Starter readme                                                                             |
-| `ci`           | `.github/workflows/test.yml`           | Test workflow wired to managed composite action                                            |
-| `ci`           | `.github/workflows/deploy.yml`         | Deploy workflow shell                                                                      |
-| `backend`      | `src/pages/api/health.ts`              | Example API route                                                                          |
-| `devcontainer` | `.devcontainer/devcontainer.json`      | Consumer devcontainer entrypoint (seeded by default at init; see [modules.md](modules.md)) |
-| `website`      | `.husky/pre-commit`, `.husky/pre-push` | Git hooks (`yarn lint`, `yarn format`, `yarn test:unit`), matching this repo's own hooks   |
+| Module           | SEED path                              | Description                                                                                |
+| ---------------- | -------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `website`        | `README.md`                            | Starter readme                                                                             |
+| `ci`             | `.github/workflows/test.yml`           | Test workflow wired to managed composite action                                            |
+| `ci`             | `.github/workflows/deploy.yml`         | Deploy workflow shell                                                                      |
+| `backend`        | `src/pages/api/health.ts`              | Example API route                                                                          |
+| `devcontainer`   | `.devcontainer/devcontainer.json`      | Consumer devcontainer entrypoint (seeded by default at init; see [modules.md](modules.md)) |
+| `website`        | `.husky/pre-commit`, `.husky/pre-push` | Git hooks (`yarn lint`, `yarn format`, `yarn test:unit`), matching this repo's own hooks   |
 
 `.devcontainer/docker-compose.project.yml` and `.devcontainer/scripts/setup-devcontainer.project.sh`
 are **not** SEED paths of the `devcontainer` module — they're harness-coding's own SEED files;

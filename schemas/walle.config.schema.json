@@ -60,18 +60,9 @@
       "description": "Every path walle wrote, grouped by class (managed | seed | inject) then by module → array of dest paths.",
       "additionalProperties": false,
       "properties": {
-        "managed": {
-          "type": "object",
-          "additionalProperties": { "type": "array", "items": { "type": "string" } }
-        },
-        "seed": {
-          "type": "object",
-          "additionalProperties": { "type": "array", "items": { "type": "string" } }
-        },
-        "inject": {
-          "type": "object",
-          "additionalProperties": { "type": "array", "items": { "type": "string" } }
-        }
+        "managed": { "type": "object", "additionalProperties": { "type": "array", "items": { "type": "string" } } },
+        "seed": { "type": "object", "additionalProperties": { "type": "array", "items": { "type": "string" } } },
+        "inject": { "type": "object", "additionalProperties": { "type": "array", "items": { "type": "string" } } }
       }
     }
   },

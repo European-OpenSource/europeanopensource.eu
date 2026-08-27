@@ -53,10 +53,8 @@ const shouldShowBrand = hasLogo || hasTitle;
 
       <slot name="actions" />
 
-      {
-        /* Last in the DOM so on mobile the reading/focus order matches the visual order
-          (brand · cart · hamburger) without CSS `order` reshuffling the tab sequence. */
-      }
+      {/* Last in the DOM so on mobile the reading/focus order matches the visual order
+          (brand · cart · hamburger) without CSS `order` reshuffling the tab sequence. */}
       <button
         id="mobile-menu-toggle"
         class="hamburger"

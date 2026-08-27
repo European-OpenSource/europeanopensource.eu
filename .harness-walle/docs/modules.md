@@ -12,11 +12,11 @@ A walle consumer declares which modules it uses in `.harness-walle/manifest.json
 Every consumer has a `.harness-walle/` folder holding walle's own metadata — not a module, always
 present:
 
-| Path                           | What it is                                                                                                                                                                                   |
-| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.harness-walle/manifest.json` | The consumer manifest (schemaVersion, name, walleVersion, modules, etc.) — same schema previously at the root `.walle.config.json`                                                           |
-| `.harness-walle/config.yml`    | Consumer-facing setup config (currently just `docs: true/false`). Created with defaults if absent, **NEVER-TOUCH** after — yours to edit freely                                              |
-| `.harness-walle/lock`          | Single line: the resolved source ref (a tag, or `local` when `--source` is used). Written on every `init`/`update`                                                                           |
+| Path                   | What it is                                                                                                                                                                           |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `.harness-walle/manifest.json` | The consumer manifest (schemaVersion, name, walleVersion, modules, etc.) — same schema previously at the root `.walle.config.json`                                                   |
+| `.harness-walle/config.yml`    | Consumer-facing setup config (currently just `docs: true/false`). Created with defaults if absent, **NEVER-TOUCH** after — yours to edit freely                                      |
+| `.harness-walle/lock`          | Single line: the resolved source ref (a tag, or `local` when `--source` is used). Written on every `init`/`update`                                                                   |
 | `.harness-walle/docs/`         | Curated copy of `cli.md`, `modules.md`, `managed-vs-seed.md`, `versioning.md` from the pinned release. Refreshed on every `init`/`update` unless `.harness-walle/config.yml`'s `docs: false` |
 
 A consumer on an older layout — a root `.walle.config.json`, or the earlier `.walle/` folder — is

@@ -1,10 +1,10 @@
 ---
-import { Footer, Navbar } from "@walle/components";
+import Footer from "@walle/components/features/FooterResolver.astro";
+import Navbar from "@walle/components/features/Navbar/NavbarResolver.astro";
 import config from "@walle/config";
 import type { NavbarConfig } from "@walle/config";
-import { AbstractLayout } from "@walle/layouts";
-import CartMount from "@walle/commerce/CartMount.astro";
-import CartBadge from "@walle/commerce/CartBadge.astro";
+import AbstractLayout from "./AbstractLayout.astro";
+
 import { getCollection } from "astro:content";
 
 // Cart UI only in commerce mode; a vetrina site ships none of it. `cartInNavbar` puts
@@ -12,6 +12,11 @@ import { getCollection } from "astro:content";
 const commerce = (config.app as { commerce?: { showBuyButton?: boolean; cartInNavbar?: boolean } })
   .commerce;
 const showCart = commerce?.showBuyButton ?? false;
+// Imported dynamically so a vetrina site keeps the cart out of its module graph entirely.
+// Astro collects a page's CSS from that graph, not from what renders, so a static import
+// shipped the whole cart stylesheet on every page of every site that never shows a cart.
+const CartMount = showCart ? (await import("@walle/commerce/CartMount.astro")).default : null;
+const CartBadge = showCart ? (await import("@walle/commerce/CartBadge.astro")).default : null;
 const cartInNavbar = commerce?.cartInNavbar ?? false;
 
 // Optional built-in docs: if this site ships a `wiki` collection with pages (the design-system
@@ -51,7 +56,7 @@ try {
   <slot name="head" slot="head" />
   <slot name="navbar">
     <Navbar config={navbarConfig}>
-      {showCart && cartInNavbar && <CartBadge slot="actions" floating={false} />}
+      {showCart && CartBadge && <CartBadge slot="actions" floating={false} />}
     </Navbar>
   </slot>
   <main id="main-content" tabindex="-1">
@@ -60,6 +65,6 @@ try {
   <slot name="footer">
     <Footer />
   </slot>
-  {showCart && <CartMount />}
-  {showCart && !cartInNavbar && <CartBadge floating={true} />}
+  {showCart && CartMount && <CartMount />}
+  {showCart && !cartInNavbar && CartBadge && <CartBadge floating={true} />}
 </AbstractLayout>
