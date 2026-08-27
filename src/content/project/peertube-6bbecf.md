@@ -1,0 +1,28 @@
+---
+name: "PeerTube"
+description: "PeerTube is a free, federated, and decentralized video hosting platform developed by Framasoft in Lyon. Built on ActivityPub and WebTorrent, it allows anyone to host their own video server that interconnects across the Fediverse, providing a privacy-respecting alternative to centralized platforms."
+tags:
+  - video
+  - fediverse
+  - activitypub
+  - decentralized
+  - self-hosted
+category: "app"
+country:
+  - France
+source:
+  platform: "GitHub"
+  url_repository: "https://github.com/Chocobozzz/PeerTube"
+  url_documentation: "https://docs.joinpeertube.org"
+  license: "AGPL-3.0"
+  language: "TypeScript"
+owner:
+  name: "Framasoft"
+  type: "organization"
+  description: "French non-profit association promoting free software and digital commons since 2001."
+  url_website: "https://framasoft.org"
+  is_a_startup: false
+metadata:
+  filename: peertube-6bbecf.json
+  created_at: 2026-08-26T17:58:58Z
+---

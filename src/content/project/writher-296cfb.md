@@ -1,0 +1,25 @@
+---
+name: "Writher"
+description: "Writher is an offline voice assistant and dictation tool for Windows, built in Python. It lets you dictate text into any application and manage notes, appointments, and reminders hands-free, without sending audio to any cloud service."
+tags:
+  - voice-assistant
+  - dictation
+  - offline
+  - windows
+  - accessibility
+category: "app"
+country:
+  - Italy
+source:
+  platform: "GitHub"
+  url_repository: "https://github.com/benmaster82/writher"
+  license: "MIT"
+  language: "Python"
+owner:
+  name: "Benito Mallamaci"
+  type: "individual"
+  is_a_startup: false
+metadata:
+  filename: writher-296cfb.json
+  created_at: 2026-08-26T17:57:43Z
+---

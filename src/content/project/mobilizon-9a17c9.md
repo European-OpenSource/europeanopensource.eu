@@ -1,0 +1,28 @@
+---
+name: "Mobilizon"
+description: "Mobilizon is a free, federated event and group management platform built by Framasoft in France. Based on ActivityPub, it enables organizations and communities to publish events and coordinate members without surveillance-driven social networks, connecting across the Fediverse."
+tags:
+  - events
+  - fediverse
+  - activitypub
+  - community
+  - self-hosted
+category: "app"
+country:
+  - France
+source:
+  platform: "GitLab"
+  url_repository: "https://framagit.org/framasoft/mobilizon"
+  url_documentation: "https://docs.joinmobilizon.org"
+  license: "AGPL-3.0"
+  language: "Elixir"
+owner:
+  name: "Framasoft"
+  type: "organization"
+  description: "French non-profit association promoting free software and digital commons since 2001."
+  url_website: "https://framasoft.org"
+  is_a_startup: false
+metadata:
+  filename: mobilizon-9a17c9.json
+  created_at: 2026-08-26T17:59:04Z
+---
