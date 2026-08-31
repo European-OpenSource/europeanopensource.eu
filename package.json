@@ -24,7 +24,7 @@
   "dependencies": {
     "@astrojs/markdown-satteri": "^0.3.8",
     "@astrojs/mdx": "^7.0.3",
-    "@astrojs/node": "^11.0.2",
+    "@astrojs/node": "^11.1.4",
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.3",
     "@iconify-json/fa": "^1.2.2",
