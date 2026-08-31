@@ -254,22 +254,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@astrojs/internal-helpers@npm:0.10.1":
-  version: 0.10.1
-  resolution: "@astrojs/internal-helpers@npm:0.10.1"
-  dependencies:
-    "@types/hast": "npm:^3.0.4"
-    "@types/mdast": "npm:^4.0.4"
-    js-yaml: "npm:^4.1.1"
-    picomatch: "npm:^4.0.4"
-    retext-smartypants: "npm:^6.2.0"
-    shiki: "npm:^4.0.2"
-    smol-toml: "npm:^1.6.0"
-    unified: "npm:^11.0.5"
-  checksum: 10c0/1176a1399ae40fdc2bbfce69bc3c3937d298d8b284194aa965f51341edad6b9938bc5ddf5d14d8eafabe353d2de87f0b7bb1fa47605999434a5a634cf460c4ec
-  languageName: node
-  linkType: hard
-
 "@astrojs/internal-helpers@npm:0.10.3":
   version: 0.10.3
   resolution: "@astrojs/internal-helpers@npm:0.10.3"
@@ -367,16 +351,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@astrojs/node@npm:^11.0.2":
-  version: 11.0.2
-  resolution: "@astrojs/node@npm:11.0.2"
+"@astrojs/node@npm:^11.1.4":
+  version: 11.1.4
+  resolution: "@astrojs/node@npm:11.1.4"
   dependencies:
-    "@astrojs/internal-helpers": "npm:0.10.1"
+    "@astrojs/internal-helpers": "npm:0.10.4"
     send: "npm:^1.2.1"
     server-destroy: "npm:^1.0.1"
   peerDependencies:
-    astro: ^7.0.0
-  checksum: 10c0/71a149a8726ebc870e924921f83e41a111e640783ba82b767e624da825a5f794dfdfb3e2e25d0e26823e6703ea613190c218f41e7322de1e1412755fc209b7b8
+    astro: ^7.2.1
+  checksum: 10c0/cb0acac0191db2b06ec9a8ab94854ec76e43f135f2c35346bb9988d98a8b8c4b3c46617643409f3c728888bb4ce9e84142d7f7d86fec2a20d9744bad46822450
   languageName: node
   linkType: hard
 
@@ -6276,17 +6260,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-yaml@npm:^4.1.1":
-  version: 4.3.0
-  resolution: "js-yaml@npm:4.3.0"
-  dependencies:
-    argparse: "npm:^2.0.1"
-  bin:
-    js-yaml: bin/js-yaml.js
-  checksum: 10c0/058b30473d6915ca5b4feb11e2f7d4d97242f98d00a798ed48dd90b46b7c640398afe9128c5db22c5300f8c6528fe2a174b9a93f351a70ebc28c6203938d8bff
-  languageName: node
-  linkType: hard
-
 "js-yaml@npm:^4.3.0":
   version: 4.3.1
   resolution: "js-yaml@npm:4.3.1"
@@ -9869,7 +9842,7 @@ __metadata:
   dependencies:
     "@astrojs/markdown-satteri": "npm:^0.3.8"
     "@astrojs/mdx": "npm:^7.0.3"
-    "@astrojs/node": "npm:^11.0.2"
+    "@astrojs/node": "npm:^11.1.4"
     "@astrojs/rss": "npm:^4.0.19"
     "@astrojs/sitemap": "npm:^3.7.3"
     "@axe-core/playwright": "npm:^4.13.0"
