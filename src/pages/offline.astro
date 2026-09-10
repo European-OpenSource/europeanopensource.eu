@@ -1,0 +1,60 @@
+---
+/**
+ * Served by the service worker when a navigation fails and the requested page is not cached
+ * (see the `pwa` block in astro.config.mjs). Uses the normal site layout so the visitor still
+ * recognises where they are. Not linked from the site and excluded from the sitemap.
+ */
+import { BaseLayout } from "@walle/layouts";
+import { Button } from "@walle/components";
+---
+
+<BaseLayout
+  headerTitle="You are offline"
+  headerDescription="Shown when the device has no internet connection."
+  headerRobots="noindex, nofollow"
+>
+  <section class="offline">
+    <h1 class="offline__title">You are offline</h1>
+    <p class="offline__lead">
+      This page could not be loaded because your device is not connected to the internet. Check your
+      connection and try again.
+    </p>
+
+    <nav class="offline__links" aria-label="Main sections">
+      <Button href="/" text="Back to home" size="small" effects={false} />
+      <Button
+        href="/projects"
+        text="Browse the catalog"
+        variant="secondary"
+        outline
+        size="small"
+        effects={false}
+      />
+    </nav>
+  </section>
+</BaseLayout>
+
+<style>
+  .offline {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--space-xl) var(--space-xl) var(--space-4xl);
+    text-align: center;
+  }
+
+  .offline__title {
+    margin-bottom: var(--space-md);
+  }
+
+  .offline__lead {
+    color: var(--text-secondary, inherit);
+    margin-bottom: var(--space-xl);
+  }
+
+  .offline__links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-sm);
+  }
+</style>

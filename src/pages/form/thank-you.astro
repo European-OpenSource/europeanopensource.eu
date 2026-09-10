@@ -11,17 +11,24 @@ import { Button } from "@walle/components";
 <BaseLayout
   headerTitle="Thank you"
   headerDescription="We received your project submission and will review it against our acceptance criteria."
-  robots="noindex, nofollow"
+  headerRobots="noindex, nofollow"
 >
   <section class="thank-you">
     <h1 class="thank-you__title">Thank you for your contribution!</h1>
     <p class="thank-you__lead">
-      Your project has been submitted successfully. We'll review it against our acceptance
-      criteria and add it to the catalog if it qualifies.
+      Your project has been submitted successfully. We'll review it against our acceptance criteria
+      and add it to the catalog if it qualifies.
     </p>
 
     <nav class="thank-you__links" aria-label="Main sections">
-      <Button href="/form" text="Submit another project" variant="secondary" outline size="small" effects={false} />
+      <Button
+        href="/form"
+        text="Submit another project"
+        variant="secondary"
+        outline
+        size="small"
+        effects={false}
+      />
       <Button href="/projects" text="Browse the catalog" size="small" effects={false} />
     </nav>
   </section>
