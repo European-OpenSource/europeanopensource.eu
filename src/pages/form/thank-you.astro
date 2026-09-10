@@ -1,0 +1,53 @@
+---
+/**
+ * Post-submission page for the Tally form (europeanopensource.eu/form). Set as
+ * settings.redirectOnCompletion on the live Tally form — not linked from anywhere on the site
+ * itself, only reachable via that Tally redirect.
+ */
+import { BaseLayout } from "@walle/layouts";
+import { Button } from "@walle/components";
+---
+
+<BaseLayout
+  headerTitle="Thank you"
+  headerDescription="We received your project submission and will review it against our acceptance criteria."
+  robots="noindex, nofollow"
+>
+  <section class="thank-you">
+    <h1 class="thank-you__title">Thank you for your contribution!</h1>
+    <p class="thank-you__lead">
+      Your project has been submitted successfully. We'll review it against our acceptance
+      criteria and add it to the catalog if it qualifies.
+    </p>
+
+    <nav class="thank-you__links" aria-label="Main sections">
+      <Button href="/form" text="Submit another project" variant="secondary" outline size="small" effects={false} />
+      <Button href="/projects" text="Browse the catalog" size="small" effects={false} />
+    </nav>
+  </section>
+</BaseLayout>
+
+<style>
+  .thank-you {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--space-xl) var(--space-xl) var(--space-4xl);
+    text-align: center;
+  }
+
+  .thank-you__title {
+    margin-bottom: var(--space-md);
+  }
+
+  .thank-you__lead {
+    color: var(--text-secondary, inherit);
+    margin-bottom: var(--space-xl);
+  }
+
+  .thank-you__links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-sm);
+  }
+</style>
