@@ -43,7 +43,7 @@
     "@typescript-eslint/parser": "^8.65.0",
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
-    "eslint": "^10.7.0",
+    "eslint": "^10.9.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-astro": "^3.0.1",
     "eslint-plugin-markdown": "^5.1.0",
