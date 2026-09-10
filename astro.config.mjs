@@ -31,7 +31,7 @@ export default defineWalleConfig({
         "offline/index.html",
         "img/logo/light/logo-standard-version.svg",
         "img/favicon/favicon.svg",
-        "fonts/NectoMono-Regular.woff2",
+        "fonts/*.woff2",
       ],
       globIgnores: ["_astro/CartMount*"],
     },
