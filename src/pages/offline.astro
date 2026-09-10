@@ -1,9 +1,5 @@
 ---
-/**
- * Served by the service worker when a navigation fails and the requested page is not cached
- * (see the `pwa` block in astro.config.mjs). Uses the normal site layout so the visitor still
- * recognises where they are. Not linked from the site and excluded from the sitemap.
- */
+// Service worker fallback for uncached pages when offline (see astro.config.mjs).
 import { BaseLayout } from "@walle/layouts";
 import { Button } from "@walle/components";
 ---

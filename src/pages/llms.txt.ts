@@ -2,11 +2,7 @@ import type { APIRoute } from "astro";
 import config from "@walle/config";
 import { getCollection } from "astro:content";
 
-/**
- * /llms.txt (https://llmstxt.org): a build-time markdown index of the site for LLMs. Site
- * identity, how the catalog works, and every listed project grouped by category. The admission
- * criteria are a summary of the Terms & Conditions (section 10), which stay the source of truth.
- */
+// https://llmstxt.org. Admission criteria summarise the Terms & Conditions, section 10.
 export const GET: APIRoute = async ({ site }) => {
   const url = (path: string) => new URL(path, site).href;
   const repo = "https://github.com/European-OpenSource/awesome-european-opensource";
