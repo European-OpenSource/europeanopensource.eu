@@ -1,0 +1,21 @@
+---
+name: "Polytope"
+description: "ECMWF library for extracting polytope features from meteorological datacubes."
+category: "library"
+country:
+  - United Kingdom
+source:
+  platform: "GitHub"
+  url_repository: "https://github.com/ecmwf/polytope"
+  url_documentation: "https://www.ecmwf.int"
+  license: "Apache-2.0"
+  language: "Python"
+owner:
+  name: "ecmwf"
+  type: "organization"
+  url_website: "https://www.ecmwf.int"
+  is_a_startup: false
+metadata:
+  filename: polytope-2d750e.json
+  created_at: 2026-09-10T09:46:04Z
+---

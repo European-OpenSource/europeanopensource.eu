@@ -1,0 +1,21 @@
+---
+name: "giscoR"
+description: "R package for downloading geospatial data from the Eurostat GISCO API."
+category: "package"
+country:
+  - Spain
+source:
+  platform: "GitHub"
+  url_repository: "https://github.com/rOpenGov/giscoR"
+  url_documentation: "https://ropengov.github.io/giscoR/"
+  license: "GPL-3.0"
+  language: "R"
+owner:
+  name: "rOpenGov"
+  type: "organization"
+  url_website: "http://ropengov.org"
+  is_a_startup: false
+metadata:
+  filename: giscor-824f6a.json
+  created_at: 2026-09-10T09:32:30Z
+---

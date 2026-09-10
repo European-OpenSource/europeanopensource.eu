@@ -1,0 +1,20 @@
+---
+name: "pyaxis"
+description: "Python converter from PC-Axis statistical format to Pandas DataFrames, used by European national statistical offices."
+category: "library"
+country:
+  - Spain
+source:
+  platform: "GitHub"
+  url_repository: "https://github.com/icane/pyaxis"
+  license: "Apache-2.0"
+  language: "Python"
+owner:
+  name: "icane"
+  type: "organization"
+  url_website: "http://www.icane.es"
+  is_a_startup: false
+metadata:
+  filename: pyaxis-ebdc2f.json
+  created_at: 2026-09-10T10:00:25Z
+---

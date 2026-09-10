@@ -1,0 +1,21 @@
+---
+name: "FIWARE NGSI-LD Tutorials"
+description: "Step-by-step tutorials for FIWARE NGSI-LD smart applications."
+category: "learning"
+country:
+  - Germany
+source:
+  platform: "GitHub"
+  url_repository: "https://github.com/FIWARE/tutorials.NGSI-LD"
+  url_documentation: "http://ngsi-ld-tutorials.rtfd.io/"
+  license: "MIT"
+  language: "JavaScript"
+owner:
+  name: "FIWARE"
+  type: "organization"
+  url_website: "https://developer.fiware.org"
+  is_a_startup: false
+metadata:
+  filename: fiware-ngsi-ld-tutorials-7c37db.json
+  created_at: 2026-09-10T09:41:26Z
+---

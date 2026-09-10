@@ -1,0 +1,21 @@
+---
+name: "concentrationMetrics"
+description: "Python library for computing concentration, inequality and diversity indices used in EU banking regulation."
+category: "library"
+country:
+  - Netherlands
+source:
+  platform: "GitHub"
+  url_repository: "https://github.com/open-risk/concentrationMetrics"
+  url_documentation: "https://www.openriskmanual.org/wiki/Concentration_Index"
+  license: "MIT"
+  language: "Python"
+owner:
+  name: "open-risk"
+  type: "individual"
+  url_website: "https://www.openriskmanagement.com"
+  is_a_startup: false
+metadata:
+  filename: concentrationmetrics-3a71e7.json
+  created_at: 2026-09-10T09:41:11Z
+---

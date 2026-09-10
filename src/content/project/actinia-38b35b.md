@@ -1,0 +1,21 @@
+---
+name: "actinia"
+description: "Open source REST API for scalable geospatial data processing used in European environmental monitoring."
+category: "api"
+country:
+  - Germany
+source:
+  platform: "GitHub"
+  url_repository: "https://github.com/mundialis/actinia_core"
+  url_documentation: "https://actinia.mundialis.de/"
+  license: "GPL-3.0"
+  language: "Python"
+owner:
+  name: "actinia-org"
+  type: "organization"
+  url_website: "https://actinia-org.github.io/"
+  is_a_startup: false
+metadata:
+  filename: actinia-38b35b.json
+  created_at: 2026-09-10T09:22:48Z
+---

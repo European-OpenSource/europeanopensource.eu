@@ -1,0 +1,21 @@
+---
+name: "Open Legal Data Platform"
+description: "Open source platform for publishing and accessing European legal data."
+category: "app"
+country:
+  - Germany
+source:
+  platform: "GitHub"
+  url_repository: "https://github.com/openlegaldata/oldp"
+  url_documentation: "https://openlegaldata.io"
+  license: "MIT"
+  language: "Python"
+owner:
+  name: "openlegaldata"
+  type: "organization"
+  url_website: "https://openlegaldata.io/"
+  is_a_startup: false
+metadata:
+  filename: open-legal-data-platform-152b3b.json
+  created_at: 2026-09-10T09:16:55Z
+---

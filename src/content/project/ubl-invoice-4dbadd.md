@@ -1,0 +1,23 @@
+---
+name: "UBL Invoice"
+description: "PHP library to read and create valid UBL and Peppol BIS files."
+tags:
+  - en16931
+  - peppol
+category: "library"
+country:
+  - Belgium
+source:
+  platform: "GitHub"
+  url_repository: "https://github.com/num-num/ubl-invoice"
+  license: "MIT"
+  language: "PHP"
+owner:
+  name: "num-num"
+  type: "organization"
+  url_website: "https://www.numnum.be"
+  is_a_startup: false
+metadata:
+  filename: ubl-invoice-4dbadd.json
+  created_at: 2026-08-31T19:47:53Z
+---

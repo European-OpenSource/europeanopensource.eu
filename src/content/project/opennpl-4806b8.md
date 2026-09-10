@@ -1,0 +1,21 @@
+---
+name: "openNPL"
+description: "Open source platform for managing Non-Performing Loan data aligned with EBA templates."
+category: "app"
+country:
+  - Netherlands
+source:
+  platform: "GitHub"
+  url_repository: "https://github.com/open-risk/openNPL"
+  url_documentation: "https://www.openriskmanagement.com/categories/opennpl/"
+  license: "MIT"
+  language: "JavaScript"
+owner:
+  name: "open-risk"
+  type: "individual"
+  url_website: "https://www.openriskmanagement.com"
+  is_a_startup: false
+metadata:
+  filename: opennpl-4806b8.json
+  created_at: 2026-09-10T09:47:25Z
+---

@@ -1,0 +1,22 @@
+---
+name: "Newdle"
+description: "Open source collaborative meeting scheduling tool developed at CERN."
+tags:
+  - cern
+category: "app"
+country:
+  - France
+source:
+  platform: "GitHub"
+  url_repository: "https://github.com/indico/newdle"
+  license: "MIT"
+  language: "JavaScript"
+owner:
+  name: "indico"
+  type: "organization"
+  url_website: "https://getindico.io/"
+  is_a_startup: false
+metadata:
+  filename: newdle-9ab481.json
+  created_at: 2026-08-31T19:48:23Z
+---

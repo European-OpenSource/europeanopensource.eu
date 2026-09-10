@@ -1,0 +1,21 @@
+---
+name: "Interoperability Test Bed"
+description: "Conformance testing solution supported by the European Commission for EU IT systems interoperability."
+category: "app"
+country:
+  - Belgium
+source:
+  platform: "GitHub"
+  url_repository: "https://github.com/ISAITB/gitb"
+  url_documentation: "https://www.itb.ec.europa.eu"
+  license: "EUPL-1.2"
+  language: "Scala"
+owner:
+  name: "ISAITB"
+  type: "organization"
+  url_website: "https://www.itb.ec.europa.eu"
+  is_a_startup: false
+metadata:
+  filename: interoperability-test-bed-d20c7f.json
+  created_at: 2026-09-10T09:49:56Z
+---

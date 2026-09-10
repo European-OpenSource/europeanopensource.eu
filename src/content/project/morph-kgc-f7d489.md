@@ -1,0 +1,23 @@
+---
+name: "Morph-KGC"
+description: "Powerful RDF knowledge graph generation engine with RML mappings used in European data integration."
+tags:
+  - rdf
+category: "library"
+country:
+  - Spain
+source:
+  platform: "GitHub"
+  url_repository: "https://github.com/oeg-upm/morph-kgc"
+  url_documentation: "https://morph-kgc.readthedocs.io"
+  license: "Apache-2.0"
+  language: "Python"
+owner:
+  name: "morph-kgc"
+  type: "organization"
+  url_website: "https://morph-kgc.readthedocs.io"
+  is_a_startup: false
+metadata:
+  filename: morph-kgc-f7d489.json
+  created_at: 2026-08-31T19:47:17Z
+---

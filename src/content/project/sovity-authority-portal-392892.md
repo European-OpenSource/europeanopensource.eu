@@ -1,0 +1,21 @@
+---
+name: "sovity Authority Portal"
+description: "Governance and collaboration portal for participants in EU Data Spaces."
+category: "app"
+country:
+  - Germany
+source:
+  platform: "GitHub"
+  url_repository: "https://github.com/sovity/authority-portal"
+  url_documentation: "https://sovity.de/en/build-entire-data-space-en/"
+  license: "AGPL-3.0"
+  language: "TypeScript"
+owner:
+  name: "sovity"
+  type: "organization"
+  url_website: "https://sovity.de"
+  is_a_startup: false
+metadata:
+  filename: sovity-authority-portal-392892.json
+  created_at: 2026-09-10T10:03:01Z
+---

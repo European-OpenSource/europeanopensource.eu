@@ -1,0 +1,21 @@
+---
+name: "Metview Python"
+description: "Python interface to the ECMWF Metview meteorological workstation and batch system."
+category: "library"
+country:
+  - United Kingdom
+source:
+  platform: "GitHub"
+  url_repository: "https://github.com/ecmwf/metview-python"
+  url_documentation: "https://metview.readthedocs.io/en/latest/"
+  license: "Apache-2.0"
+  language: "Python"
+owner:
+  name: "ecmwf"
+  type: "organization"
+  url_website: "https://www.ecmwf.int"
+  is_a_startup: false
+metadata:
+  filename: metview-python-fcf412.json
+  created_at: 2026-09-10T09:14:19Z
+---

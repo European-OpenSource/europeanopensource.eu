@@ -1,0 +1,21 @@
+---
+name: "Open Energy Platform"
+description: "Web platform providing an interface to open energy data and the Open Energy Ontology for European research."
+category: "app"
+country:
+  - Germany
+source:
+  platform: "GitHub"
+  url_repository: "https://github.com/OpenEnergyPlatform/oeplatform"
+  url_documentation: "http://openenergyplatform.org/"
+  license: "AGPL-3.0"
+  language: "Python"
+owner:
+  name: "OpenEnergyPlatform"
+  type: "organization"
+  url_website: "https://github.com/OpenEnergyPlatform/organisation/blob/master/README.md"
+  is_a_startup: false
+metadata:
+  filename: open-energy-platform-60ec94.json
+  created_at: 2026-09-10T09:28:47Z
+---
