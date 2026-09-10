@@ -36,6 +36,18 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Ronzino-Regular";
+  src: url("/fonts/Ronzino-Regular.woff2") format("woff2");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Ronzino-Bold";
+  src: url("/fonts/Ronzino-Bold.woff2") format("woff2");
+  font-display: swap;
+}
+
 .logo-text,
 .logo-text-footer {
   font-family: "NectoMono", sans-serif;

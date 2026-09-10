@@ -18,7 +18,17 @@
         "favicon": { "type": "string" },
         "image": { "type": "string" },
         "robots": { "type": "string" },
-        "language": { "type": "string" }
+        "language": { "type": "string" },
+        "titleMaxLength": {
+          "type": "integer",
+          "minimum": 20,
+          "description": "Character budget for the rendered <title>. When set, and \"<page title> | <site title>\" would exceed it, the site-title suffix is dropped and the page title is emitted alone — never truncated, because the page title is the content and the suffix is boilerplate repeated on every page. Omit to always append the suffix (default). 60 is roughly where Google truncates the SERP display; ranking still uses the full title, so this is a click-through concern."
+        },
+        "descriptionMaxLength": {
+          "type": "integer",
+          "minimum": 50,
+          "description": "Character budget for the meta/OG/Twitter description. When set, a longer description is cut at the last word boundary that fits and gets an ellipsis. Unlike the title there is no boilerplate half to drop, because a description is prose. Omit to emit it untouched (default). 155 is roughly where Google truncates."
+        }
       }
     },
     "astro": {
@@ -30,6 +40,11 @@
         "basePath": { "type": "string" },
         "trailingSlash": { "enum": ["always", "never", "ignore"] },
         "analyticsScriptContent": { "type": "string" },
+        "sitemapExclude": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Path prefixes kept out of sitemap.xml, e.g. [\"/offline\"]. For pages that must stay routable but not indexed: listing a noindex page in the sitemap is the \"Submitted URL marked noindex\" conflict Search Console reports. Omit to list every page (default)."
+        },
         "ssr": {
           "type": "object",
           "additionalProperties": false,

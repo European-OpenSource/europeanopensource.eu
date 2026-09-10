@@ -25,7 +25,7 @@ const itemTarget = item.target ?? (item.url.startsWith("http") ? "_blank" : "_se
         <NavbarDropdown items={item.dropdown!} />
       </div>
     ) : (
-      <NavbarLink href={item.url} target={itemTarget} class="nav-link">
+      <NavbarLink href={item.url} target={itemTarget} class="nav-link" name={item.name}>
         {item.icon && <Icon name={item.icon} aria-hidden="true" size={20} />}
         {item.name && <span>{item.name}</span>}
       </NavbarLink>

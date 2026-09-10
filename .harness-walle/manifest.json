@@ -2,7 +2,7 @@
   "$schema": "../schemas/walle.config.schema.json",
   "schemaVersion": 3,
   "name": "europeanopensource.eu",
-  "walleVersion": "v0.4.0",
+  "walleVersion": "v0.6.1",
   "modules": [
     "website",
     "ci",
@@ -82,5 +82,5 @@
       ]
     }
   },
-  "updatedAt": "2026-08-27T14:58:58Z"
+  "updatedAt": "2026-09-10T18:03:41Z"
 }

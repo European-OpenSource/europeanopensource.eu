@@ -100,3 +100,19 @@ export function normalizePath(path: string): string {
   if (path === "/") return "/";
   return path.replace(/\/$/, "");
 }
+
+/**
+ * Meta-description budget. Returns `text` untouched when it fits, otherwise cuts it at the last
+ * word boundary that fits and appends an ellipsis.
+ *
+ * The `cut > 0` guard is not defensive noise: `lastIndexOf(" ", n)` returns -1 for a string with
+ * no space in its first n characters (a long unbroken token, a URL, an agglutinated title), and
+ * `slice(0, -1)` would then drop exactly one character instead of truncating — producing an
+ * almost-full-length string that silently defeats the whole function. In that case there is no
+ * word boundary to respect, so the cut falls back to a hard one at the limit.
+ */
+export function truncateAtWord(text: string, maxLength: number): string {
+  if (text.length <= maxLength) return text;
+  const cut = text.lastIndexOf(" ", maxLength - 1);
+  return text.slice(0, cut > 0 ? cut : maxLength - 1).trimEnd() + "…";
+}
