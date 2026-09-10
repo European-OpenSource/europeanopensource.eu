@@ -22,7 +22,7 @@ export const GET: APIRoute = async ({ site }) => {
     "",
     "Admission criteria (full text in the Terms & Conditions, section 10):",
     "",
-    "- Geographic eligibility: a legal entity incorporated in the EU, EEA, UK or Switzerland, or founders/maintainers with citizenship or residency there.",
+    "- Geographic eligibility, at least one of: a legal entity incorporated in the EU, EEA, UK or Switzerland; a majority of founders or maintainers with citizenship there; a primary maintainer with citizenship or residency there.",
     "- Values alignment: privacy, accessibility and inclusivity, sustainability, contribution to public good.",
     "",
     "## Pages",
