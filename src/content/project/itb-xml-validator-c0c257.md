@@ -1,0 +1,21 @@
+---
+name: "ITB XML Validator"
+description: "European Commission validation service for XML data in EU interoperability testing."
+category: "app"
+country:
+  - Belgium
+source:
+  platform: "GitHub"
+  url_repository: "https://github.com/ISAITB/xml-validator"
+  url_documentation: "https://www.itb.ec.europa.eu"
+  license: "EUPL-1.2"
+  language: "Java"
+owner:
+  name: "ISAITB"
+  type: "organization"
+  url_website: "https://www.itb.ec.europa.eu"
+  is_a_startup: false
+metadata:
+  filename: itb-xml-validator-c0c257.json
+  created_at: 2026-09-10T10:01:53Z
+---

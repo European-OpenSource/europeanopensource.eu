@@ -1,0 +1,21 @@
+---
+name: "Anonimatron"
+description: "Data anonymization tool providing GDPR compliance for databases since 2010."
+category: "cli"
+country:
+  - Netherlands
+source:
+  platform: "GitHub"
+  url_repository: "https://github.com/realrolfje/anonimatron"
+  url_documentation: "https://realrolfje.github.io/anonimatron/"
+  license: "MIT"
+  language: "Java"
+owner:
+  name: "realrolfje"
+  type: "individual"
+  url_website: "https://www.rolfje.com"
+  is_a_startup: false
+metadata:
+  filename: anonimatron-225c06.json
+  created_at: 2026-09-10T09:16:33Z
+---

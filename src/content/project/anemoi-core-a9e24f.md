@@ -1,0 +1,22 @@
+---
+name: "Anemoi Core"
+description: "Core packages for ECMWF Anemoi machine learning weather forecasting framework."
+tags:
+  - ecmwf
+category: "ai"
+country:
+  - United Kingdom
+source:
+  platform: "GitHub"
+  url_repository: "https://github.com/ecmwf/anemoi-core"
+  license: "Apache-2.0"
+  language: "Python"
+owner:
+  name: "ecmwf"
+  type: "organization"
+  url_website: "https://www.ecmwf.int"
+  is_a_startup: false
+metadata:
+  filename: anemoi-core-a9e24f.json
+  created_at: 2026-08-31T19:48:05Z
+---

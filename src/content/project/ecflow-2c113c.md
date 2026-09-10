@@ -1,0 +1,20 @@
+---
+name: "ecFlow"
+description: "ECMWF workflow manager for scheduling and monitoring computational tasks in weather forecasting."
+category: "app"
+country:
+  - United Kingdom
+source:
+  platform: "GitHub"
+  url_repository: "https://github.com/ecmwf/ecflow"
+  license: "Apache-2.0"
+  language: "C++"
+owner:
+  name: "ecmwf"
+  type: "organization"
+  url_website: "https://www.ecmwf.int"
+  is_a_startup: false
+metadata:
+  filename: ecflow-2c113c.json
+  created_at: 2026-09-10T09:31:50Z
+---

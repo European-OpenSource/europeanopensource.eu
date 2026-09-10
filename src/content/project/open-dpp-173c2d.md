@@ -1,0 +1,21 @@
+---
+name: "Open DPP"
+description: "Open source platform for managing Digital Product Passports in compliance with EU regulations."
+category: "app"
+country:
+  - Germany
+source:
+  platform: "GitHub"
+  url_repository: "https://github.com/open-dpp/open-dpp"
+  url_documentation: "https://open-dpp.de"
+  license: "AGPL-3.0"
+  language: "TypeScript"
+owner:
+  name: "open-dpp"
+  type: "organization"
+  url_website: "https://open-dpp.de"
+  is_a_startup: false
+metadata:
+  filename: open-dpp-173c2d.json
+  created_at: 2026-09-10T10:03:26Z
+---

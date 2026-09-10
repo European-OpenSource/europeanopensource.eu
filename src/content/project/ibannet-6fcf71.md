@@ -1,0 +1,21 @@
+---
+name: "IbanNet"
+description: "C .NET IBAN validator, parser, builder, and generator."
+tags:
+  - iban
+category: "library"
+country:
+  - Netherlands
+source:
+  platform: "GitHub"
+  url_repository: "https://github.com/skwasjer/IbanNet"
+  license: "Apache-2.0"
+  language: "C#"
+owner:
+  name: "skwasjer"
+  type: "individual"
+  is_a_startup: false
+metadata:
+  filename: ibannet-6fcf71.json
+  created_at: 2026-08-31T19:48:27Z
+---
