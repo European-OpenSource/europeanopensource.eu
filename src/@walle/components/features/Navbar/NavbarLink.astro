@@ -2,9 +2,13 @@
 import type { HTMLAttributes } from "astro/types";
 import { normalizePath, resolveInternalUrl } from "@walle/utils";
 
-type Props = HTMLAttributes<"a">;
+interface Props extends HTMLAttributes<"a"> {
+  /** Visible link text, when the caller renders one. Icon-only links (no visible text) still
+   * get the "Go to X" fallback below, since their accessible name would otherwise be empty. */
+  name?: string;
+}
 
-const { href, class: className, ...props } = Astro.props;
+const { href, name, class: className, "aria-label": ariaLabel, ...props } = Astro.props;
 const resolvedHref = resolveInternalUrl(String(href || ""));
 const currentPath = normalizePath(Astro.url.pathname);
 const targetPath = normalizePath(resolvedHref);
@@ -21,7 +25,7 @@ const isActive =
   href={resolvedHref}
   class:list={[className, { active: isActive }]}
   {...props}
-  aria-label={`Go to ${resolvedHref}`}
+  aria-label={ariaLabel ?? (name ? undefined : `Go to ${resolvedHref}`)}
 >
   <slot />
 </a>

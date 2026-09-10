@@ -341,6 +341,11 @@ type AstroConfigSection = {
   basePath?: string;
   trailingSlash?: "always" | "never" | "ignore";
   ssr?: { enabled?: boolean; adapter?: "node" };
+  /** Path prefixes to keep out of sitemap.xml. For pages that exist as a routable URL but must
+   * not be indexed (a `noindex` status page such as an offline fallback): listing one in the
+   * sitemap while its own meta says `noindex` is the "Submitted URL marked noindex" conflict
+   * Search Console reports. Absent key = every page is listed, as before. */
+  sitemapExclude?: string[];
 };
 
 /**
@@ -354,7 +359,21 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
   assertVariants((appConfig as { components?: Record<string, string> }).components);
 
   const ssrEnabled = astro.ssr?.enabled === true;
-  const walleIntegrations = [mdx(), sitemap(), icon()];
+  const sitemapExclude = astro.sitemapExclude ?? [];
+  const walleIntegrations = [
+    mdx(),
+    sitemap(
+      sitemapExclude.length > 0
+        ? {
+            filter: (page: string) => {
+              const path = new URL(page).pathname.replace(/\/$/, "");
+              return !sitemapExclude.some((p) => path === p || path.startsWith(p + "/"));
+            },
+          }
+        : undefined
+    ),
+    icon(),
+  ];
 
   const {
     integrations: consumerIntegrations = [],
