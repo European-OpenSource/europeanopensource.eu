@@ -1,0 +1,21 @@
+---
+name: "Procivis One Core"
+description: "Issue, hold and verify digital identities and credentials with eIDAS 2.0 compliancy."
+category: "library"
+country:
+  - Switzerland
+source:
+  platform: "GitHub"
+  url_repository: "https://github.com/procivis/one-core"
+  url_documentation: "https://docs.procivis.ch/"
+  license: "Apache-2.0"
+  language: "Rust"
+owner:
+  name: "procivis"
+  type: "organization"
+  url_website: "https://procivis.ch"
+  is_a_startup: false
+metadata:
+  filename: procivis-one-core-880cb8.json
+  created_at: 2026-09-11T13:11:15Z
+---
