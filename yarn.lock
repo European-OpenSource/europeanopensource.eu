@@ -4844,9 +4844,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-astro@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "eslint-plugin-astro@npm:3.0.1"
+"eslint-plugin-astro@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "eslint-plugin-astro@npm:3.1.0"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.5.1"
     "@jridgewell/sourcemap-codec": "npm:^1.5.0"
@@ -4860,12 +4860,15 @@ __metadata:
     "@typescript-eslint/parser": ">=8.61.0"
     eslint: ">=10.0.0"
     eslint-plugin-jsx-a11y: ">=6.10.2"
+    typescript-eslint: ">=8.61.0"
   peerDependenciesMeta:
     "@typescript-eslint/parser":
       optional: true
     eslint-plugin-jsx-a11y:
       optional: true
-  checksum: 10c0/3572d6b8575ed0b376e7fff6b2b21f46af88c20310dd8c3b939fd14e7d3b3dbcf4f1c37e84e1ee2fe1c1ae6c0f2b2c5852429b65d57cce6c2ea4a88b4f69a76f
+    typescript-eslint:
+      optional: true
+  checksum: 10c0/be090c8a5fdb7bfd8b40108a552a4e5e1e33de11d651688d864203d75d7e3b735eb92b9b1911f63aaee44e65f994ec4d754d18ea9cc4a38a7a142deb1ab72f96
   languageName: node
   linkType: hard
 
@@ -9892,7 +9895,7 @@ __metadata:
     astro-icon: "npm:^1.2.0"
     eslint: "npm:^10.9.1"
     eslint-config-prettier: "npm:^10.1.8"
-    eslint-plugin-astro: "npm:^3.0.1"
+    eslint-plugin-astro: "npm:^3.1.0"
     eslint-plugin-markdown: "npm:^5.1.0"
     husky: "npm:^9.1.7"
     nanostores: "npm:^1.5.2"
