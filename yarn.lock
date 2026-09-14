@@ -327,7 +327,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@astrojs/markdown-satteri@npm:0.4.1":
+"@astrojs/markdown-satteri@npm:0.4.1, @astrojs/markdown-satteri@npm:^0.4.1":
   version: 0.4.1
   resolution: "@astrojs/markdown-satteri@npm:0.4.1"
   dependencies:
@@ -336,18 +336,6 @@ __metadata:
     github-slugger: "npm:^2.0.0"
     satteri: "npm:^0.10.3"
   checksum: 10c0/04b8ec777ee6e19c212887f022b151f3348a4150c1f66ab33d4927e986722820b9b1c2b6b10c3a45721b11eef429ab33cfca1b342b11b5d040e0a90e79a8f83e
-  languageName: node
-  linkType: hard
-
-"@astrojs/markdown-satteri@npm:^0.3.8":
-  version: 0.3.8
-  resolution: "@astrojs/markdown-satteri@npm:0.3.8"
-  dependencies:
-    "@astrojs/internal-helpers": "npm:0.10.4"
-    "@astrojs/prism": "npm:4.0.2"
-    github-slugger: "npm:^2.0.0"
-    satteri: "npm:^0.10.3"
-  checksum: 10c0/58dc4567a795d19a8cf94d3cdf98b42189b6d71de25e05bb5bc8ca8bf201a30920ee067ecf6b7999035f30f2ec0f7d1525346d5580ae03c8c29545d113ac311c
   languageName: node
   linkType: hard
 
@@ -9872,7 +9860,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "website@workspace:."
   dependencies:
-    "@astrojs/markdown-satteri": "npm:^0.3.8"
+    "@astrojs/markdown-satteri": "npm:^0.4.1"
     "@astrojs/mdx": "npm:^7.0.3"
     "@astrojs/node": "npm:^11.1.4"
     "@astrojs/rss": "npm:^4.0.19"
