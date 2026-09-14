@@ -379,16 +379,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@astrojs/node@npm:^11.1.4":
-  version: 11.1.4
-  resolution: "@astrojs/node@npm:11.1.4"
+"@astrojs/node@npm:^11.1.5":
+  version: 11.1.5
+  resolution: "@astrojs/node@npm:11.1.5"
   dependencies:
-    "@astrojs/internal-helpers": "npm:0.10.4"
+    "@astrojs/internal-helpers": "npm:0.11.0"
     send: "npm:^1.2.1"
     server-destroy: "npm:^1.0.1"
   peerDependencies:
     astro: ^7.2.1
-  checksum: 10c0/cb0acac0191db2b06ec9a8ab94854ec76e43f135f2c35346bb9988d98a8b8c4b3c46617643409f3c728888bb4ce9e84142d7f7d86fec2a20d9744bad46822450
+  checksum: 10c0/d8c7e865d5f6c4a5c6bb24ad51d6eb260705911ec23174c566951d0ac25c7571a355a33c30168bd779193fee15dc2be8871c226e54249c7b5c1b400681688007
   languageName: node
   linkType: hard
 
@@ -9874,7 +9874,7 @@ __metadata:
   dependencies:
     "@astrojs/markdown-satteri": "npm:^0.3.8"
     "@astrojs/mdx": "npm:^7.0.3"
-    "@astrojs/node": "npm:^11.1.4"
+    "@astrojs/node": "npm:^11.1.5"
     "@astrojs/rss": "npm:^4.0.19"
     "@astrojs/sitemap": "npm:^3.7.3"
     "@axe-core/playwright": "npm:^4.13.0"
