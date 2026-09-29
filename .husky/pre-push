@@ -1,5 +1,4 @@
 #!/usr/bin/env sh
 cd "$(dirname -- "$0")/.." || exit 1
 
-yarn lint
-yarn test:unit
+yarn lint && yarn test:unit

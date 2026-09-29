@@ -60,34 +60,51 @@ just help
 <!-- [walle:START] -->
 ## Walle design system (managed block)
 
-This project uses the [Walle](https://github.com/FabrizioCafolla/harness-walle)
-design system. The `@walle/` namespaces are **read-only**: they are overwritten on every
-`just walle-update`. Customize through the consumer zones only.
+This project uses the [Walle](https://github.com/FabrizioCafolla/harness-walle) design system.
+Paths under `@walle/` are **read-only**: `just walle-update` overwrites them. Customize only in
+the consumer zones below, and follow the customization ladder (skill `walle-customize`).
 
 - **Consumer zones (never overwritten):** `src/configs/`, `src/styles/global.css`,
-  `src/components/`, `src/pages/`, `src/content/`, `astro.config.mjs`, `package.json`,
-  `.vscode/`.
-- **Config:** edit `src/configs/*.json` (validated by `just validate-configs`). `app.json`
-  drives metadata, the optional `astro.ssr` flag, and component variants; `theme.json` holds
-  design tokens.
-- **Astro config:** `astro.config.mjs` is a thin `defineWalleConfig({})` shell — pass native
-  Astro overrides there (scalars override, `integrations` merge additively).
-- **Updates:** run `just walle-update`. Only the declared modules' `@walle/` paths are synced;
-  this managed block is rewritten in place between its markers.
+  `src/components/`, `src/pages/`, `src/content/`, `src/content.config.ts`, `astro.config.mjs`,
+  `package.json`, `.vscode/`.
+- **Config:** `src/configs/app.json`, `navbar.json`, `footer.json` and the optional `theme.json`
+  are validated at build time; an invalid key stops the build with the file and key path
+  (`just validate-configs` checks them without building). `theme.json` holds palette, neutral
+  scale, shadows, radii, spacing and `typography.fonts`.
+- **Styles:** put every site rule in `src/styles/global.css` inside `@layer site { }`, which wins
+  over walle's layers. Restyle components through their public custom properties
+  (`--button-radius`, `--card-bg`, `--navbar-bg`, ...), never through walle's inner class names,
+  `!important` or repeated selectors. Define the `site` variant (`[data-variant="site"]`) for a
+  brand color that any component can take with `variant="site"`.
+- **Components:** variants are `primary`, `secondary`, `alternative`, `site`; modifiers are
+  boolean props (`outline`, `inverse`, `filled`, `muted`). Replace an embedded component (navbar,
+  footer, card, breadcrumbs, page header, table of contents) with `app.json` `components`, using a
+  built-in name or a `./src/...` path; to wrap the original, import it by file path, not from
+  `@walle/components`.
+- **Language:** `website.language` drives every date, price and number; translate walle's
+  interface strings in `app.json` `labels`.
+- **Features (off unless enabled in `app.json`):** `commerce.mode` (`off`, `catalog`, `shop`),
+  `pwa.enabled` and `pwa.offline`, `seo.ogImage`, `seo.feeds`, `astro.redirects`,
+  `astro.adapter: "node"` for routes with `prerender = false`, `map` defaults for the `Map`
+  component. Walle injects the routes these need; do not add pages at the same paths.
+- **Astro config:** `astro.config.mjs` is a thin `defineWalleConfig({})` shell for native Astro
+  overrides (scalars override, `integrations` merge).
+- **Updates:** run `just walle-update`, then `just walle-deps` and `just build`. Only the active
+  modules' managed paths are synced, and this block is rewritten between its markers.
 
 Do not edit files inside `@walle/` directories, and do not edit the content between the
-`[walle:START]` / `[walle:END]` markers by hand — both are regenerated on update.
+`[walle:START]` / `[walle:END]` markers by hand: both are regenerated on update.
 
 ### Active walle modules
 
-- **website** — Astro site — @walle components, layouts, styles, config and CLI scripts
+- **website**: Astro site: @walle components, layouts, styles, config and CLI scripts
   - Managed: src/@walle, schemas, scripts/@walle, scripts/@walle/walle.yml
-- **ci** — GitHub Actions workflows (test + deploy) under @walle
+- **ci**: GitHub Actions workflows (test + deploy) under @walle
   - Managed: .github/workflows/actions/@walle
   - Seeded once: .github/workflows/test.yml, .github/workflows/deploy.yml
-- **ai** — AI harness — generated AGENTS.md block and @walle skills
+- **ai**: AI harness: generated AGENTS.md block and @walle skills
   - Managed: .claude/skills/@walle
-- **harness-coding** — Harness coding scaffold
+- **harness-coding**: Harness coding scaffold
   - Seeded once: justfile.project, .husky/pre-commit, .husky/pre-push, .devcontainer/docker-compose.project.yml
 
 ### Working with walle

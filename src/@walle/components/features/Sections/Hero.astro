@@ -1,0 +1,209 @@
+---
+import { Image } from "astro:assets";
+import type { BaseProps, ModifierProps, Variant, VariantProps } from "../../shared/types";
+import { splitProps } from "../../shared/attrs";
+import Button from "../../elements/Button.astro";
+import SectionWrapper from "./SectionWrapper.astro";
+
+export interface HeroAction {
+  text: string;
+  href: string;
+  variant?: Variant;
+  inverse?: boolean;
+}
+
+export interface Props
+  extends BaseProps<"section">, VariantProps, Pick<ModifierProps, "filled" | "muted"> {
+  /** Optional tagline shown above the title. String prop or `tagline` slot (slot wins). */
+  tagline?: string;
+  /** Hero title, rendered as the page h1 when present. String prop or `title` slot (slot wins). */
+  title?: string;
+  /** Optional subtitle below the title. String prop or `subtitle` slot (slot wins). */
+  subtitle?: string;
+  /** Action buttons; renders however many are passed. */
+  actions?: HeroAction[];
+  image?: {
+    src: ImageMetadata | string;
+    alt: string;
+  };
+  /** Side the image sits on relative to the text content. @default "end" */
+  imagePosition?: "start" | "end";
+  centered?: boolean;
+  id?: string;
+}
+
+const OWN_KEYS = [
+  "id",
+  "tagline",
+  "title",
+  "subtitle",
+  "actions",
+  "image",
+  "imagePosition",
+  "centered",
+  "variant",
+  "filled",
+  "muted",
+] as const;
+
+const { own, rest } = splitProps(Astro.props, OWN_KEYS);
+const {
+  id,
+  tagline,
+  title,
+  subtitle,
+  actions = [],
+  image = null,
+  imagePosition = "end",
+  centered = false,
+  variant,
+  filled = false,
+  muted = false,
+} = own;
+
+const hasTagline = Astro.slots.has("tagline") || Boolean(tagline);
+const hasTitle = Astro.slots.has("title") || Boolean(title);
+const hasSubtitle = Astro.slots.has("subtitle") || Boolean(subtitle);
+---
+
+<SectionWrapper
+  centered={centered}
+  variant={variant}
+  filled={filled}
+  muted={muted}
+  id={id}
+  {...rest}
+>
+  <slot name="background" slot="background" />
+  <div class:list={["hero-content", { "hero-content-image": image }]}>
+    <div class="hero-text">
+      {
+        hasTagline && (
+          <p class="hero-tagline">
+            {Astro.slots.has("tagline") ? <slot name="tagline" /> : tagline}
+          </p>
+        )
+      }
+      {
+        hasTitle && (
+          <h1 class="hero-title">{Astro.slots.has("title") ? <slot name="title" /> : title}</h1>
+        )
+      }
+      {
+        hasSubtitle && (
+          <p class="hero-subtitle">
+            {Astro.slots.has("subtitle") ? <slot name="subtitle" /> : subtitle}
+          </p>
+        )
+      }
+      {
+        actions.length > 0 && (
+          <div class="hero-actions">
+            {actions.map((action) => (
+              <Button
+                text={action.text}
+                href={action.href}
+                variant={action.variant}
+                inverse={action.inverse}
+              />
+            ))}
+          </div>
+        )
+      }
+    </div>
+    {
+      image && (
+        <div
+          class:list={[
+            "hero-image-container",
+            { "hero-image-container-first": imagePosition === "start" },
+          ]}
+        >
+          {/* image.src is `string | ImageMetadata`; Astro's <Image> only overloads on one or
+               the other, so a union value never resolves to either branch on its own. */}
+          <Image
+            src={image.src as string}
+            alt={image.alt}
+            width={600}
+            height={480}
+            loading="eager"
+            fetchpriority="high"
+            class="hero-image"
+          />
+        </div>
+      )
+    }
+  </div>
+</SectionWrapper>
+
+<style>
+  @layer walle.components {
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hero-content-image {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4xl);
+      align-items: center;
+    }
+
+    .hero-tagline {
+      margin: 0 0 var(--space-sm);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: inherit;
+    }
+
+    .hero-title {
+      margin: 0 0 var(--space-2xl);
+      color: var(--wrapper-title-color);
+      font-size: clamp(2rem, 4vw, 2.75rem);
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .hero-subtitle {
+      margin: 0 0 var(--space-2xl);
+      color: inherit;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+      margin-top: var(--space-xl);
+    }
+
+    .hero-image-container {
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+
+    .hero-image {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Reorders the grid item without touching text direction, safe for RTL pages. */
+    .hero-image-container-first {
+      order: -1;
+    }
+
+    @media (max-width: 900px) {
+      .hero-content-image {
+        grid-template-columns: 1fr;
+        gap: var(--space-2xl);
+      }
+
+      .hero-image-container {
+        order: -1;
+      }
+    }
+  }
+</style>

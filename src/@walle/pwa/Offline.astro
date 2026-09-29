@@ -1,0 +1,26 @@
+---
+import { BaseLayout } from "@walle/layouts";
+import { label } from "@walle/utils";
+
+const title = label("offline.title");
+const message = label("offline.message");
+---
+
+<BaseLayout headerTitle={title} headerRobots="noindex, follow">
+  <div class="offline">
+    <h1>{title}</h1>
+    <p>{message}</p>
+  </div>
+</BaseLayout>
+
+<style>
+  @layer walle.components {
+    .offline {
+      max-width: 60ch;
+      margin: 0 auto;
+      padding: var(--space-4xl) var(--space-xl);
+      text-align: center;
+      color: var(--text-muted);
+    }
+  }
+</style>

@@ -1,7 +1,7 @@
-# walle.yml — single source of truth for what `cli.sh` writes into a consumer.
+# walle.yml: single source of truth for what `cli.sh` writes into a consumer.
 #
 # Real YAML (yq-readable), but each entry's fields are pipe-separated so the CLI can
-# parse it with awk alone — no YAML runtime dependency (it must run as `curl | bash`).
+# parse it with awk alone: no YAML runtime dependency (it must run as `curl | bash`).
 # Edit here to change what is MANAGED, SEED, or INJECT. The CLI reads only this file;
 # no code change is needed to add a path or a module.
 #
@@ -46,10 +46,15 @@ website-seed-exclude:
   - src/@walle
   - schemas
   - src/pages/wiki
+  - src/pages/showcase.astro
+  - src/pages/checkout-demo.astro
+  - src/configs/theme.json
   - astrobook
   - tests
   - playwright.config.ts
   - playwright.astrobook.config.ts
   - vitest.config.ts
   - .gitignore
+  - test-results
+  - playwright-report
   - .env

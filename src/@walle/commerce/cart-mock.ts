@@ -1,6 +1,6 @@
 /**
- * In-memory mock of the Storefront cart. Used when commerce is enabled (`showBuyButton`)
- * but no Storefront env vars are set — so the demo (and any consumer) can exercise the
+ * In-memory mock of the Storefront cart. Used when commerce is enabled (`commerce.mode ===
+ * "shop"`) but no Storefront env vars are set, so the demo (and any consumer) can exercise the
  * full add-to-cart / drawer / checkout flow with zero credentials. Line data comes from
  * the bundled fixture. When real env vars are present, cart.ts uses the live API instead.
  */

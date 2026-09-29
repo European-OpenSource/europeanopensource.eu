@@ -1,22 +1,20 @@
 ---
-import Footer from "@walle/components/features/FooterResolver.astro";
-import Navbar from "@walle/components/features/Navbar/NavbarResolver.astro";
+import { footer as Footer, navbar as Navbar } from "virtual:walle-components";
+import { CartMount, CartBadge } from "virtual:walle-features";
 import config from "@walle/config";
 import type { NavbarConfig } from "@walle/config";
 import AbstractLayout from "./AbstractLayout.astro";
 
 import { getCollection } from "astro:content";
 
-// Cart UI only in commerce mode; a vetrina site ships none of it. `cartInNavbar` puts
-// the trigger in the navbar, otherwise it floats bottom-right.
-const commerce = (config.app as { commerce?: { showBuyButton?: boolean; cartInNavbar?: boolean } })
-  .commerce;
-const showCart = commerce?.showBuyButton ?? false;
-// Imported dynamically so a vetrina site keeps the cart out of its module graph entirely.
-// Astro collects a page's CSS from that graph, not from what renders, so a static import
-// shipped the whole cart stylesheet on every page of every site that never shows a cart.
-const CartMount = showCart ? (await import("@walle/commerce/CartMount.astro")).default : null;
-const CartBadge = showCart ? (await import("@walle/commerce/CartBadge.astro")).default : null;
+export type { BaseLayoutProps as Props } from "./types";
+
+// Cart UI only in commerce mode; a site with commerce off ships none of it. `cartInNavbar` puts the
+// trigger in the navbar, otherwise it floats bottom-right. `CartMount`/`CartBadge` come from
+// `virtual:walle-features`, which resolves to `null` at the module-graph level when commerce
+// is off, so that build never emits a chunk for the cart components at all.
+const commerce = config.app.commerce;
+const showCart = Boolean(CartMount);
 const cartInNavbar = commerce?.cartInNavbar ?? false;
 
 // "Docs" link for the showcase's /wiki pages (seed-excluded, so consumers never have them).
@@ -36,9 +34,25 @@ if (Object.keys(import.meta.glob("/src/pages/wiki/index.astro")).length > 0) {
 <AbstractLayout {...Astro.props}>
   <slot name="head" slot="head" />
   <slot name="navbar">
-    <Navbar config={navbarConfig}>
-      {showCart && CartBadge && <CartBadge slot="actions" floating={false} />}
-    </Navbar>
+    {
+      /* Astro registers slot names statically from the template: a `<slot slot="brand">`
+         token anywhere in the children marks brand as "provided" on Navbar and suppresses
+         its default brand, even behind a falsy guard. So we branch instead, letting a
+         caller override just the brand while leaving Navbar's own default showing when
+         no brand slot is given. */
+    }
+    {
+      Astro.slots.has("brand") ? (
+        <Navbar config={navbarConfig}>
+          <slot name="brand" slot="brand" />
+          {showCart && CartBadge && <CartBadge slot="actions" floating={false} />}
+        </Navbar>
+      ) : (
+        <Navbar config={navbarConfig}>
+          {showCart && CartBadge && <CartBadge slot="actions" floating={false} />}
+        </Navbar>
+      )
+    }
   </slot>
   <main id="main-content" tabindex="-1">
     <slot />

@@ -7,12 +7,12 @@
  *   - The site stays fully static (no SSR, no adapter).
  *   - The cart is client-side only (src/@walle/commerce/cart.ts), never here.
  *
- * Offline / vetrina fallback: when the Storefront env vars are absent, the loader
+ * Offline / demo catalog fallback: when the Storefront env vars are absent, the loader
  * serves a bundled fixture (src/@walle/commerce/fixture.ts) so the demo builds with
  * zero credentials. A real consumer sets the two PUBLIC_ vars and gets the live catalog
  * with no code change.
  *
- * Env (public by design — the Storefront public token is meant for the client):
+ * Env (public by design: the Storefront public token is meant for the client):
  *   PUBLIC_SHOPIFY_STORE            e.g. "my-store" from my-store.myshopify.com
  *   PUBLIC_SHOPIFY_STOREFRONT_TOKEN Headless channel public access token
  */
@@ -98,7 +98,7 @@ export function shopifyLoader(): Loader {
       };
 
       if (!shopifyEnabled()) {
-        logger.info(`Shopify env not set — loading ${fixtureProducts.length} fixture products`);
+        logger.info(`Shopify env not set, loading ${fixtureProducts.length} fixture products`);
         store.clear();
         for (const p of fixtureProducts) await upsert(p);
         return;
@@ -122,7 +122,7 @@ export function shopifyLoader(): Loader {
         cursor = data.products.pageInfo.hasNextPage ? data.products.pageInfo.endCursor : null;
       } while (cursor);
 
-      // Drop products deleted on Shopify (snapshot keys first — no delete mid-iteration).
+      // Drop products deleted on Shopify (snapshot keys first: no delete mid-iteration).
       for (const id of [...store.keys()]) if (!seen.has(id)) store.delete(id);
       logger.info(`Loaded ${count} Shopify products`);
     },
@@ -173,8 +173,18 @@ export function isSingleVariant(product: ShopifyProduct): boolean {
   );
 }
 
-/** Format Storefront money (amount is a decimal string) — never concatenate by hand. */
-export function formatMoney(money: ShopifyMoney, locale = "en-US"): string {
+/**
+ * Format Storefront money (amount is a decimal string): never concatenate by hand.
+ *
+ * `locale` is required, not defaulted, for two reasons: this module is also loaded as an
+ * `astro:content` Loader, a separate Vite build graph from regular components, and importing
+ * `@walle/config` (or anything that re-exports `defineWalleConfig`) into that graph drags
+ * `vite-plugin-pwa` along with it and breaks the build ("generateAssets" missing export); and
+ * a silent `"en-US"` fallback would let a caller that forgot to resolve the site's locale ship
+ * English formatting with no error. Every real caller (VariantPicker, CartMount) is an
+ * ordinary component that resolves `locale()` itself before calling this.
+ */
+export function formatMoney(money: ShopifyMoney, locale: string): string {
   return new Intl.NumberFormat(locale, {
     style: "currency",
     currency: money.currencyCode,

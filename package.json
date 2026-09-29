@@ -16,42 +16,45 @@
     "fix": "yarn lint:fix && yarn format:fix",
     "test": "yarn lint:fix && yarn format:fix",
     "test:ci": "yarn lint && yarn format && yarn build",
+    "test:unit": "vitest run --passWithNoTests",
     "test:e2e": "playwright test"
   },
   "engines": {
     "node": ">=24.0.0"
   },
   "dependencies": {
-    "@astrojs/markdown-satteri": "^0.3.8",
-    "@astrojs/mdx": "^7.0.3",
-    "@astrojs/node": "^11.1.4",
+    "@astrojs/markdown-satteri": "^0.4.2",
+    "@astrojs/mdx": "^8.0.2",
+    "@astrojs/node": "^11.1.6",
     "@astrojs/rss": "^4.0.19",
-    "@astrojs/sitemap": "^3.7.3",
+    "@astrojs/sitemap": "^3.7.4",
     "@iconify-json/fa": "^1.2.2",
     "@iconify-json/mdi": "^1.2.3",
     "@nanostores/persistent": "^1.3.5",
     "@vite-pwa/astro": "^1.2.0",
-    "astro": "^7.2.9",
+    "astro": "^7.3.4",
     "astro-icon": "^1.2.0",
-    "nanostores": "^1.5.2"
+    "leaflet": "^1.9.4",
+    "nanostores": "^1.5.3"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
-    "@playwright/test": "^1.61.1",
+    "@playwright/test": "^1.63.0",
     "@resvg/resvg-js": "^2.6.2",
-    "@typescript-eslint/eslint-plugin": "^8.68.0",
-    "@typescript-eslint/parser": "^8.69.0",
+    "@typescript-eslint/eslint-plugin": "^8.70.1",
+    "@typescript-eslint/parser": "^8.70.1",
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
-    "eslint": "^10.9.1",
+    "eslint": "^10.11.0",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-astro": "^3.0.1",
+    "eslint-plugin-astro": "^3.2.1",
     "eslint-plugin-markdown": "^5.1.0",
     "husky": "^9.1.7",
-    "prettier": "^3.9.6",
+    "prettier": "^3.9.9",
     "prettier-plugin-astro": "^0.14.1",
-    "satori": "^0.33.4",
-    "typescript": "^6.0.3"
+    "satori": "^0.33.5",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.1"
   },
   "packageManager": "yarn@4.17.0"
 }

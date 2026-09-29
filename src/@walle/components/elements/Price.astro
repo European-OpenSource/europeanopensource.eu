@@ -1,5 +1,7 @@
 ---
-import config from "@walle/config";
+import type { BaseProps, Size } from "../shared/types";
+import { splitProps } from "../shared/attrs";
+import { label as t, locale as siteLocale } from "@walle/utils";
 
 export interface PriceData {
   /**
@@ -13,12 +15,12 @@ export interface PriceData {
   currency: string;
 
   /**
-   * Original price before discount — rendered struck-through
+   * Original price before discount: rendered struck-through
    */
   compareAt?: number;
 }
 
-export interface Props {
+export interface Props extends BaseProps {
   /**
    * Price to display
    */
@@ -34,7 +36,7 @@ export interface Props {
    * Size
    * @default "medium"
    */
-  size?: "small" | "medium" | "large";
+  size?: Size;
 
   /**
    * Accessible label announced for the discounted (current) price
@@ -47,21 +49,22 @@ export interface Props {
    * @default "Original price"
    */
   originalLabel?: string;
-
-  /**
-   * Additional CSS classes appended to the root element
-   */
-  class?: string;
 }
 
+const OWN_KEYS = ["price", "locale", "size", "discountedLabel", "originalLabel", "class"] as const;
+
+const { own, rest } = splitProps(Astro.props, OWN_KEYS);
 const {
   price,
-  locale = config.app.website.language || "en-US",
+  locale = siteLocale(),
   size = "medium",
-  discountedLabel = "Discounted price",
-  originalLabel = "Original price",
-  class: className = "",
-} = Astro.props;
+  discountedLabel: discountedLabelProp,
+  originalLabel: originalLabelProp,
+  class: className,
+} = own;
+
+const discountedLabel = t("price.discounted", discountedLabelProp);
+const originalLabel = t("price.original", originalLabelProp);
 
 // Intl wants BCP 47 (hyphens); tolerate a POSIX-style "it_IT" so a config typo
 // can't throw a RangeError at build.
@@ -70,10 +73,10 @@ const format = (amount: number) =>
   new Intl.NumberFormat(bcp47, { style: "currency", currency: price.currency }).format(amount);
 
 const hasDiscount = price.compareAt != null && price.compareAt > price.amount;
-const classes = ["price", `price-${size}`, className].filter(Boolean).join(" ");
+const classes = ["price", className ?? ""].filter(Boolean).join(" ");
 ---
 
-<span class={classes} data-component="Price">
+<span class={classes} data-component="Price" data-size={size} {...rest}>
   {
     hasDiscount && (
       <s class="price-compare">
@@ -89,29 +92,35 @@ const classes = ["price", `price-${size}`, className].filter(Boolean).join(" ");
 </span>
 
 <style>
-  .price {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 0.5em;
-    font-weight: 700;
-    color: var(--text);
-  }
+  @layer walle.components {
+    .price {
+      /* Public properties */
+      --price-color: var(--text);
+      --price-compare-color: var(--text-muted);
 
-  .price-small {
-    font-size: 0.875rem;
-  }
+      display: inline-flex;
+      align-items: baseline;
+      gap: 0.5em;
+      font-weight: 700;
+      color: var(--price-color);
+    }
 
-  .price-medium {
-    font-size: 1.125rem;
-  }
+    .price[data-size="small"] {
+      font-size: 0.875rem;
+    }
 
-  .price-large {
-    font-size: 1.5rem;
-  }
+    .price[data-size="medium"] {
+      font-size: 1.125rem;
+    }
 
-  .price-compare {
-    font-weight: 400;
-    font-size: 0.85em;
-    color: var(--text-muted);
+    .price[data-size="large"] {
+      font-size: 1.5rem;
+    }
+
+    .price-compare {
+      font-weight: 400;
+      font-size: 0.85em;
+      color: var(--price-compare-color);
+    }
   }
 </style>

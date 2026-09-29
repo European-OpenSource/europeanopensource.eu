@@ -1,0 +1,133 @@
+---
+import { BaseLayout } from "@walle/layouts";
+import { ProductCard, SectionHeaderStandard, CollectionFilters } from "@walle/components";
+import ProductBuyCard from "@walle/commerce/ProductBuyCard.astro";
+import { resolveInternalUrl } from "@walle/utils";
+import { defaultVariant, shopifyEnabled, type ShopifyProduct } from "@walle/commerce/shopify";
+import config from "@walle/config";
+import { label } from "@walle/utils/i18n";
+import { getCollection } from "astro:content";
+
+// Reads `commerce.mode` directly rather than through feature-gating at the module graph level.
+const commerce = config.app.commerce;
+const showBuyButton = commerce?.mode === "shop";
+const locale = config.app.website.language ?? "en-US";
+const addToCartLabel = label("cart.add");
+const showAddToCartOnCards = commerce?.showAddToCartOnCards ?? true;
+
+const entries = await getCollection("products");
+const products = entries.map((e) => e.data as ShopifyProduct);
+
+const productImage = (url: string) => (url.startsWith("http") ? url : resolveInternalUrl(url));
+
+const types = Array.from(new Set(products.map((p) => p.productType).filter(Boolean))).sort();
+
+function toCard(p: ShopifyProduct) {
+  const v = defaultVariant(p);
+  const inStock = p.variants.nodes.some((x) => x.availableForSale);
+  return {
+    name: p.title,
+    description: p.seo.description ?? undefined,
+    image: {
+      src: productImage(p.featuredImage?.url ?? p.images.nodes[0]?.url ?? ""),
+      alt: p.featuredImage?.altText ?? p.title,
+    },
+    price: {
+      amount: Number(v?.price.amount ?? 0),
+      currency: v?.price.currencyCode ?? "EUR",
+      compareAt: v?.compareAtPrice ? Number(v.compareAtPrice.amount) : undefined,
+    },
+    availability: (inStock ? "in_stock" : "out_of_stock") as "in_stock" | "out_of_stock",
+    href: resolveInternalUrl(`/products/${p.handle}`),
+  };
+}
+---
+
+<BaseLayout headerTitle={label("products.title")}>
+  <SectionHeaderStandard title={label("products.title")} variant="primary" filled={true} />
+
+  <div class="products">
+    {
+      !shopifyEnabled() && (
+        <p class="products__note">
+          Showing the bundled demo catalog. Set <code>PUBLIC_SHOPIFY_STORE</code> and
+          <code>PUBLIC_SHOPIFY_STOREFRONT_TOKEN</code> to load a live Shopify catalog with no code
+          change.
+        </p>
+      )
+    }
+
+    {
+      types.length > 1 && (
+        <CollectionFilters
+          facets={[{ key: "type", label: label("products.type"), options: types }]}
+          labels={{
+            searchPlaceholder: label("products.searchPlaceholder"),
+            status: label("products.status"),
+          }}
+        />
+      )
+    }
+
+    {
+      products.length === 0 ? (
+        <p class="products__empty">{label("products.empty")}</p>
+      ) : (
+        <div class="products__grid">
+          {products.map((p) => (
+            <div
+              data-filter-item
+              data-type={p.productType}
+              data-search={`${p.title} ${p.tags.join(" ")}`}
+            >
+              {showBuyButton ? (
+                <ProductBuyCard
+                  product={p}
+                  locale={locale}
+                  showAddToCart={showAddToCartOnCards}
+                  showQuantity={false}
+                  addLabel={addToCartLabel}
+                />
+              ) : (
+                <ProductCard product={toCard(p)} />
+              )}
+            </div>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  @layer walle.components {
+    .products {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--space-2xl) var(--space-xl) var(--space-4xl);
+    }
+
+    .products__note {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--space-md) var(--space-lg);
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: var(--space-xl);
+    }
+
+    .products__grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: var(--space-xl);
+      align-items: start;
+    }
+
+    .products__empty {
+      text-align: center;
+      color: var(--text-muted);
+      padding: var(--space-4xl) 0;
+    }
+  }
+</style>

@@ -1,5 +1,7 @@
 ---
-import Section from "@walle/components/features/Sections/Section.astro";
+import type { BaseProps, VariantProps, ModifierProps } from "../../shared/types";
+import { splitProps } from "../../shared/attrs";
+import SectionWrapper from "./SectionWrapper.astro";
 import { Icon } from "astro-icon/components";
 
 export interface FlowStep {
@@ -9,11 +11,11 @@ export interface FlowStep {
   icon?: string;
 }
 
-export interface Props {
+export interface Props
+  extends BaseProps<"section">, VariantProps, Pick<ModifierProps, "filled" | "muted"> {
   title: string;
   steps: FlowStep[];
   centered?: boolean;
-  variant?: "primary" | "gray" | null;
   /**
    * Accessible label for the step list
    * @default "Process steps"
@@ -21,10 +23,29 @@ export interface Props {
   label?: string;
 }
 
-const { title, steps, centered = true, variant = null, label = "Process steps" } = Astro.props;
+const OWN_KEYS = ["title", "steps", "centered", "variant", "filled", "muted", "label"] as const;
+
+const { own, rest } = splitProps(Astro.props, OWN_KEYS);
+const {
+  title,
+  steps,
+  centered = true,
+  variant,
+  filled = false,
+  muted = false,
+  label = "Process steps",
+} = own;
 ---
 
-<Section title={title} centered={centered} variant={variant}>
+<SectionWrapper
+  title={title}
+  centered={centered}
+  variant={variant}
+  filled={filled}
+  muted={muted}
+  {...rest}
+>
+  <slot name="title" slot="title" />
   <ol class="flow-steps" aria-label={label}>
     {
       steps.map((step) => (
@@ -40,107 +61,109 @@ const { title, steps, centered = true, variant = null, label = "Process steps" }
       ))
     }
   </ol>
-
   <slot />
-</Section>
+</SectionWrapper>
 
 <style>
-  .flow-steps {
-    counter-reset: step;
-    list-style: none;
-    padding: 0;
-    margin: 0 0 2rem 0;
-    max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: left;
-  }
+  @layer walle.components {
+    .flow-steps {
+      counter-reset: step;
+      list-style: none;
+      padding: 0;
+      margin: 0 0 2rem 0;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
+    }
 
-  .flow-step {
-    display: flex;
-    align-items: center;
-    margin-bottom: var(--space-xl);
-  }
-
-  .flow-step:last-child {
-    margin-bottom: 0;
-  }
-
-  .step-number {
-    flex-shrink: 0;
-    width: 3rem;
-    height: 3rem;
-    border-radius: 50%;
-    background: var(--primary);
-    color: var(--white);
-    font-size: 1.5rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 1.5rem;
-    box-shadow: var(--box-shadow);
-    position: relative;
-  }
-
-  .step-content {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 1.5rem 2rem;
-    flex: 1;
-    position: relative;
-  }
-
-  .step-content h3 {
-    /* Step titles are h3 for correct heading order (the section title is h2);
-       keep the compact visual size the design used. */
-    font-size: 1.25rem;
-    margin-top: 0;
-    margin-bottom: 0.5rem;
-  }
-
-  .step-content p {
-    margin: 0;
-    color: var(--text-muted);
-  }
-
-  .step-icon {
-    position: absolute;
-    top: 1.5rem;
-    right: 1.5rem;
-    color: var(--primary);
-    opacity: 0.7;
-  }
-
-  /* Responsive adjustments */
-  @media (max-width: 768px) {
     .flow-step {
-      flex-direction: column;
-      align-items: stretch;
+      display: flex;
+      align-items: center;
+      margin-bottom: var(--space-xl);
+    }
+
+    .flow-step:last-child {
+      margin-bottom: 0;
     }
 
     .step-number {
-      margin: 0 0 1rem 0;
-      align-self: flex-start;
+      /* Public properties */
+      --section-flow-step-bg: var(--variant-bg);
+      --section-flow-step-fg: var(--variant-fg);
+
+      /* Circular badge shape, not a themeable radius: internal, not part of the public
+                 radius scale (tokens.css keeps that scale pill-free by design). */
+      --_step-number-radius: 50%;
+
+      flex-shrink: 0;
+      width: 3rem;
+      height: 3rem;
+      border-radius: var(--_step-number-radius);
+      background: var(--section-flow-step-bg);
+      color: var(--section-flow-step-fg);
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 1.5rem;
+      box-shadow: var(--shadow-md);
+      position: relative;
     }
 
     .step-content {
-      padding: 1rem;
+      /* Always its own surface/text pair: readable regardless of the wrapping section's
+                 filled/muted foreground color. */
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem 2rem;
+      flex: 1;
+      position: relative;
+    }
+
+    .step-content h3 {
+      /* Step titles are h3 for correct heading order (the section title is h2);
+                 keep the compact visual size the design used. */
+      font-size: 1.25rem;
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+    }
+
+    .step-content p {
+      margin: 0;
+      color: var(--text-muted);
     }
 
     .step-icon {
-      top: 1rem;
-      right: 1rem;
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      color: var(--primary);
+      opacity: 0.7;
     }
-  }
 
-  /* Ensure text is readable in all color themes */
-  :global(.section-content-primary) .step-content {
-    color: var(--text);
-  }
+    @media (max-width: 768px) {
+      .flow-step {
+        flex-direction: column;
+        align-items: stretch;
+      }
 
-  :global(.section-content-primary) .step-content p {
-    color: var(--text-muted);
+      .step-number {
+        margin: 0 0 1rem 0;
+        align-self: flex-start;
+      }
+
+      .step-content {
+        padding: 1rem;
+      }
+
+      .step-icon {
+        top: 1rem;
+        right: 1rem;
+      }
+    }
   }
 </style>

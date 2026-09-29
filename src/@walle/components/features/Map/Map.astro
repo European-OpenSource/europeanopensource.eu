@@ -1,0 +1,217 @@
+---
+/**
+ * Server HTML is a labelled region wrapping a sized (but empty) mount container plus an
+ * ordered list of markers: the list is the only visible content without JavaScript, and
+ * stays reachable by assistive technology after the client hides it (see map.client.ts).
+ * Coordinates outside a valid lat/lng range are dropped; with nothing left to show, the
+ * component renders nothing at all.
+ */
+import type { AppConfig } from "@walle/config";
+import config from "@walle/config";
+import { label as t } from "@walle/utils";
+import type { BaseProps, Variant } from "../../shared/types";
+
+type MapTiles = NonNullable<AppConfig["map"]>["tiles"];
+type Directions = NonNullable<AppConfig["map"]>["directions"];
+
+export interface MapMarker {
+  lat: number;
+  lng: number;
+  title: string;
+  description?: string;
+  /** Overrides the computed directions link entirely. */
+  href?: string;
+  variant?: Variant;
+}
+
+export interface Props extends BaseProps {
+  markers: MapMarker[];
+  /** Initial zoom when there's exactly one marker. @default 15 */
+  zoom?: number;
+  /** Zoom cap when fitting bounds around several markers. @default 15 */
+  maxZoom?: number;
+  height?: string;
+  label?: string;
+  /** @default false */
+  scrollZoom?: boolean;
+  tiles?: MapTiles;
+  directions?: Directions;
+}
+
+const {
+  markers,
+  zoom = 15,
+  maxZoom = 15,
+  height,
+  label: regionLabel,
+  scrollZoom = false,
+  tiles,
+  directions,
+  ...attrs
+} = Astro.props;
+
+function isValidCoordinate(lat: number, lng: number): boolean {
+  return (
+    Number.isFinite(lat) &&
+    lat >= -90 &&
+    lat <= 90 &&
+    Number.isFinite(lng) &&
+    lng >= -180 &&
+    lng <= 180
+  );
+}
+
+const validMarkers = markers.filter((marker) => isValidCoordinate(marker.lat, marker.lng));
+
+const resolvedTiles: NonNullable<MapTiles> = tiles ??
+  config.app.map?.tiles ?? {
+    url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    subdomains: "abc",
+    maxZoom: 19,
+  };
+const resolvedDirections: NonNullable<Directions> =
+  directions ?? config.app.map?.directions ?? "google";
+
+function resolveDirectionsUrl(
+  lat: number,
+  lng: number,
+  provider: NonNullable<Directions>
+): string | undefined {
+  switch (provider) {
+    case "google":
+      return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+    case "osm":
+      return `https://www.openstreetmap.org/directions?to=${lat},${lng}`;
+    case "apple":
+      return `https://maps.apple.com/?daddr=${lat},${lng}`;
+    case "none":
+      return undefined;
+  }
+}
+---
+
+{
+  validMarkers.length > 0 && (
+    <section
+      aria-label={regionLabel ?? t("map.region")}
+      {...attrs}
+      class:list={["map", attrs.class]}
+    >
+      <div
+        class="map__container"
+        data-map-container
+        style={height ? `--map-height: ${height}` : undefined}
+        data-zoom={zoom}
+        data-max-zoom={maxZoom}
+        data-scroll-zoom={scrollZoom ? "true" : "false"}
+        data-tiles-url={resolvedTiles.url}
+        data-tiles-attribution={resolvedTiles.attribution}
+        data-tiles-subdomains={resolvedTiles.subdomains}
+        data-tiles-max-zoom={resolvedTiles.maxZoom}
+      />
+      <ol class="map__list" data-map-list>
+        {validMarkers.map((marker) => {
+          const directionsHref =
+            marker.href ?? resolveDirectionsUrl(marker.lat, marker.lng, resolvedDirections);
+          return (
+            <li
+              data-lat={marker.lat}
+              data-lng={marker.lng}
+              data-variant={marker.variant ?? "primary"}
+              data-title={marker.title}
+            >
+              <p class="map__marker-title">{marker.title}</p>
+              {marker.description && <p class="map__marker-description">{marker.description}</p>}
+              {directionsHref && (
+                <a href={directionsHref} target="_blank" rel="noopener noreferrer">
+                  {t("map.directions")}
+                </a>
+              )}
+            </li>
+          );
+        })}
+      </ol>
+    </section>
+  )
+}
+
+<style>
+  @layer walle.components {
+    /* --map-marker-bg/--map-marker-fg are deliberately left undeclared here: the structural
+       rule below falls back to the variant tokens (--variant-bg/--variant-fg), so a marker's
+       own data-variant already colors it, and a site only needs these two to force every
+       marker to one fixed color regardless of variant. */
+    .map {
+      --map-height: 400px;
+      --map-radius: var(--radius-md);
+      --map-border: var(--border);
+      --map-marker-size: 28px;
+      --map-popup-bg: var(--surface);
+      --map-popup-fg: var(--text);
+      --map-popup-radius: var(--radius-md);
+      --map-control-bg: var(--surface);
+      --map-control-fg: var(--text);
+      --map-control-radius: var(--radius-sm);
+      --map-marker-radius: 50%;
+    }
+
+    .map__container {
+      height: var(--map-height);
+      border-radius: var(--map-radius);
+      border: 1px solid var(--map-border);
+      overflow: hidden;
+    }
+  }
+</style>
+
+<style is:global>
+  @layer walle.components {
+    /* Leaflet creates these elements at runtime, so they never carry this component's scope
+       attribute: the rules stay global, prefixed with .map__container so they only restyle a
+       walle Map. */
+    .map__container .map__marker {
+      width: var(--map-marker-size, 28px);
+      height: var(--map-marker-size, 28px);
+      border-radius: var(--map-marker-radius);
+      background: var(--map-marker-bg, var(--variant-bg, var(--primary)));
+      border: 2px solid var(--map-marker-fg, var(--variant-fg, var(--white)));
+      box-shadow: var(--shadow-sm);
+    }
+
+    .map__container .leaflet-popup-content-wrapper {
+      background: var(--map-popup-bg, var(--surface));
+      color: var(--map-popup-fg, var(--text));
+      border-radius: var(--map-popup-radius, var(--radius-md));
+    }
+
+    .map__container .leaflet-popup-tip {
+      background: var(--map-popup-bg, var(--surface));
+    }
+
+    .map__container .leaflet-control-zoom a {
+      background: var(--map-control-bg, var(--surface));
+      color: var(--map-control-fg, var(--text));
+      border-radius: var(--map-control-radius, var(--radius-sm));
+    }
+
+    /* The attribution control (.leaflet-control-attribution) is never touched here: it keeps
+       leaflet's own default styling, since the tile provider's attribution must stay visible
+       per its license. */
+  }
+</style>
+
+<script>
+  import { initMap } from "./map.client";
+
+  function boot() {
+    document.querySelectorAll<HTMLElement>("[data-map-container]").forEach((container) => {
+      const root = container.parentElement;
+      if (root) initMap(root);
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", boot);
+  document.addEventListener("astro:page-load", boot);
+</script>

@@ -1,0 +1,58 @@
+@layer walle.utilities {
+  /* List marker control */
+  ul.no-markers,
+  ol.no-markers,
+  ul.no-markers li,
+  ol.no-markers li {
+    list-style: none;
+    padding-left: 0;
+    margin-left: 0;
+  }
+  ul.no-markers li::marker,
+  ol.no-markers li::marker {
+    content: "";
+  }
+
+  /* Utility class for screen readers */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* Skip link - appears on focus to allow jumping to main content */
+  .skip-link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translateY(-100%);
+    background: var(--text);
+    color: var(--surface);
+    padding: 0.75rem 1rem;
+    z-index: 1000;
+    text-decoration: none;
+    font-weight: 600;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: var(--radius-sm);
+    border-bottom-right-radius: var(--radius-sm);
+    transition: transform 0.2s ease;
+  }
+  .skip-link:focus,
+  .skip-link:focus-visible {
+    transform: translateY(0);
+  }
+
+  /* Container utility */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+}

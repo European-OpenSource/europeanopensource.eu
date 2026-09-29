@@ -1,0 +1,315 @@
+---
+import { Carousel } from "@walle/components";
+import { DetailLayout } from "@walle/layouts";
+import VariantPicker from "@walle/commerce/VariantPicker.astro";
+import { defaultVariant, formatMoney, type ShopifyProduct } from "@walle/commerce/shopify";
+import type { ProductData } from "@walle/components/features/Card/ProductCard.astro";
+import { resolveInternalUrl } from "@walle/utils";
+import config from "@walle/config";
+import { label } from "@walle/utils/i18n";
+import { getCollection, getEntry } from "astro:content";
+
+export async function getStaticPaths() {
+  const products = await getCollection("products");
+  return products.map((p) => ({ params: { handle: p.data.handle }, props: { product: p.data } }));
+}
+
+const { product } = Astro.props as { product: ShopifyProduct };
+
+// Reads `commerce.mode` directly rather than through feature-gating at the module graph level.
+const commerce = config.app.commerce;
+const showBuyButton = commerce?.mode === "shop";
+const locale = config.app.website.language ?? "en-US";
+const addToCartLabel = label("cart.add");
+
+const productImage = (url: string) => (url.startsWith("http") ? url : resolveInternalUrl(url));
+
+const images = product.images.nodes.length
+  ? product.images.nodes
+  : product.featuredImage
+    ? [product.featuredImage]
+    : [];
+
+const v = defaultVariant(product);
+
+// ProductData feeds the header title and the Product/Offer JSON-LD in DetailLayout.
+const productData: ProductData = {
+  name: product.title,
+  description: product.seo.description ?? undefined,
+  image: {
+    src: productImage(product.featuredImage?.url ?? images[0]?.url ?? ""),
+    alt: product.featuredImage?.altText ?? product.title,
+  },
+  price: {
+    amount: Number(v?.price.amount ?? 0),
+    currency: v?.price.currencyCode ?? "EUR",
+    compareAt: v?.compareAtPrice ? Number(v.compareAtPrice.amount) : undefined,
+  },
+  availability: product.variants.nodes.some((x) => x.availableForSale)
+    ? "in_stock"
+    : "out_of_stock",
+  href: resolveInternalUrl(`/products/${product.handle}`),
+};
+
+// Upselling: resolve recommended handles against the collection (drop the missing).
+const recommended = (await Promise.all(product.recommended.map((h) => getEntry("products", h))))
+  .filter(Boolean)
+  .map((e) => e!.data as ShopifyProduct);
+---
+
+<DetailLayout
+  title={product.title}
+  description={product.seo.description ?? undefined}
+  breadcrumbs={[
+    { label: label("breadcrumbs.home"), href: resolveInternalUrl("/") },
+    { label: label("products.title"), href: resolveInternalUrl("/products") },
+    { label: product.title },
+  ]}
+  product={productData}
+>
+  <h2 class="sr-only">{label("products.galleryHeading")}</h2>
+  <Carousel
+    label={label("products.gallery").replace("{title}", product.title)}
+    perView={1}
+    controls={images.length > 1}
+    counter={images.length > 1}
+    zoom={true}
+    class="product-gallery"
+  >
+    {
+      images.map((im, i) => (
+        <div class="pg-slide">
+          <img
+            src={productImage(im.url)}
+            alt={im.altText ?? product.title}
+            width={im.width ?? 1200}
+            height={im.height ?? 800}
+            loading={i === 0 ? "eager" : "lazy"}
+          />
+        </div>
+      ))
+    }
+  </Carousel>
+
+  <div slot="below" class="product-below">
+    <div class="product-body" set:html={product.descriptionHtml} />
+
+    {
+      recommended.length > 0 && (
+        <section class="upsell" aria-labelledby="upsell-heading">
+          <h2 id="upsell-heading">{label("products.related")}</h2>
+          <ul class="upsell__grid">
+            {recommended.map((r) => {
+              const rv = defaultVariant(r);
+              return (
+                <li>
+                  <a class="upsell__card" href={resolveInternalUrl(`/products/${r.handle}`)}>
+                    {r.featuredImage && (
+                      <img
+                        src={productImage(r.featuredImage.url)}
+                        alt={r.featuredImage.altText ?? r.title}
+                        width={r.featuredImage.width ?? 1200}
+                        height={r.featuredImage.height ?? 800}
+                        loading="lazy"
+                      />
+                    )}
+                    <span class="upsell__title">{r.title}</span>
+                    {rv && <span class="upsell__price">{formatMoney(rv.price, locale)}</span>}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )
+    }
+  </div>
+
+  <div slot="aside" id="buy-box" class="purchase-card" tabindex="-1">
+    <p class="purchase-card__title">{product.title}</p>
+    <VariantPicker
+      product={product}
+      locale={locale}
+      showBuyButton={showBuyButton}
+      showQuantity={showBuyButton}
+    />
+  </div>
+
+  {
+    showBuyButton && (
+      <div slot="below" class="pdp-sticky" data-pdp-sticky hidden>
+        <a href="#buy-box" class="pdp-sticky__cta" data-pdp-sticky-cta>
+          {addToCartLabel}
+        </a>
+      </div>
+    )
+  }
+</DetailLayout>
+
+<style>
+  @layer walle.components {
+    /* Image sizing is owned by the Carousel (fit="uniform" by default). */
+    .product-gallery :global(.pg-slide) {
+      background: var(--surface-alt);
+      border-radius: var(--radius-lg);
+    }
+
+    .product-below {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2xl);
+    }
+
+    /* Keep the prose to a comfortable measure; the upsell grid below stays full-width. */
+    .product-body {
+      max-width: 70ch;
+    }
+
+    .product-body :global(h3) {
+      font-size: 1.25rem;
+      margin-top: var(--space-xl);
+    }
+
+    .product-body :global(ul) {
+      padding-left: 1.2rem;
+      color: var(--text-muted);
+    }
+
+    .upsell {
+      border-top: 1px solid var(--border);
+      padding-top: var(--space-xl);
+    }
+
+    .upsell h2 {
+      font-size: 1.4rem;
+    }
+
+    .upsell__grid {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: var(--space-lg);
+    }
+
+    .upsell__card {
+      display: block;
+      text-decoration: none;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition:
+        border-color var(--transition),
+        box-shadow var(--transition);
+    }
+
+    .upsell__card:hover {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-md);
+    }
+
+    .upsell__card img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .upsell__title {
+      display: block;
+      padding: var(--space-sm) var(--space-md) 0;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .upsell__price {
+      display: block;
+      padding: 0 var(--space-md) var(--space-sm);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .purchase-card {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+      padding: var(--space-lg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--surface);
+      position: sticky;
+      top: 90px;
+      /* Anchor jumps from the sticky CTA clear the fixed site header. */
+      scroll-margin-top: 84px;
+    }
+
+    .purchase-card__title {
+      font-size: 1.2rem;
+      margin: 0;
+    }
+
+    /* Sticky add-to-cart bar, mobile only, a single full-width button revealed by
+       JS when the buy box is off-screen. Tapping it scrolls to the buy box so the shopper picks
+       size/colour there. Works without JS too (it just stays hidden). */
+    .pdp-sticky {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 950;
+      display: none;
+      padding: 0.6rem 1rem;
+      padding-bottom: max(0.6rem, env(safe-area-inset-bottom));
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .pdp-sticky__cta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 48px;
+      padding: 0 1.5rem;
+      border-radius: var(--radius-md);
+      background: var(--primary);
+      color: var(--white);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .pdp-sticky__cta:hover {
+      background: var(--primary-dark);
+    }
+
+    @media (max-width: 900px) {
+      .purchase-card {
+        position: static;
+      }
+
+      /* Revealed by JS (removes [hidden]); on desktop it always stays display:none. */
+      .pdp-sticky:not([hidden]) {
+        display: flex;
+      }
+    }
+  }
+</style>
+
+<script>
+  function initPdpStickyCta() {
+    const bar = document.querySelector<HTMLElement>("[data-pdp-sticky]");
+    const buyBox = document.getElementById("buy-box");
+    if (!bar || !buyBox) return;
+    // Show the bar only while the buy box is off-screen; hide it once it's in view.
+    const io = new IntersectionObserver(([entry]) => (bar.hidden = entry.isIntersecting), {
+      rootMargin: "0px 0px -20% 0px",
+    });
+    io.observe(buyBox);
+  }
+  document.addEventListener("DOMContentLoaded", initPdpStickyCta);
+  document.addEventListener("astro:page-load", initPdpStickyCta);
+</script>

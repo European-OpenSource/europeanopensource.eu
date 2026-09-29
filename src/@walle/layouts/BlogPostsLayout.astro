@@ -1,11 +1,11 @@
 ---
-import BasicCard from "@walle/components/features/Card/BasicCard.astro";
+import { card as BasicCard } from "virtual:walle-components";
 import CollectionFilters from "@walle/components/features/CollectionFilters.astro";
 import BaseLayout from "./BaseLayout.astro";
-import { formatDate, resolveInternalUrl } from "@walle/utils";
+import { formatDate, label, resolveInternalUrl } from "@walle/utils";
 import { getCollection, type CollectionEntry } from "astro:content";
 
-type PostsEntry = CollectionEntry<"posts">;
+export type { BlogPostsLayoutProps as Props } from "./types";
 
 const {
   headerTitle = "Blog",
@@ -38,6 +38,10 @@ const sortedPosts = postsToUse.sort((a: any, b: any) => {
 const allCategories: string[] = Array.from(
   new Set(postsToUse.flatMap((post: any) => post.data.tags || []).filter(Boolean))
 ).sort() as string[];
+
+// The first tag is the card's badge.
+const badgeFor = (post: CollectionEntry<"posts">) =>
+  post.data.tags?.length ? { text: post.data.tags[0], variant: "secondary" as const } : undefined;
 ---
 
 <BaseLayout headerTitle={headerTitle}>
@@ -61,38 +65,32 @@ const allCategories: string[] = Array.from(
       {
         sortedPosts.length === 0 ? (
           <div class="blog-layout__empty">
-            <p>No posts found.</p>
+            <p>{label("blog.empty")}</p>
           </div>
         ) : (
           <div class="blog-layout__grid">
-            {sortedPosts.map((post: PostsEntry) => {
-              const badge = post.data.tags?.length
-                ? { text: post.data.tags[0], variant: "secondary" as const }
-                : undefined;
-
-              return (
-                <div
-                  data-filter-item
-                  data-category={(post.data.tags || []).join(",")}
-                  data-search={`${post.data.title} ${post.data.description ?? ""}`}
-                >
-                  <BasicCard
-                    title={post.data.title}
-                    content={post.data.description}
-                    href={resolveInternalUrl(`/blog/${post.id}`)}
-                    image={{
-                      src: resolveInternalUrl(post.data.image || "/img/posts/default.svg"),
-                      alt: post.data.title,
-                    }}
-                    badge={badge}
-                    publishDate={
-                      post.data.publishDate ? formatDate(post.data.publishDate.toString()) : null
-                    }
-                    target="_self"
-                  />
-                </div>
-              );
-            })}
+            {sortedPosts.map((post: CollectionEntry<"posts">) => (
+              <div
+                data-filter-item
+                data-category={(post.data.tags || []).join(",")}
+                data-search={`${post.data.title} ${post.data.description ?? ""}`}
+              >
+                <BasicCard
+                  title={post.data.title}
+                  content={post.data.description}
+                  href={resolveInternalUrl(`/blog/${post.id}`)}
+                  image={{
+                    src: resolveInternalUrl(post.data.image || "/img/posts/default.svg"),
+                    alt: post.data.title,
+                  }}
+                  badge={badgeFor(post)}
+                  publishDate={
+                    post.data.publishDate ? formatDate(post.data.publishDate.toString()) : null
+                  }
+                  target="_self"
+                />
+              </div>
+            ))}
           </div>
         )
       }
@@ -102,98 +100,100 @@ const allCategories: string[] = Array.from(
 </BaseLayout>
 
 <style>
-  .blog-layout {
-    width: 100%;
-    min-height: 80vh;
-  }
-
-  .blog-layout__header {
-    width: 100%;
-    margin-bottom: 48px;
-  }
-
-  .blog-layout__container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 32px 64px;
-  }
-
-  .blog-layout__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 32px;
-    align-items: start;
-  }
-
-  .blog-layout__empty {
-    text-align: center;
-    padding: 80px 24px;
-    color: var(--text-muted);
-    font-size: 18px;
-  }
-
-  /* Mobile First - smartphones */
-  @media (max-width: 640px) {
-    .blog-layout__container {
-      padding: 0 16px 40px;
+  @layer walle.components {
+    .blog-layout {
+      width: 100%;
+      min-height: 80vh;
     }
 
     .blog-layout__header {
-      margin-bottom: 32px;
+      width: 100%;
+      margin-bottom: 48px;
     }
 
-    .blog-layout__grid {
-      grid-template-columns: 1fr;
-      gap: 20px;
-    }
-  }
-
-  /* Tablet portrait */
-  @media (min-width: 641px) and (max-width: 768px) {
     .blog-layout__container {
-      padding: 0 24px 48px;
-    }
-
-    .blog-layout__grid {
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 24px;
-    }
-  }
-
-  /* Tablet landscape */
-  @media (min-width: 769px) and (max-width: 1024px) {
-    .blog-layout__container {
-      padding: 0 28px 56px;
-    }
-
-    .blog-layout__grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 28px;
-    }
-  }
-
-  /* Desktop */
-  @media (min-width: 1025px) and (max-width: 1440px) {
-    .blog-layout__container {
+      max-width: 1400px;
+      margin: 0 auto;
       padding: 0 32px 64px;
     }
 
     .blog-layout__grid {
-      grid-template-columns: repeat(3, 1fr);
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       gap: 32px;
-    }
-  }
-
-  /* Large Desktop */
-  @media (min-width: 1441px) {
-    .blog-layout__container {
-      max-width: 1600px;
-      padding: 0 48px 80px;
+      align-items: start;
     }
 
-    .blog-layout__grid {
-      grid-template-columns: repeat(4, 1fr);
-      gap: 36px;
+    .blog-layout__empty {
+      text-align: center;
+      padding: 80px 24px;
+      color: var(--text-muted);
+      font-size: var(--font-size-body);
+    }
+
+    /* Mobile First - smartphones */
+    @media (max-width: 640px) {
+      .blog-layout__container {
+        padding: 0 16px 40px;
+      }
+
+      .blog-layout__header {
+        margin-bottom: 32px;
+      }
+
+      .blog-layout__grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+    }
+
+    /* Tablet portrait */
+    @media (min-width: 641px) and (max-width: 768px) {
+      .blog-layout__container {
+        padding: 0 24px 48px;
+      }
+
+      .blog-layout__grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 24px;
+      }
+    }
+
+    /* Tablet landscape */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .blog-layout__container {
+        padding: 0 28px 56px;
+      }
+
+      .blog-layout__grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 28px;
+      }
+    }
+
+    /* Desktop */
+    @media (min-width: 1025px) and (max-width: 1440px) {
+      .blog-layout__container {
+        padding: 0 32px 64px;
+      }
+
+      .blog-layout__grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 32px;
+      }
+    }
+
+    /* Large Desktop */
+    @media (min-width: 1441px) {
+      .blog-layout__container {
+        max-width: 1600px;
+        padding: 0 48px 80px;
+      }
+
+      .blog-layout__grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 36px;
+      }
     }
   }
 </style>

@@ -1,0 +1,164 @@
+@layer walle.base {
+  html {
+    scroll-behavior: smooth;
+    height: 100%;
+  }
+
+  /* Reduced motion: disable non-essential animation library-wide (WCAG 2.3.3).
+     Component-local rules may add finer-grained handling on top. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  body {
+    font-family: var(--font-body);
+    letter-spacing: 0.01em;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    background-color: var(--surface);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    color: var(--text);
+    font-size: var(--font-size-body);
+    line-height: 1.6;
+    text-decoration: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  main {
+    flex: 1;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 0 0 var(--space-lg) 0;
+    line-height: 1.2;
+    color: var(--heading);
+    font-weight: 700;
+    font-family: var(--font-heading);
+  }
+  h1 {
+    font-size: var(--font-size-h1);
+    line-height: 1.1;
+    margin-bottom: var(--space-xl);
+  }
+  h2 {
+    font-size: var(--font-size-h2);
+    line-height: 1.15;
+    margin-bottom: var(--space-xl);
+  }
+  h3 {
+    font-size: var(--font-size-h3);
+    margin-bottom: var(--space-lg);
+  }
+  h4 {
+    font-size: var(--font-size-h4);
+    margin-bottom: var(--space-md);
+  }
+  h5 {
+    font-size: var(--font-size-h5);
+    margin-bottom: var(--space-md);
+    font-weight: 600;
+  }
+  strong,
+  b {
+    font-weight: 700;
+    font-family: var(--font-heading);
+    color: var(--heading);
+  }
+
+  p {
+    margin: 0 0 var(--space-lg) 0;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+
+  a {
+    color: var(--link);
+    text-decoration: none;
+    transition: var(--transition);
+    font-weight: 500;
+  }
+
+  a:hover {
+    color: var(--link-hover);
+    text-decoration: none;
+  }
+
+  a:focus {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  textarea {
+    width: 100%;
+    font-size: var(--input-font-size-min);
+  }
+  input {
+    font-size: var(--input-font-size-min);
+  }
+  table {
+    width: 100%;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  code {
+    padding: 2px 5px;
+    background-color: var(--surface-alt);
+    border-radius: var(--radius-sm);
+  }
+  pre {
+    padding: 1.5em;
+    border-radius: var(--radius-lg);
+  }
+  pre > code {
+    all: unset;
+  }
+  blockquote {
+    border-left: 4px solid var(--link);
+    padding: 0 0 0 20px;
+    margin: 0px;
+    font-size: 1.333em;
+  }
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Consistent focus outline for interactive elements (buttons, links) */
+  button:focus-visible,
+  a.button:focus-visible,
+  a.skip-link:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 3px;
+    box-shadow: none;
+  }
+}

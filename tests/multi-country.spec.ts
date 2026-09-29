@@ -83,21 +83,21 @@ test.describe("Project detail page — country badges", () => {
     await expect(countryBadges.first()).toHaveAttribute("href", "/projects/country/italy");
   });
 
-  test("country badge icons are on the left (eos-label-icon-start)", async ({ page }) => {
+  test("country badge icons are on the left (badge-icon-start)", async ({ page }) => {
     await page.goto("/projects/capsule-6f5262");
     const countryBadge = page
       .locator(".project-detail-badges a[href^='/projects/country/']")
       .first();
-    await expect(countryBadge).toHaveClass(/eos-label-icon-start/);
+    await expect(countryBadge).toHaveClass(/badge-icon-start/);
   });
 
   test("detail card badges use icon-start for language, license, platform", async ({ page }) => {
     await page.goto("/projects/capsule-6f5262");
-    const metaBadges = page.locator(".project-detail-card__meta .eos-label-with-icon");
+    const metaBadges = page.locator(".project-detail-card__meta .badge-with-icon");
     const count = await metaBadges.count();
     expect(count).toBeGreaterThan(0);
     for (let i = 0; i < count; i++) {
-      await expect(metaBadges.nth(i)).toHaveClass(/eos-label-icon-start/);
+      await expect(metaBadges.nth(i)).toHaveClass(/badge-icon-start/);
     }
   });
 });

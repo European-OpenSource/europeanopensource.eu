@@ -3,8 +3,8 @@
  * shared across islands; the cart id is persisted in localStorage. Checkout is the hosted
  * Shopify checkout (redirect to `cart.checkoutUrl`). No server, no payment data here.
  *
- * This module is the ecommerce layer: it is only loaded when `commerce.showBuyButton`
- * is true (see CartMount.astro / BaseLayout). A vetrina build never imports it.
+ * This module is the ecommerce layer: it is only loaded when `commerce.mode === "shop"`
+ * (see CartMount.astro / BaseLayout). A build with commerce off never imports it.
  */
 import { persistentAtom } from "@nanostores/persistent";
 import { atom } from "nanostores";
@@ -143,7 +143,7 @@ export async function goToCheckout(): Promise<void> {
 
 // Load any persisted cart on first import (browser, live mode only). Errors (offline,
 // adblocker) leave the cart empty rather than throwing an unhandled rejection. In mock
-// mode there is nothing to load — the cart starts empty in memory.
+// mode there is nothing to load: the cart starts empty in memory.
 if (typeof window !== "undefined") {
   if (shopifyEnabled()) loadCart().catch(() => cart.set(null));
   else cart.set(mockInit()); // rehydrate the persisted mock cart

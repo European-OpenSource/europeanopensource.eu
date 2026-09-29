@@ -1,6 +1,6 @@
 /**
  * Offline demo catalog. Served by the Shopify loader when the Storefront env vars are
- * absent, so the vetrina demo builds with zero credentials. Shape matches the live
+ * absent, so the demo builds with zero credentials. Shape matches the live
  * Storefront response exactly, so the product pages render identically either way.
  *
  * Image URLs are local (/img/...); the product pages base-prefix non-http URLs, while

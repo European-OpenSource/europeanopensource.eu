@@ -24,6 +24,64 @@ WALLE_END_SH="# [walle:END]"
 WALLE_START_JS="// [walle:START]"
 WALLE_END_JS="// [walle:END]"
 
+# JSON the CLI writes into consumer-owned files must already match prettier's output, or the
+# consumer's `prettier --check .` fails on a fresh init. Prettier's JSON printer differs from
+# JSON.stringify(v, null, 2) in two ways that matter here: an array of primitives that fits in
+# 100 columns stays on one line, and an object stays on one line when the source had its first
+# key on the `{` line and it fits. `readPretty(text)` parses and remembers which objects were
+# inline; `pretty(value)` writes them back the same way (prepended to a `node -e` script).
+# package.json is not written with it: prettier formats that file like JSON.stringify.
+PRETTY_JSON_JS='
+const inlineObjects = new Map();
+const readPretty = (text) => {
+  const open = [];
+  for (let i = 0, str = false; i < text.length; i++) {
+    const c = text[i];
+    if (str) { if (c === "\\") i++; else if (c === "\"") str = false; }
+    else if (c === "\"") str = true;
+    else if (c === "{") open.push(!/^[ \t]*\r?\n/.test(text.slice(i + 1)));
+  }
+  const value = JSON.parse(text);
+  const mark = (v) => {
+    if (!v || typeof v !== "object") return;
+    if (!Array.isArray(v)) inlineObjects.set(v, open.shift());
+    Object.values(v).forEach(mark);
+  };
+  mark(value);
+  return value;
+};
+const flat = (v) => {
+  if (v === null || typeof v !== "object") return JSON.stringify(v);
+  const parts = (Array.isArray(v) ? v : Object.keys(v)).map((x) => {
+    const e = Array.isArray(v) ? x : v[x];
+    if (e !== null && typeof e === "object" && (Array.isArray(v) || Array.isArray(e))) return null;
+    const f = e !== null && typeof e === "object" && !inlineObjects.get(e) ? null : flat(e);
+    return f === null ? null : Array.isArray(v) ? f : JSON.stringify(x) + ": " + f;
+  });
+  if (parts.includes(null)) return null;
+  if (!Array.isArray(v)) return parts.length ? "{ " + parts.join(", ") + " }" : "{}";
+  return "[" + parts.join(", ") + "]";
+};
+const pretty = (v, ind = "", room = 0) => {
+  if (v === null || typeof v !== "object") return JSON.stringify(v);
+  const isArr = Array.isArray(v);
+  const keys = isArr ? v : Object.keys(v);
+  if (!keys.length) return isArr ? "[]" : "{}";
+  if (isArr || inlineObjects.get(v)) {
+    const one = flat(v);
+    if (one !== null && ind.length + room + one.length <= 100) return one;
+  }
+  const i2 = ind + "  ";
+  const items = isArr
+    ? v.map((x, k) => i2 + pretty(x, i2, k < v.length - 1 ? 1 : 0))
+    : keys.map((k, j) => {
+        const pre = JSON.stringify(k) + ": ";
+        return i2 + pre + pretty(v[k], i2, pre.length + (j < keys.length - 1 ? 1 : 0));
+      });
+  return (isArr ? "[" : "{") + "\n" + items.join(",\n") + "\n" + ind + (isArr ? "]" : "}");
+};
+'
+
 # Execution State
 INTENTIONAL_EXIT=0
 DRY_RUN=0
@@ -107,12 +165,12 @@ validate_module() {
   esac
 }
 
-ssr_enabled() {
-  node -e "try{const a=require('$1/src/configs/app.json');process.exit(a&&a.astro&&a.astro.ssr&&a.astro.ssr.enabled===true?0:1)}catch(e){process.exit(1)}" 2>/dev/null
+node_adapter_enabled() {
+  node -e "try{const a=require('$1/src/configs/app.json');process.exit(a&&a.astro&&a.astro.adapter==='node'?0:1)}catch(e){process.exit(1)}" 2>/dev/null
 }
 
 # --- Config-driven paths (walle/walle.yml is the single source of truth) -------------
-# The config is real YAML but every entry is pipe-delimited, so awk alone parses it — no
+# The config is real YAML but every entry is pipe-delimited, so awk alone parses it: no
 # YAML runtime dep (the CLI must run as `curl | bash`).
 # ponytail: purpose-built reader for our flat schema, not a general YAML parser.
 
@@ -157,10 +215,10 @@ module_seed_paths()    { config_dests seed "$1"; }
 
 module_purpose() {
   case "$1" in
-    website) echo "Astro site — @walle components, layouts, styles, config and CLI scripts" ;;
+    website) echo "Astro site: @walle components, layouts, styles, config and CLI scripts" ;;
     ci) echo "GitHub Actions workflows (test + deploy) under @walle" ;;
-    ai) echo "AI harness — generated AGENTS.md block and @walle skills" ;;
-    backend) echo "API routes (requires SSR enabled in src/configs/app.json)" ;;
+    ai) echo "AI harness: generated AGENTS.md block and @walle skills" ;;
+    backend) echo "API routes (requires astro.adapter: \"node\" in src/configs/app.json)" ;;
     harness-coding|devcontainer) echo "Harness coding scaffold" ;;
     *) echo "walle module" ;;
   esac
@@ -411,16 +469,37 @@ EOF
     -not -path '*/node_modules/*' -not -path '*/.astro/*' \
     -not -path '*/.yarn/*' -not -name 'yarn.lock')
 
-  # app.json in website/ carries Walle's own GH-Pages deployment identity; reset it to neutral
-  # defaults for a fresh consumer (only when we just created the file, never on a re-seed).
+  # app.json in website/ carries Walle's own GH-Pages deployment identity AND its own demo-only
+  # content (commerce.mode: "shop", redirects to demo product handles): reset/strip it to
+  # neutral defaults for a fresh consumer (only when we just created the file, never on a
+  # re-seed). seo.ogImage/seo.feeds are left as the demo has them (both enabled), and every
+  # other key that isn't demo-specific.
   local app="${tgt_dir}/src/configs/app.json"
   if [ "$had_app" = "0" ] && [ "$DRY_RUN" != "1" ] && [ -f "$app" ]; then
-    APP_JSON="$app" node -e '
+    APP_JSON="$app" node -e "$PRETTY_JSON_JS"'
       const fs = require("fs"), p = process.env.APP_JSON;
-      const c = JSON.parse(fs.readFileSync(p, "utf8"));
-      if (c.astro) { c.astro.baseUrl = "http://localhost:4321"; c.astro.basePath = "/"; }
+      const c = readPretty(fs.readFileSync(p, "utf8"));
+      if (c.astro) {
+        c.astro.baseUrl = "http://localhost:4321";
+        c.astro.basePath = "/";
+        delete c.astro.redirects;
+      }
       if (c.website) { c.website.title = "My Walle Site"; }
-      fs.writeFileSync(p, JSON.stringify(c, null, 2) + "\n");
+      delete c.commerce;
+      if (!c.labels) c.labels = {};
+      fs.writeFileSync(p, pretty(c) + "\n");
+    '
+  fi
+
+  # navbar.json links the demo-only /showcase page (excluded from the seed) and /products
+  # (commerce is off on a fresh site): drop both so a new site starts with no dead links.
+  local nav="${tgt_dir}/src/configs/navbar.json"
+  if [ "$had_app" = "0" ] && [ "$DRY_RUN" != "1" ] && [ -f "$nav" ]; then
+    NAV_JSON="$nav" node -e "$PRETTY_JSON_JS"'
+      const fs = require("fs"), p = process.env.NAV_JSON;
+      const c = readPretty(fs.readFileSync(p, "utf8"));
+      c.items = (c.items || []).filter((i) => i.url !== "/showcase" && i.url !== "/products");
+      fs.writeFileSync(p, pretty(c) + "\n");
     '
   fi
 }
@@ -449,7 +528,7 @@ generate_agents_block() {
   echo -e "\n### Active walle modules\n"
 
   for m in ${AGENTS_MODULES}; do
-    echo "- **${m}** — $(module_purpose "$m")"
+    echo "- **${m}**: $(module_purpose "$m")"
     local managed seed
     managed="$(module_managed_paths "$m")"
     seed="$(module_seed_paths "$m")"
@@ -458,7 +537,7 @@ generate_agents_block() {
   done
 
   if [ "${HARNESS_CODING_ENABLED:-0}" = "1" ]; then
-    echo "- **harness-coding** — $(module_purpose "devcontainer")"
+    echo "- **harness-coding**: $(module_purpose "devcontainer")"
     local m_dc s_dc
     m_dc="$(module_managed_paths "devcontainer")"
     s_dc="$(module_seed_paths "devcontainer")"
@@ -581,7 +660,7 @@ sync_module() {
 
 # Establish the harness-coding base (real justfile with markers, justfile.tooling,
 # .devcontainer/*, .pre-commit-config.yaml, AGENTS.md base block) BEFORE walle seeds and
-# injects. Walle owns none of these — it only injects its own blocks into files harness-coding
+# injects. Walle owns none of these; it only injects its own blocks into files harness-coding
 # already created. Runs harness-coding's own CLI so the base is always current, not a stale
 # copy vendored here. Override the source with WALLE_HARNESS_CODING_CLI (path to a local
 # cli.sh) for offline/e2e runs; defaults to fetching main over the network.
@@ -622,7 +701,7 @@ run_init_sync() {
 # =============================================================================
 
 # Writes .harness-walle/manifest.json. The `files` map records every path walle wrote, grouped by
-# class (managed | seed | inject) → module — same idea as harness-coding's manifest. Node
+# class (managed | seed | inject) → module, same idea as harness-coding's manifest. Node
 # assembles the JSON from the FILES_LOG the sync functions accumulate (single parser: awk
 # reads the config, node only groups what was recorded).
 write_manifest() {
@@ -713,9 +792,15 @@ walle_docs_enabled() {
 sync_walle_docs() {
   local src_dir="$1" tgt_dir="$2"
   walle_docs_enabled "$tgt_dir" || return 0
-  for f in cli.md modules.md managed-vs-seed.md versioning.md; do
-    if [ "$DRY_RUN" = "1" ]; then plan_path "${src_dir}/wiki/${f}" "${tgt_dir}/.harness-walle/docs/${f}"
-    else sync_path "${src_dir}/wiki/${f}" "${tgt_dir}/.harness-walle/docs/${f}"; fi
+  local d legacy
+  for d in get-started develop architecture ai; do
+    if [ "$DRY_RUN" = "1" ]; then plan_path "${src_dir}/wiki/${d}" "${tgt_dir}/.harness-walle/docs/${d}"
+    else sync_path "${src_dir}/wiki/${d}" "${tgt_dir}/.harness-walle/docs/${d}"; fi
+  done
+  for legacy in cli modules managed-vs-seed versioning; do
+    if [ ! -e "${tgt_dir}/.harness-walle/docs/${legacy}.md" ]; then continue; fi
+    if [ "$DRY_RUN" = "1" ]; then print_plan "- ${tgt_dir}/.harness-walle/docs/${legacy}.md"
+    else rm -f "${tgt_dir}/.harness-walle/docs/${legacy}.md"; fi
   done
 }
 
@@ -969,7 +1054,7 @@ cmd_add() {
 
   local present=0
   for m in "${mods[@]}"; do [ "$m" = "$NEW_MOD" ] && present=1; done
-  [ "$present" = "1" ] && print_info "'${NEW_MOD}' already declared — re-syncing."
+  [ "$present" = "1" ] && print_info "'${NEW_MOD}' already declared, re-syncing."
 
   if [ "$DRY_RUN" = "1" ]; then
     print_plan "add plan: '${NEW_MOD}'"
@@ -984,8 +1069,8 @@ cmd_add() {
   write_walle_config_yml "$PROJ_PATH" "${mods[@]}"
   print_info "Module '${NEW_MOD}' added."
 
-  if [ "$NEW_MOD" = "backend" ] && ! ssr_enabled "$PROJ_PATH"; then
-    print_warn "backend requires SSR in src/configs/app.json"
+  if [ "$NEW_MOD" = "backend" ] && ! node_adapter_enabled "$PROJ_PATH"; then
+    print_warn "backend requires astro.adapter: \"node\" in src/configs/app.json"
   fi
 }
 
@@ -1056,13 +1141,13 @@ cmd_check() {
 # =============================================================================
 # 8b. DEPENDENCY DRIFT
 # =============================================================================
-# package.json is a SEED file (consumer-owned), so `update` never rewrites it — that would
+# package.json is a SEED file (consumer-owned), so `update` never rewrites it: that would
 # clobber the deps a consumer added. Instead we treat the source seed
 # (walle/website/package.json) as the reference for Walle-OWNED deps and compare the
 # consumer's versions against it. Consumer-added deps (not in the seed) are never touched.
 # `check` reports drift; `apply` bumps behind deps in place AND adds missing runtime
-# `dependencies` (Walle code the consumer synced hard-imports them — e.g. commerce/cart.ts
-# needs nanostores — so an absent one is a build breaker, not an opt-out). Missing
+# `dependencies` (Walle code the consumer synced hard-imports them, e.g. commerce/cart.ts
+# needs nanostores, so an absent one is a build breaker, not an opt-out). Missing
 # `devDependencies` (optional tooling) are only reported, never forced. Always exits 0
 # (informational) so it never fails an update.
 run_deps() {
@@ -1096,7 +1181,7 @@ for (const sec of SECTIONS)
       // A missing runtime `dependency` is a build breaker: Walle code the consumer
       // synced (e.g. commerce/cart.ts) hard-imports it, so it must be present. A
       // missing `devDependency` is optional tooling (vitest, playwright, astrobook)
-      // the consumer may deliberately skip — warn only, never force.
+      // the consumer may deliberately skip: warn only, never force.
       missing.push({ name, walle: wr, runtime: sec === "dependencies" });
       continue;
     }
@@ -1120,7 +1205,7 @@ if (mode === "apply") {
     for (const d of missingRuntime) console.log(`          ${d.name}  (added) ${d.walle}`);
     console.log(" [INFO] Run `yarn install` (or your package manager) to update the lockfile.");
   } else {
-    console.log(" [INFO] Walle dependencies already aligned — nothing to do.");
+    console.log(" [INFO] Walle dependencies already aligned, nothing to do.");
   }
   if (missingDev.length)
     console.log(
@@ -1148,12 +1233,12 @@ if (behind.length) {
   console.log(
     ` ⚠ ${behind.length} Walle dependency(ies) in your package.json are behind the tested set`
   );
-  console.log("   (Walle never rewrites package.json — it's yours):");
+  console.log("   (Walle never rewrites package.json; it's yours):");
   console.log("");
   console.log(`     ${pad("package", w1)}  ${pad("yours", w2)}  walle`);
   for (const d of behind)
     console.log(
-      `     ${pad(d.name, w1)}  ${pad(d.yours, w2)}  ${d.walle}${d.major ? "   ⚠ major — check breaking changes" : ""}`
+      `     ${pad(d.name, w1)}  ${pad(d.yours, w2)}  ${d.walle}${d.major ? "   ⚠ major: check breaking changes" : ""}`
     );
   console.log("");
   console.log("   Align them:  yarn up " + behind.map((d) => `${d.name}@${d.walle}`).join(" "));
@@ -1162,7 +1247,7 @@ if (behind.length) {
 if (missingRuntime.length) {
   console.log(
     `\n ⚠ ${missingRuntime.length} required Walle runtime dependency(ies) missing from package.json` +
-      " — builds that reach the code importing them (e.g. commerce) will fail:"
+      "; builds that reach the code importing them (e.g. commerce) will fail:"
   );
   console.log("     " + missingRuntime.map((d) => `${d.name}@${d.walle}`).join("  "));
   console.log("   Add them:    walle deps --apply   (or: yarn add " +
@@ -1204,7 +1289,7 @@ cmd_deps() {
 main() {
   # The command is the FIRST argument; everything after is passed to the subcommand
   # verbatim. (Scanning all args for a command keyword would mistake a flag value that
-  # happens to equal a command name — e.g. `init -n deps` — for the command itself.)
+  # happens to equal a command name, e.g. `init -n deps`, for the command itself.)
   [ $# -gt 0 ] || { usage; print_error "no command given"; }
   local cmd="$1"; shift
   case "$cmd" in

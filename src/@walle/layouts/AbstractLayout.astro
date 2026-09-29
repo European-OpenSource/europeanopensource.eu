@@ -4,20 +4,24 @@ import Head from "@walle/components/features/Head.astro";
 import StructuredData from "@walle/components/features/StructuredData.astro";
 import config from "@walle/config";
 import { organizationJsonLd, websiteJsonLd } from "@walle/utils/structured-data";
+import { label } from "@walle/utils";
 import "@walle/styles/global.css";
 // Generated theme tokens (overrides walle defaults, overridden by consumer global.css).
 import "virtual:walle-theme.css";
 import "@styles/global.css";
+
+export type { AbstractLayoutProps as Props } from "./types";
 
 const {
   headerTitle = "",
   headerDescription = config.app.website.description || "",
   headerImage = config.app.website.image || null,
   headerOgImage = null,
+  headerEntryOgImage = null,
   headerRobots = config.app.website.robots || "index, follow",
   headerLanguage = config.app.website.language || "",
   headerPublishedTime = null,
-  skipLinkLabel = "Skip to content",
+  skipLinkLabel,
 } = Astro.props;
 
 const siteInfo = {
@@ -36,14 +40,15 @@ const siteInfo = {
       description={headerDescription}
       image={headerImage}
       ogImage={headerOgImage}
+      entryOgImage={headerEntryOgImage}
       robots={headerRobots}
       publishedTime={headerPublishedTime}
     />
     <StructuredData data={[websiteJsonLd(siteInfo), organizationJsonLd(siteInfo)]} />
     <slot name="head" />
   </head>
-  <body>
-    <a href="#main-content" class="skip-link">{skipLinkLabel}</a>
+  <body data-label-scrollable={label("scrollableRegion")}>
+    <a href="#main-content" class="skip-link">{label("skipLink", skipLinkLabel)}</a>
     <slot />
     <Analytics
       enable={config.env.IS_PRODUCTION || false}
@@ -72,7 +77,8 @@ const siteInfo = {
         needsFocus.forEach((el) => {
           el.setAttribute("tabindex", "0");
           el.setAttribute("role", "region");
-          if (!el.hasAttribute("aria-label")) el.setAttribute("aria-label", "Scrollable content");
+          const name = document.body.dataset.labelScrollable;
+          if (name && !el.hasAttribute("aria-label")) el.setAttribute("aria-label", name);
         });
       }
       // One frame later: the geometry these reads need is only final once the page has been

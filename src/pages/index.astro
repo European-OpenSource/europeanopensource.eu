@@ -113,7 +113,7 @@ const submissionSteps = [
       </div>
     </div>
 
-    <Button href="/form" text="Submit Project" variant="secondary" class="mt-xl" effects={false} />
+    <Button href="/form" text="Submit Project" variant="secondary" class="mt-xl" />
   </Section>
   <Section title="Why Join European OpenSource?" centered={true}>
     <div class="benefits-grid">
@@ -151,12 +151,12 @@ const submissionSteps = [
       </div>
     </div>
 
-    <Button href="/form" text="Submit Project" variant="secondary" class="mt-xl" effects={false} />
+    <Button href="/form" text="Submit Project" variant="secondary" class="mt-xl" />
   </Section>
 
   <!-- Submission Flow -->
   <SectionFlow title="How to submit" steps={submissionSteps}>
-    <Button href="/form" text="Submit Project" variant="secondary" class="mt-xl" effects={false} />
+    <Button href="/form" text="Submit Project" variant="secondary" class="mt-xl" />
   </SectionFlow>
 
   <!-- Eligibility Criteria -->
@@ -205,7 +205,7 @@ const submissionSteps = [
       </div>
     </div>
 
-    <Button href="/form" text="Submit Project" variant="secondary" class="mt-xl" effects={false} />
+    <Button href="/form" text="Submit Project" variant="secondary" class="mt-xl" />
   </Section>
 </BaseLayout>
 
@@ -228,7 +228,7 @@ const submissionSteps = [
     flex-direction: column;
     gap: var(--space-lg);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
-    transition: var(--transition-smooth);
+    transition: var(--transition-normal);
   }
 
   .mv-title {
@@ -428,7 +428,7 @@ const submissionSteps = [
     border-radius: var(--radius-xl);
     border: 2px solid var(--gray-medium);
     padding: var(--space-2xl);
-    transition: var(--transition-smooth);
+    transition: var(--transition-normal);
     width: 100%;
     box-sizing: border-box;
   }
@@ -531,7 +531,7 @@ const submissionSteps = [
     border: 1px solid var(--gray-medium);
     padding: var(--space-2xl);
     text-align: center;
-    transition: var(--transition-smooth);
+    transition: var(--transition-normal);
     position: relative;
     overflow: hidden;
   }
@@ -545,12 +545,12 @@ const submissionSteps = [
     height: 4px;
     background: linear-gradient(90deg, var(--primary), var(--secondary));
     transform: scaleX(0);
-    transition: var(--transition-smooth);
+    transition: var(--transition-normal);
   }
 
   .benefit-card:hover {
     transform: translateY(-8px);
-    box-shadow: var(--box-shadow-hover);
+    box-shadow: var(--shadow-lg);
     border-color: var(--primary-light);
   }
 
@@ -577,7 +577,7 @@ const submissionSteps = [
     justify-content: center;
     color: var(--white);
     font-size: 2rem;
-    transition: var(--transition-smooth);
+    transition: var(--transition-normal);
     position: relative;
     overflow: hidden;
   }
@@ -592,7 +592,7 @@ const submissionSteps = [
     background: rgba(255, 255, 255, 0.2);
     border-radius: 50%;
     transform: translate(-50%, -50%);
-    transition: var(--transition-smooth);
+    transition: var(--transition-normal);
   }
 
   .benefit-card:hover .benefit-icon {
@@ -725,7 +725,7 @@ const submissionSteps = [
     }
 
     .criteria-compact-grid {
-      display: flex !important;
+      display: flex;
       flex-direction: column;
       gap: var(--space-xl);
       margin-bottom: var(--space-2xl);

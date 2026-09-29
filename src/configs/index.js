@@ -9,19 +9,16 @@ import NavbarConfig from "./navbar.json";
  */
 export default {
   // Default configuration. Don't change or remove this.
-  // app.json is schema-validated (additionalProperties: false), so project-specific
-  // fields live here, merged onto app.website, instead of in app.json.
-  app: {
-    ...AppConfig,
-    website: {
-      ...AppConfig.website,
-      github_awesome_project_url:
-        "https://github.com/European-OpenSource/awesome-european-opensource",
-      github_website_project_url: "https://github.com/European-OpenSource/europeanopensource.eu",
-    },
-  },
+  app: AppConfig,
   footer: FooterConfig,
   navbar: NavbarConfig,
+  // Project-specific fields outside the schema-validated `app`/`navbar`/`footer` keys
+  // (app.json disallows unknown properties).
+  project: {
+    github_awesome_project_url:
+      "https://github.com/European-OpenSource/awesome-european-opensource",
+    github_website_project_url: "https://github.com/European-OpenSource/europeanopensource.eu",
+  },
   teamMembers: [
     {
       name: "Fabrizio Cafolla",

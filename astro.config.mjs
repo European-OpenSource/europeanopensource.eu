@@ -6,34 +6,15 @@ import { defineWalleConfig } from "./src/@walle/config";
 export default defineWalleConfig({
   pwa: {
     workbox: {
-      runtimeCaching: [
-        // Walle's NetworkFirst rule plus the offline page as fallback. Not `navigateFallback`:
-        // its route is registered first and would serve the offline page even when online.
-        {
-          urlPattern: ({ request }) => request.mode === "navigate",
-          handler: "NetworkFirst",
-          options: {
-            cacheName: "html-pages",
-            networkTimeoutSeconds: 3,
-            plugins: [
-              {
-                // Precached as `/offline?__WB_REVISION__=...`, hence ignoreSearch.
-                handlerDidError: async () =>
-                  (await caches.match("/offline", { ignoreSearch: true })) || Response.error(),
-              },
-            ],
-          },
-        },
-      ],
-      // Replaces walle's default glob, so it restates `_astro/**`.
+      // Merged onto walle's own globPatterns (which already cover the hashed build output
+      // and self-hosted @font-face fonts through the Astro Fonts API). These three are
+      // outside that: raw brand fonts and images served from public/, needed offline by
+      // BaseLayout's header on the /offline fallback page.
       globPatterns: [
-        "_astro/**/*.{js,css}",
-        "offline/index.html",
         "img/logo/light/logo-standard-version.svg",
         "img/favicon/favicon.svg",
         "fonts/*.woff2",
       ],
-      globIgnores: ["_astro/CartMount*"],
     },
   },
   vite: {

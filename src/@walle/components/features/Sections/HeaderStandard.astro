@@ -1,7 +1,11 @@
 ---
 import { Image } from "astro:assets";
+import type { BaseProps, VariantProps, ModifierProps } from "../../shared/types";
+import { splitProps } from "../../shared/attrs";
+import SectionWrapper from "./SectionWrapper.astro";
 
-export interface Props {
+export interface Props
+  extends BaseProps<"section">, VariantProps, Pick<ModifierProps, "filled" | "muted"> {
   /** Main page title (h1) */
   title: string;
   /** Subtitle or page description */
@@ -13,36 +17,55 @@ export interface Props {
   };
   /** Position the image to the right of the text @default false */
   imageRight?: boolean;
-  /** Visual variant @default "primary" */
-  variant?: "primary" | "secondary" | "white";
-  /** Center the content @default true */
+  /** Center the content (ignored when an image is present) @default true */
   centered?: boolean;
 }
 
+const OWN_KEYS = [
+  "title",
+  "subtitle",
+  "image",
+  "imageRight",
+  "variant",
+  "filled",
+  "muted",
+  "centered",
+] as const;
+
+const { own, rest } = splitProps(Astro.props, OWN_KEYS);
 const {
   title,
   subtitle = "",
   image = null,
   imageRight = false,
-  variant = "primary",
+  variant,
+  filled = false,
+  muted = false,
   centered = true,
-} = Astro.props;
+} = own;
+
+const isCentered = centered && !image;
+const hasSubtitle = Astro.slots.has("subtitle") || Boolean(subtitle);
 ---
 
-<header
-  class:list={[
-    "header-section",
-    `header-${variant}`,
-    { "is-centered": centered && !image, "has-image": !!image, "image-right": imageRight },
-  ]}
->
-  <div class="header-inner">
-    <div class="header-text">
-      <h1 class="header-title">{title}</h1>
-      {subtitle && <p class="header-subtitle">{subtitle}</p>}
+<SectionWrapper centered={isCentered} variant={variant} filled={filled} muted={muted} {...rest}>
+  <div
+    class:list={[
+      "header-grid",
+      { "has-image": !!image, "image-right": imageRight, "is-centered": isCentered },
+    ]}
+  >
+    <div class="header-extra">
+      <h1 class="header-title">{Astro.slots.has("title") ? <slot name="title" /> : title}</h1>
+      {
+        hasSubtitle && (
+          <p class="header-subtitle">
+            {Astro.slots.has("subtitle") ? <slot name="subtitle" /> : subtitle}
+          </p>
+        )
+      }
       <slot />
     </div>
-
     {
       image && (
         <div class="header-media">
@@ -58,100 +81,83 @@ const {
       )
     }
   </div>
-</header>
+</SectionWrapper>
 
 <style>
-  .header-section {
-    padding: clamp(2.5rem, 6vw, 4rem) var(--space-xl);
-  }
-
-  .header-primary {
-    background-color: var(--primary);
-    color: var(--white);
-  }
-
-  .header-secondary {
-    background-color: var(--surface-alt);
-    color: var(--text);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .header-white {
-    background-color: transparent;
-    color: var(--text);
-  }
-
-  .header-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: clamp(2rem, 4vw, 3rem);
-    align-items: center;
-  }
-
-  .is-centered .header-inner {
-    text-align: center;
-  }
-
-  .is-centered .header-subtitle {
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .has-image .header-inner {
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
-  }
-
-  .image-right .header-text {
-    order: 1;
-  }
-  .image-right .header-media {
-    order: 2;
-  }
-
-  .header-title {
-    font-size: clamp(1.9rem, 3.5vw, 2.6rem);
-    line-height: 1.12;
-    letter-spacing: -0.02em;
-    margin: 0 0 var(--space-md);
-    color: inherit;
-  }
-
-  .header-subtitle {
-    font-size: 1.1rem;
-    line-height: 1.55;
-    max-width: 42rem;
-    margin: 0;
-    color: inherit;
-    opacity: 0.9;
-  }
-
-  .header-media {
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    box-shadow: var(--box-shadow);
-  }
-
-  .header-image {
-    width: 100%;
-    height: auto;
-    display: block;
-    object-fit: cover;
-  }
-
-  @media (max-width: 768px) {
-    .has-image .header-inner {
+  @layer walle.components {
+    .header-grid {
+      display: grid;
       grid-template-columns: 1fr;
+      gap: clamp(2rem, 4vw, 3rem);
+      align-items: center;
     }
 
-    .image-right .header-text,
-    .image-right .header-media {
-      order: unset;
+    .header-grid.has-image {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    }
+
+    /* Default (imageRight false): the image sits before the text in visual order, though
+       the markup always renders text (.header-extra) then image (.header-media) so the
+       text reads first for assistive tech regardless of imageRight. */
+    .header-grid.has-image .header-media {
+      order: -1;
+    }
+
+    .header-grid.has-image.image-right .header-media {
+      order: 1;
+    }
+
+    .header-title {
+      font-size: clamp(1.9rem, 3.5vw, 2.6rem);
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+      margin: 0 0 var(--space-md);
+      color: inherit;
+    }
+
+    .header-subtitle {
+      font-size: 1.1rem;
+      line-height: 1.55;
+      max-width: 42rem;
+      margin: 0;
+      color: inherit;
+      opacity: 0.9;
+    }
+
+    /* The subtitle's max-width would otherwise leave its box on the left of a centered header. */
+    .is-centered .header-subtitle {
+      margin-inline: auto;
     }
 
     .header-media {
-      order: -1;
+      /* Public properties */
+      --header-standard-image-radius: var(--radius-lg);
+
+      border-radius: var(--header-standard-image-radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+
+    .header-image {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+    }
+
+    @media (max-width: 768px) {
+      .header-grid.has-image {
+        grid-template-columns: 1fr;
+      }
+
+      .header-grid.image-right .header-extra,
+      .header-grid.image-right .header-media {
+        order: unset;
+      }
+
+      .header-media {
+        order: -1;
+      }
     }
   }
 </style>

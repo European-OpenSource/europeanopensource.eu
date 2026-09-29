@@ -2,44 +2,66 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://walle.dev/schemas/footer.schema.json",
   "title": "Walle footer config (src/configs/footer.json)",
-  "version": "2.0.0",
   "type": "object",
-  "additionalProperties": false,
-  "required": ["logo", "items"],
   "properties": {
-    "$schema": { "type": "string" },
-    "logo": { "$ref": "#/definitions/logo" },
-    "items": {
-      "type": "array",
-      "items": { "$ref": "#/definitions/navigationLink" }
-    }
-  },
-  "definitions": {
+    "$schema": {
+      "type": "string"
+    },
     "logo": {
       "type": "object",
-      "additionalProperties": false,
-      "required": ["url"],
       "properties": {
-        "src": { "type": "string" },
-        "title": { "type": "string" },
-        "url": { "type": "string" },
-        "width": { "type": "number" },
-        "height": { "type": "number" },
-        "alt": { "type": "string" },
-        "cssClasses": { "type": "string" },
-        "license": { "type": "string" }
-      }
+        "src": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        },
+        "alt": {
+          "type": "string"
+        },
+        "cssClasses": {
+          "type": "string"
+        },
+        "license": {
+          "type": "string"
+        }
+      },
+      "required": ["url"],
+      "additionalProperties": false
     },
-    "navigationLink": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["url"],
-      "properties": {
-        "name": { "type": "string" },
-        "url": { "type": "string" },
-        "icon": { "type": "string" },
-        "target": { "enum": ["_blank", "_self"] }
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "target": {
+            "type": "string",
+            "enum": ["_blank", "_self"]
+          }
+        },
+        "required": ["url"],
+        "additionalProperties": false
       }
     }
-  }
+  },
+  "required": ["logo", "items"],
+  "additionalProperties": false
 }
