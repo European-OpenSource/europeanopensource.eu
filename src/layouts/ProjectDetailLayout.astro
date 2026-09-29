@@ -29,6 +29,7 @@ const breadcrumbItems = [
         text={`${data.category.toLocaleUpperCase()}`}
         variant="primary"
         size="large"
+        class="project-detail-badges__category"
         href={`/projects/category/${toSlug(data.category)}`}
       />
       {
@@ -157,6 +158,12 @@ const breadcrumbItems = [
     flex-wrap: wrap;
     gap: 0.7rem;
     align-items: center;
+    justify-content: center;
+  }
+
+  /* Category badge on the filled primary header. */
+  .project-detail-badges__category {
+    --badge-bg: var(--primary-light);
   }
 
   .project-detail-container {
