@@ -24,8 +24,11 @@ import { label as t } from "@walle/utils";
  * its (comma-separated) `data-<key>` values is selected, and the search text
  * matches `data-search` (falling back to the item's text content).
  *
- * Progressive enhancement: the filter UI is hidden until the script
- * initializes; with JavaScript disabled every item stays visible.
+ * Progressive enhancement: a `<noscript>` rule hides the filter bar when
+ * JavaScript is unavailable, since none of its controls do anything without
+ * the script; every item stays visible in that case. With JavaScript
+ * available the bar renders visible from the first paint, so it never
+ * shifts layout once the script attaches its listeners.
  */
 
 export interface FilterFacet {
@@ -104,7 +107,6 @@ const l = {
   data-item-selector={itemSelector}
   data-label-status={l.status}
   data-label-selected={l.facetSelected}
-  hidden
   {...rest}
 >
   <div class="filters__row">
@@ -178,6 +180,16 @@ const l = {
   </div>
   <div class="filters__status" role="status" aria-live="polite" aria-atomic="true"></div>
 </div>
+
+<noscript>
+  <style>
+    @layer walle.components {
+      [data-component="CollectionFilters"] {
+        display: none;
+      }
+    }
+  </style>
+</noscript>
 
 <style>
   @layer walle.components {
@@ -495,8 +507,6 @@ const l = {
           apply();
         });
 
-        // Progressive enhancement: reveal the UI only once functional
-        root.hidden = false;
         apply();
       });
   }

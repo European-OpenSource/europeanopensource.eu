@@ -40,7 +40,10 @@ declare module "virtual:walle-features" {
  * only relevant to Astro's own build-time `fonts` config, resolved in define-config.ts.
  */
 declare module "virtual:walle-fonts" {
-  export const fonts: Array<{ cssVariable: string; preload: boolean }>;
+  export const fonts: Array<{
+    cssVariable: string;
+    preload: boolean | Array<{ weight?: string | number; style?: string; subset?: string }>;
+  }>;
 }
 
 /** Palette and `typography.fonts` from theme.json, resolved at config time for OG rendering. */

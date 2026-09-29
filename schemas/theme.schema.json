@@ -73,7 +73,30 @@
                 }
               },
               "preload": {
-                "type": "boolean"
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "weight": {
+                          "type": ["string", "number"]
+                        },
+                        "style": {
+                          "type": "string",
+                          "enum": ["normal", "italic", "oblique"]
+                        },
+                        "subset": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  }
+                ]
               },
               "fallback": {
                 "type": "string",

@@ -243,7 +243,8 @@ Replace site code that walle now provides:
 | Your site has | Use |
 |---|---|
 | an offline page plus a workbox rule for it | `pwa.offline: true` (or a `./` path to your own page); remove the page, the rule and its `sitemapExclude` entry |
-| custom workbox `globIgnores` for cart chunks, or a glob for font files | remove them: walle ignores commerce chunks when commerce is not `shop` and precaches self-hosted fonts |
+| custom workbox `globIgnores` for cart chunks, `BlogTableOfContents`, or a glob for font files | remove them: walle ignores commerce chunks when commerce is not `shop`, ignores `BlogTableOfContents` by default, and precaches self-hosted fonts |
+| a preload filter set outside walle for a font with many weights or styles | `typography.fonts[].preload` also accepts an array of `{ weight, style, subset }` to preload only those |
 | an Open Graph image endpoint | `seo.ogImage`, with a custom template per collection if needed |
 | a local leaflet map component | `Map` |
 | a collection-based RSS endpoint | `seo.feeds` (keep your own if it filters entries, emits other formats, or reads a nested field: `fields` maps top-level entry fields only) |

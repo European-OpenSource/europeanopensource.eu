@@ -113,6 +113,8 @@
     --variant-bg: var(--primary);
     --variant-bg-hover: var(--primary-dark);
     --variant-fg: var(--primary-contrast);
+    /* --walle-outline-fg-* comes from generateThemeCss(); falls back to the dark shade. */
+    --variant-outline-fg: var(--walle-outline-fg-primary, var(--primary-dark));
   }
 
   [data-variant="secondary"] {
@@ -121,6 +123,7 @@
     --variant-bg: var(--secondary);
     --variant-bg-hover: var(--secondary-dark);
     --variant-fg: var(--secondary-contrast);
+    --variant-outline-fg: var(--walle-outline-fg-secondary, var(--secondary-dark));
   }
 
   [data-variant="alternative"] {
@@ -129,6 +132,7 @@
     --variant-bg: var(--alternative);
     --variant-bg-hover: var(--alternative-dark);
     --variant-fg: var(--alternative-contrast);
+    --variant-outline-fg: var(--walle-outline-fg-alternative, var(--alternative-dark));
   }
 
   /* site is identical to primary until a consumer redefines it in @layer site. */
@@ -138,5 +142,6 @@
     --variant-bg: var(--primary);
     --variant-bg-hover: var(--primary-dark);
     --variant-fg: var(--primary-contrast);
+    --variant-outline-fg: var(--walle-outline-fg-primary, var(--primary-dark));
   }
 }

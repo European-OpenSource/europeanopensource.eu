@@ -175,8 +175,9 @@ const tagAttrs = isLink
     .button[data-outline] {
       --button-bg: transparent;
       --button-bg-hover: var(--variant-bg-hover);
-      --button-fg: var(--variant-color);
-      --button-border: var(--variant-color);
+      /* --variant-outline-fg: AA-safe text color on the page surface. */
+      --button-fg: var(--variant-outline-fg);
+      --button-border: var(--variant-outline-fg);
       --button-shadow: none;
     }
 

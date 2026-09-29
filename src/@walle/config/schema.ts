@@ -478,7 +478,23 @@ const fontEntrySchema = z
     // files are a real Astro feature this schema doesn't expose: add a `variants` array here
     // if a site needs it).
     src: z.array(z.string()).optional(),
-    preload: z.boolean().optional(),
+    // true preloads every weight/style/subset combination Astro generated for this family;
+    // false preloads none; an array preloads only the listed weight/style/subset
+    // combinations. Passed straight through to Astro's own <Font preload> filter.
+    preload: z
+      .union([
+        z.boolean(),
+        z.array(
+          z
+            .object({
+              weight: z.union([z.string(), z.number()]).optional(),
+              style: z.enum(["normal", "italic", "oblique"]).optional(),
+              subset: z.string().optional(),
+            })
+            .strict()
+        ),
+      ])
+      .optional(),
     // The generic family Astro falls back to while the real font loads (and permanently if
     // it fails). Astro only generates a metric-matched fallback @font-face (eliminating the
     // layout shift on swap) for a fixed set of generics it has system-font metrics for; the

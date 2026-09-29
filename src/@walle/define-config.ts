@@ -8,7 +8,7 @@ import sitemap from "@astrojs/sitemap";
 import { defineConfig, fontProviders } from "astro/config";
 import type { AstroIntegration, AstroUserConfig, HookParameters } from "astro";
 import icon from "astro-icon";
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -19,6 +19,7 @@ import navbarConfigJson from "../configs/navbar.json";
 import { appSchema, footerSchema, navbarSchema, parseConfig, themeSchema } from "./config/schema";
 import { resolveSitePath } from "./utils/site-path";
 import { stripBase, withBase } from "./utils/base-path";
+import { contrastRatio } from "./utils/contrast";
 
 export { withBase };
 
@@ -198,7 +199,25 @@ function readThemeJson(): Record<string, any> {
   }
 }
 
-function generateThemeCss(): string {
+/**
+ * Per variant, returns the dark shade or the contrast token, whichever has the higher
+ * contrast ratio against palette.background.
+ */
+export function resolveOutlineFgOverrides(palette: Record<string, unknown>): string[] {
+  const surface = typeof palette.background === "string" ? palette.background : "#fefefe";
+  const lines: string[] = [];
+  for (const variant of ["primary", "secondary", "alternative"] as const) {
+    const dark = palette[`${variant}-dark`];
+    const contrast = palette[`${variant}-contrast`];
+    if (typeof dark !== "string" || typeof contrast !== "string") continue;
+    const winner =
+      contrastRatio(dark, surface) >= contrastRatio(contrast, surface) ? dark : contrast;
+    lines.push(`  --walle-outline-fg-${variant}: ${winner};`);
+  }
+  return lines;
+}
+
+export function generateThemeCss(): string {
   const themeUrl = new URL("../configs/theme.json", import.meta.url);
   if (!existsSync(fileURLToPath(themeUrl))) return "";
 
@@ -227,6 +246,7 @@ function generateThemeCss(): string {
     if (typeof value === "string" && value.length > 0)
       lines.push(`  --walle-color-${name}: ${value};`);
   }
+  lines.push(...resolveOutlineFgOverrides(theme?.palette ?? {}));
 
   const typo = theme?.typography;
   if (typo?.fontFamilyBase) lines.push(`  --walle-font-body: ${typo.fontFamilyBase};`);
@@ -404,6 +424,9 @@ export function resolvePwaOptions(
       ? ["**/_astro/Cart*", "**/_astro/VariantPicker*", "**/_astro/ProductBuyCard*"]
       : [];
 
+  // Chunks not needed to render the offline shell, excluded from every site's precache.
+  const enhancementChunkGlobIgnores = ["**/_astro/BlogTableOfContents*"];
+
   const defaults = {
     registerType: "autoUpdate" as const,
     injectRegister: "script-defer" as const,
@@ -427,7 +450,7 @@ export function resolvePwaOptions(
       // Self-hosted fonts are build output like any other asset, so
       // they precache alongside the JS/CSS they're never worth loading a page without.
       globPatterns: ["_astro/**/*.{js,css}", "_astro/fonts/**/*.woff2"],
-      globIgnores: commerceChunkGlobIgnores,
+      globIgnores: [...commerceChunkGlobIgnores, ...enhancementChunkGlobIgnores],
       // Explicitly off. vite-plugin-pwa defaults this to "/", which emits a NavigationRoute
       // bound to a URL that is not in the precache above: it throws `non-precached-url` at
       // module evaluation, before any runtimeCaching rule is registered, and the worker
@@ -500,7 +523,54 @@ function wallePwaIntegration(
   overrides: Record<string, any> = {}
 ) {
   const options = resolvePwaOptions(app, overrides);
-  return options ? [AstroPWA(options as Parameters<typeof AstroPWA>[0])] : [];
+  return options
+    ? [AstroPWA(options as Parameters<typeof AstroPWA>[0]), walleDedupePrecacheIntegration()]
+    : [];
+}
+
+/**
+ * Removes a duplicate `{url, revision}` precache entry for the same URL from a built `sw.js`
+ * source string, keeping the first occurrence; returns the input unchanged when there is
+ * nothing to remove or the file has no `precacheAndRoute([...])` call.
+ */
+export function dedupePrecacheManifest(source: string): string {
+  // Precache entries never contain nested arrays, so the first "]" after
+  // "precacheAndRoute([" always closes this array.
+  const arrayMatch = source.match(/precacheAndRoute\((\[.*?\])/);
+  if (!arrayMatch) return source;
+  const [, arrayText] = arrayMatch;
+  const entryPattern = /\{url:"((?:[^"\\]|\\.)*)",revision:(?:null|"[0-9a-fA-F]*")\}/g;
+  const seen = new Set<string>();
+  const dedupedArray = arrayText
+    .replace(entryPattern, (entry, url) => {
+      if (seen.has(url)) return "";
+      seen.add(url);
+      return entry;
+    })
+    .replace(/,+/g, ",")
+    .replace(/\[,/g, "[")
+    .replace(/,\]/g, "]");
+  if (dedupedArray === arrayText) return source;
+  return source.replace(arrayText, dedupedArray);
+}
+
+/**
+ * Rewrites the built `sw.js` with `dedupePrecacheManifest`. `@vite-pwa/astro` adds one
+ * `manifest.webmanifest` entry per Vite build environment. Registered after AstroPWA.
+ */
+function walleDedupePrecacheIntegration(): AstroIntegration {
+  return {
+    name: "walle-pwa-dedupe-precache",
+    hooks: {
+      "astro:build:done": ({ dir }: HookParameters<"astro:build:done">) => {
+        const swPath = fileURLToPath(new URL("sw.js", dir));
+        if (!existsSync(swPath)) return;
+        const original = readFileSync(swPath, "utf8");
+        const deduped = dedupePrecacheManifest(original);
+        if (deduped !== original) writeFileSync(swPath, deduped);
+      },
+    },
+  };
 }
 
 /**
@@ -596,7 +666,7 @@ function wallePwaHeadPlugin(head: Record<string, unknown>) {
 
 /**
  * Exposes the resolved font list to components at runtime: Head.astro needs to know
- * every configured font's `cssVariable` and `preload` flag to render one `<Font>` per entry,
+ * every configured font's `cssVariable` and `preload` filter to render one `<Font>` per entry,
  * but it can't read theme.json itself (only ever parsed at build time, here). Same
  * resolveId/load pattern as `wallePwaHeadPlugin`.
  */
@@ -605,7 +675,7 @@ function walleFontsPlugin(entries: WalleFontEntry[] | undefined) {
   const resolvedId = "\0" + virtualId;
   const fonts = (entries ?? []).map((entry) => ({
     cssVariable: `--walle-font-${entry.role}`,
-    preload: entry.preload !== false,
+    preload: entry.preload ?? true,
   }));
   return {
     name: "walle-fonts",
@@ -703,7 +773,7 @@ type WalleFontEntry = {
   weights?: (string | number)[];
   styles?: ("normal" | "italic" | "oblique")[];
   src?: string[];
-  preload?: boolean;
+  preload?: boolean | Array<{ weight?: string | number; style?: string; subset?: string }>;
   fallback?: "serif" | "sans-serif" | "monospace" | "system-ui";
   display?: "auto" | "block" | "fallback" | "optional" | "swap";
 };

@@ -162,8 +162,11 @@ const hasSubtitle = Boolean(subtitleHtml) || Boolean(subtitle);
            so base rules on descendant content (p, code, links) resolve correctly too. */
     .section-wrapper[data-muted] {
       --wrapper-bg: var(--surface-alt);
-      /* Only code's own background moves: it defaults to the same --surface-alt as the
-         section itself and would otherwise blend into it. */
+    }
+
+    /* Set on the inner wrapper: .section-wrapper[data-muted] reads --surface-alt into
+       --wrapper-bg. */
+    .section-wrapper[data-muted] .section-wrapper__inner {
       --surface-alt: var(--surface);
     }
 

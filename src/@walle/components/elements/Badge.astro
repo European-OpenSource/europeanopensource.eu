@@ -161,8 +161,9 @@ const hrefAttrs = href ? { href, target, rel: linkAttrs({ target }).rel } : {};
            using its own tokens rather than the palette. */
     .badge[data-outline] {
       --badge-bg: transparent;
-      --badge-fg: var(--variant-color);
-      --badge-border: var(--variant-color);
+      /* --variant-outline-fg: AA-safe text color on the page surface. */
+      --badge-fg: var(--variant-outline-fg);
+      --badge-border: var(--variant-outline-fg);
     }
 
     .badge[data-muted] {
