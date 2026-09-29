@@ -11,11 +11,12 @@
     "baseUrl": "https://europeanopensource.eu/",
     "basePath": "/",
     "trailingSlash": "never",
-    "sitemapExclude": ["/form", "/newsletter", "/share", "/offline"],
+    "sitemapExclude": ["/form", "/newsletter", "/share"],
     "analyticsScriptContent": "<script>(function(v,i,s,a,t){v[t]=v[t]||function(){(v[t].v=v[t].v||[]).push(arguments)};if(!v._visaSettings){v._visaSettings={}}v._visaSettings[a]={v:'1.0',s:a,a:'1',t:t};var b=i.getElementsByTagName('body')[0];var p=i.createElement('script');p.defer=1;p.async=1;p.src=s+'?s='+a;b.appendChild(p)})(window,document,'//app-worker.visitor-analytics.io/main.js','35aba3d9-add0-11f1-9c4b-960004340fd3','va')</script>"
   },
   "pwa": {
     "enabled": true,
+    "offline": "./src/pwa/Offline.astro",
     "themeColor": "#fefefe",
     "backgroundColor": "#fefefe",
     "icons": [
@@ -37,5 +38,14 @@
       }
     ],
     "appleTouchIcon": "/img/favicon/apple-touch-icon.png"
+  },
+  "seo": {
+    "alternates": [
+      {
+        "href": "/rss.xml",
+        "type": "application/rss+xml",
+        "title": "European OpenSource projects"
+      }
+    ]
   }
 }
