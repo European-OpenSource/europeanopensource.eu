@@ -70,7 +70,7 @@ const breadcrumbItems = [
                 <div class="owner-identity">
                   <span class="owner-name">{data.owner.name}</span>
                   <div class="owner-chips">
-                    <Badge text={data.owner.type.toUpperCase()} size="small" />
+                    <Badge text={data.owner.type.toUpperCase()} size="small" muted />
                     {data.owner.is_a_startup && (
                       <span class="startup-chip">
                         <Icon name="fa:rocket" />

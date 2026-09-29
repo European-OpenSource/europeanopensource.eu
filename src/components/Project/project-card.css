@@ -37,18 +37,6 @@
   gap: 0.5rem;
 }
 
-.project-card__category {
-  display: flex;
-  align-items: center;
-  gap: 0.3em;
-  background: var(--primary-light);
-  color: var(--white);
-  border-radius: 0.7em;
-  padding: 0.2em 0.8em;
-  font-size: 0.95rem;
-  font-weight: 500;
-}
-
 .project-card__platform {
   display: flex;
   align-items: center;
@@ -113,17 +101,6 @@
   flex-wrap: wrap;
   gap: 0.4em;
   margin-top: 0.2em;
-}
-
-.project-card__tag {
-  display: flex;
-  align-items: center;
-  gap: 0.2em;
-  background: var(--primary-light);
-  color: var(--primary-dark);
-  border-radius: 0.6em;
-  padding: 0.13em 0.7em;
-  font-size: 0.92rem;
 }
 
 .project-card__icon {

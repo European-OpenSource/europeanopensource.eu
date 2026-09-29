@@ -37,8 +37,14 @@ const data = Astro.props;
       />
     </div>
     <div>
-      <Badge text={data.source.language} icon="fa:code" iconPosition="start" size="small" />
-      <Badge text={data.source.license} icon="fa:balance-scale" iconPosition="start" size="small" />
+      <Badge text={data.source.language} icon="fa:code" iconPosition="start" size="small" muted />
+      <Badge
+        text={data.source.license}
+        icon="fa:balance-scale"
+        iconPosition="start"
+        size="small"
+        muted
+      />
     </div>
   </header>
 

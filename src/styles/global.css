@@ -14,6 +14,7 @@
   --alternative: #ffcc00;
   --alternative-light: #ffd700;
   --alternative-dark: #ffad00;
+  --alternative-contrast: var(--black);
   --white: #fefefe;
   --black: #161616;
   --gray: #ebebeb;
