@@ -23,7 +23,7 @@ const breadcrumbItems = [
 ---
 
 <BaseLayout headerTitle={data.name} headerDescription={data.description} headerOgImage={ogImageUrl}>
-  <SectionHeaderStandard title={data.name} effect={true}>
+  <SectionHeaderStandard title={data.name} variant="primary" filled={true}>
     <div class="project-detail-badges">
       <Badge
         text={`${data.category.toLocaleUpperCase()}`}
@@ -105,7 +105,7 @@ const breadcrumbItems = [
             <ul class="resources-list">
               <li>
                 <a
-                  href={`${config.app.website.github_awesome_project_url}/blob/main/awesome/projects/${data.metadata.filename}`}
+                  href={`${config.project.github_awesome_project_url}/blob/main/awesome/projects/${data.metadata.filename}`}
                   class="resource-link"
                   target="_blank"
                 >

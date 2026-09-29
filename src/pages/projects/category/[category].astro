@@ -39,7 +39,8 @@ const { category, projects } = Astro.props;
   <SectionHeaderStandard
     title={`${category} projects`}
     subtitle={`${projects.length} European open-source project${projects.length !== 1 ? "s" : ""} in the ${category} category.`}
-    effect={true}
+    variant="primary"
+    filled={true}
   />
 
   <section class="category-projects-section">

@@ -40,7 +40,8 @@ const { country, projects } = Astro.props;
   <SectionHeaderStandard
     title={`Projects from ${country}`}
     subtitle={`${projects.length} open-source project${projects.length !== 1 ? "s" : ""} from ${country} in the European catalogue.`}
-    effect={true}
+    variant="primary"
+    filled={true}
   />
 
   <section class="country-projects-section">
