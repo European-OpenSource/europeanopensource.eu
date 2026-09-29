@@ -2,6 +2,19 @@
   --border-radius: 8px;
 }
 
+.filters-toggle-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* The mobile toggle/close buttons open and close the fullscreen filters overlay that only
+   exists below 600px; hidden above that width where the form renders inline instead. */
+#filters-toggle,
+#filters-close {
+  display: none;
+}
+
 .filters-section {
   padding: 1.5rem 0;
   background-color: var(--white);
@@ -297,16 +310,6 @@
     justify-content: flex-start;
     padding-bottom: 0;
   }
-  /* walle's .visible-xs (used on #filters-toggle/#filters-close) switches on
-     at this same 768px breakpoint, but the toggle-able fullscreen overlay
-     below only activates at 600px. Between 601-768px that left two buttons
-     visible that did nothing: the form is already shown inline here, not
-     hidden behind a toggle. Hide them for that range only. */
-  #filters-toggle,
-  #filters-close {
-    display: none !important;
-  }
-
   /* Responsive pagination for tablets */
   .pagination {
     gap: 0.5rem;
@@ -424,12 +427,11 @@
   .filters-section {
     padding: 0.75rem 0;
   }
-  /* Re-show the toggle/close buttons hidden at 601-768px above — down here
-     the fullscreen overlay pattern is active and they're the only way in/out
-     of it. */
+  /* The fullscreen overlay pattern is active down here, and these two buttons are the
+     only way in/out of it. */
   #filters-toggle,
   #filters-close {
-    display: inline-flex !important;
+    display: inline-flex;
   }
   /* .filters-section drops to z-index: 99 at the 768px breakpoint above (to
      sit below the sticky navbar while scrolling normally). That trapped the
@@ -472,7 +474,7 @@
     padding-bottom: 6rem;
   }
   .filters-form.open::before {
-    content: "Filtri";
+    content: "Filters";
     display: block;
     font-size: 1.2rem;
     font-weight: 600;
