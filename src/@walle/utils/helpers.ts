@@ -1,3 +1,5 @@
+import { label, locale as siteLocale } from "./i18n";
+
 export function getPlatformIcon(platform: string): string {
   const platform_lc = platform.toLowerCase();
   if (platform_lc.includes("github")) return "fa:github";
@@ -19,10 +21,10 @@ export function calculateTimeAgo(dateString: string): string | null {
   return `${Math.floor(diffDays / 365)} years ago`;
 }
 
-export function formatDate(dateString: string): string | null {
+export function formatDate(dateString: string, locale: string = siteLocale()): string | null {
   if (!dateString) return null;
   const date = new Date(dateString);
-  return new Intl.DateTimeFormat("en-GB", {
+  return new Intl.DateTimeFormat(locale, {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -58,8 +60,13 @@ export function calculateReadingTime(content: string): {
     words / wordsPerMinute + (images * imageReadingTime) / 60 + (codeBlocks * codeReadingTime) / 60
   );
 
+  const duration = new Intl.NumberFormat(siteLocale(), {
+    style: "unit",
+    unit: "minute",
+    unitDisplay: "long",
+  }).format(totalMinutes);
   return {
-    text: `${totalMinutes} minute${totalMinutes !== 1 ? "s" : ""} read`,
+    text: label("readingTime").replace("{duration}", duration),
     minutes: totalMinutes,
     words: words,
   };
@@ -107,7 +114,7 @@ export function normalizePath(path: string): string {
  *
  * The `cut > 0` guard is not defensive noise: `lastIndexOf(" ", n)` returns -1 for a string with
  * no space in its first n characters (a long unbroken token, a URL, an agglutinated title), and
- * `slice(0, -1)` would then drop exactly one character instead of truncating — producing an
+ * `slice(0, -1)` would then drop exactly one character instead of truncating: producing an
  * almost-full-length string that silently defeats the whole function. In that case there is no
  * word boundary to respect, so the cut falls back to a hard one at the limit.
  */

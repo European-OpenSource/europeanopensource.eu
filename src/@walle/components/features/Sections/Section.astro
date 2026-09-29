@@ -1,7 +1,11 @@
 ---
 import { Image } from "astro:assets";
+import type { BaseProps, VariantProps, ModifierProps } from "../../shared/types";
+import { splitProps } from "../../shared/attrs";
+import SectionWrapper from "./SectionWrapper.astro";
 
-interface Props {
+export interface Props
+  extends BaseProps<"section">, VariantProps, Pick<ModifierProps, "filled" | "muted"> {
   title: string;
   image?: {
     src: ImageMetadata | string;
@@ -9,25 +13,35 @@ interface Props {
   };
   reversed?: boolean;
   centered?: boolean;
-  variant?: "primary" | "gray" | null;
 }
 
-const { title, image = null, centered = false, variant = null, reversed = false } = Astro.props;
+const OWN_KEYS = ["title", "image", "reversed", "centered", "variant", "filled", "muted"] as const;
+
+const { own, rest } = splitProps(Astro.props, OWN_KEYS);
+const {
+  title,
+  image = null,
+  centered = false,
+  variant,
+  filled = false,
+  muted = false,
+  reversed = false,
+} = own;
 ---
 
-<section
-  class={`section ${variant ? `section-content-${variant}` : ""} ${reversed ? "reversed" : ""} ${centered ? "text-centered" : ""}`}
->
-  <div class={`section-content ${image ? `section-content-image` : ""}`}>
+<SectionWrapper centered={centered} variant={variant} filled={filled} muted={muted} {...rest}>
+  <div class:list={["section-content", { "section-content-image": image, reversed }]}>
     <div class="text-container">
-      <h2 class={`section-title ${variant ? `section-title-${variant}` : ""}`}>{title}</h2>
+      <h2 class="section-title">{Astro.slots.has("title") ? <slot name="title" /> : title}</h2>
       <slot />
     </div>
     {
       image && (
         <div class="image-container">
+          {/* image.src is `string | ImageMetadata`; Astro's <Image> only overloads on one or
+               the other, so a union value never resolves to either branch on its own. */}
           <Image
-            src={image.src}
+            src={image.src as string}
             alt={image.alt}
             width={500}
             height={400}
@@ -38,114 +52,70 @@ const { title, image = null, centered = false, variant = null, reversed = false 
       )
     }
   </div>
-</section>
+</SectionWrapper>
 
 <style>
-  .section {
-    padding: var(--space-4xl) 0;
-  }
-
-  .text-centered {
-    text-align: center;
-  }
-
-  .section-content-primary {
-    background-color: var(--primary);
-    color: var(--white);
-  }
-
-  .section-content-gray {
-    background-color: var(--surface-alt);
-    color: var(--text);
-  }
-
-  .section-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 var(--space-xl);
-  }
-
-  .section-content-image {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-4xl);
-    align-items: center;
-  }
-
-  .reversed .section-content {
-    direction: rtl;
-  }
-
-  .text-container {
-    direction: ltr;
-  }
-
-  .section-title {
-    margin-bottom: var(--space-2xl);
-    color: var(--text);
-    font-size: clamp(2rem, 4vw, 2.75rem);
-    font-weight: 700;
-    line-height: 1.2;
-  }
-
-  .section-title-primary {
-    color: var(--white);
-  }
-
-  .section-title-gray {
-    color: var(--text);
-  }
-
-  .image-container {
-    direction: ltr;
-    border-radius: var(--radius-xl);
-    overflow: hidden;
-    box-shadow: var(--box-shadow);
-    background-color: var(--surface);
-    padding: var(--space-2xl);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: var(--transition-smooth);
-  }
-
-  .image-container:hover {
-    transform: translateY(-6px);
-    box-shadow: var(--box-shadow-hover);
-  }
-
-  .section-image {
-    max-width: 100%;
-    height: auto;
-    border-radius: var(--radius-md);
-  }
-
-  @media (max-width: 900px) {
-    .section {
-      padding: var(--space-2xl) 0;
-    }
-
-    .section-content {
-      padding: 0 var(--space-lg);
-    }
-
+  @layer walle.components {
     .section-content-image {
-      grid-template-columns: 1fr;
-      gap: var(--space-2xl);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4xl);
+      align-items: center;
+    }
+
+    .reversed {
+      direction: rtl;
+    }
+
+    .text-container {
+      direction: ltr;
+    }
+
+    .section-title {
+      margin: 0 0 var(--space-2xl);
+      color: var(--wrapper-title-color);
+      font-size: clamp(2rem, 4vw, 2.75rem);
+      font-weight: 700;
+      line-height: 1.2;
     }
 
     .image-container {
-      order: -1;
-    }
-
-    .reversed .section-content {
       direction: ltr;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      background-color: var(--surface);
+      padding: var(--space-2xl);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: var(--transition-normal);
     }
-  }
 
-  @media (max-width: 640px) {
-    .section-content {
-      padding: 0 var(--space-md);
+    .image-container:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .section-image {
+      max-width: 100%;
+      height: auto;
+      border-radius: var(--radius-md);
+    }
+
+    @media (max-width: 900px) {
+      .section-content-image {
+        grid-template-columns: 1fr;
+        gap: var(--space-2xl);
+      }
+
+      .image-container {
+        order: -1;
+      }
+
+      .reversed {
+        direction: ltr;
+      }
     }
   }
 </style>

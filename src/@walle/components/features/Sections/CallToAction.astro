@@ -1,0 +1,140 @@
+---
+import type { BaseProps, ModifierProps, VariantProps } from "../../shared/types";
+import { splitProps } from "../../shared/attrs";
+import Button from "../../elements/Button.astro";
+import SectionWrapper from "./SectionWrapper.astro";
+import type { HeroAction } from "./Hero.astro";
+
+export interface Props
+  extends BaseProps<"section">, VariantProps, Pick<ModifierProps, "filled" | "muted"> {
+  /** Boxed card or full-width band. @default "card" */
+  layout?: "card" | "banner";
+  /** Section title. String prop or `title` slot (slot wins). */
+  title?: string;
+  /** Optional subtitle below the title. String prop or `subtitle` slot (slot wins). */
+  subtitle?: string;
+  /** Action buttons. */
+  actions?: HeroAction[];
+  centered?: boolean;
+  id?: string;
+}
+
+const OWN_KEYS = [
+  "id",
+  "layout",
+  "title",
+  "subtitle",
+  "actions",
+  "centered",
+  "variant",
+  "filled",
+  "muted",
+  "class",
+] as const;
+
+const { own, rest } = splitProps(Astro.props, OWN_KEYS);
+const {
+  id,
+  layout = "card",
+  title,
+  subtitle,
+  actions = [],
+  centered = false,
+  variant,
+  filled = false,
+  muted = false,
+  class: className,
+} = own;
+
+const hasTitle = Astro.slots.has("title") || Boolean(title);
+const hasSubtitle = Astro.slots.has("subtitle") || Boolean(subtitle);
+
+const actionsInverse = filled === true;
+---
+
+<SectionWrapper
+  centered={centered}
+  variant={variant}
+  filled={filled}
+  muted={muted}
+  id={id}
+  class:list={[{ "cta-layout-card": layout === "card" }, className]}
+  {...rest}
+>
+  <div class:list={["cta-content", { "cta-card": layout === "card" }]}>
+    {
+      hasTitle && (
+        <h2 class="cta-title">{Astro.slots.has("title") ? <slot name="title" /> : title}</h2>
+      )
+    }
+    {
+      hasSubtitle && (
+        <p class="cta-subtitle">
+          {Astro.slots.has("subtitle") ? <slot name="subtitle" /> : subtitle}
+        </p>
+      )
+    }
+    {
+      actions.length > 0 && (
+        <div class="cta-actions">
+          {actions.map((action) => (
+            <Button
+              text={action.text}
+              href={action.href}
+              variant={action.variant}
+              inverse={action.inverse ?? actionsInverse}
+            />
+          ))}
+        </div>
+      )
+    }
+  </div>
+</SectionWrapper>
+
+<style>
+  @layer walle.components {
+    .cta-content {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Card layout paints the card's own box, not the section band behind it: the modifier's
+           background belongs to the card, so the text sits on the same color its foreground was
+           computed for. */
+    .section-wrapper.cta-layout-card {
+      background: transparent;
+    }
+
+    .cta-card {
+      background: var(--surface);
+      box-shadow: var(--shadow-md);
+      border-radius: var(--radius-xl);
+      padding: var(--space-2xl);
+    }
+
+    .section-wrapper[data-filled] .cta-card,
+    .section-wrapper[data-muted] .cta-card {
+      background: var(--wrapper-bg);
+    }
+
+    .cta-title {
+      margin: 0 0 var(--space-2xl);
+      color: var(--wrapper-title-color);
+      font-size: clamp(2rem, 4vw, 2.75rem);
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .cta-subtitle {
+      margin: 0 0 var(--space-2xl);
+      color: inherit;
+    }
+
+    .cta-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+      margin-top: var(--space-xl);
+    }
+  }
+</style>

@@ -1,0 +1,142 @@
+/* Repeated here for a page that bypasses Head.astro (see layers.ts): redundant otherwise. */
+@layer walle.base, walle.components, walle.utilities, site;
+
+@layer walle.base {
+  :root {
+    /* Palette: override via theme.json palette.* → --walle-color-*. Default: an editorial,
+       restrained system, desaturated navy, muted teal, warm gold. Deep enough that white text
+       clears AA on every brand surface (enforced by contrast.test.ts). */
+    --primary: var(--walle-color-primary, #243b6b);
+    --primary-light: var(--walle-color-primary-light, #324a80);
+    --primary-dark: var(--walle-color-primary-dark, #182848);
+    --primary-contrast: var(--walle-color-primary-contrast, #fefefe);
+    --secondary: var(--walle-color-secondary, #2f5d57);
+    --secondary-light: var(--walle-color-secondary-light, #3a726b);
+    --secondary-dark: var(--walle-color-secondary-dark, #20423e);
+    --secondary-contrast: var(--walle-color-secondary-contrast, #fefefe);
+    --alternative: var(--walle-color-alternative, #8a6423);
+    --alternative-light: var(--walle-color-alternative-light, #e3c07e);
+    --alternative-dark: var(--walle-color-alternative-dark, #73531d);
+    --alternative-contrast: var(--walle-color-alternative-contrast, var(--white));
+    --white: var(--walle-color-background, #fefefe);
+    --black: var(--walle-color-foreground, #161616);
+
+    /* Neutral scale: override via theme.json neutral.* → --walle-gray-*. `base` bridges to
+       `--gray` (no suffix) to keep every consumer's existing gray-token names unchanged. */
+    --gray-light: var(--walle-gray-light, #f4f5f7);
+    --gray: var(--walle-gray-base, #e9ebee);
+    --gray-medium: var(--walle-gray-medium, #d3d7de);
+    --gray-dark: var(--walle-gray-dark, #5b6472);
+    --gray-darker: var(--walle-gray-darker, #333a45);
+
+    /* Semantic tokens: components reference these for neutral surfaces, text, borders and
+       focus. Consumers restyle by overriding this block. */
+    --surface: var(--white);
+    --surface-alt: var(--gray-light);
+    --text: var(--black);
+    --text-muted: var(--gray-dark);
+    --heading: var(--walle-color-heading, var(--text));
+    --border: var(--gray-medium);
+    --link: var(--primary);
+    --link-hover: var(--primary-dark);
+    --focus-ring: var(--primary);
+    --disabled-opacity: 0.65;
+
+    /* Status tokens: semantic, not tied to the brand palette. Each pairs with its own
+       -contrast for AA-compliant text on a filled status background. */
+    --status-success: #1b7a43;
+    --status-success-contrast: var(--white);
+    --status-warning: #a36708;
+    --status-warning-contrast: var(--white);
+    --status-danger: #da2d1b;
+    --status-danger-contrast: var(--white);
+
+    /* Shadows: override via theme.json shadow.* → --walle-shadow-*. */
+    --shadow-sm: var(--walle-shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
+    --shadow-md: var(
+      --walle-shadow-md,
+      0 1px 3px rgba(0, 0, 0, 0.05),
+      0 4px 6px rgba(0, 0, 0, 0.05),
+      0 10px 15px rgba(0, 0, 0, 0.05)
+    );
+    --shadow-lg: var(
+      --walle-shadow-lg,
+      0 4px 12px rgba(0, 70, 173, 0.15),
+      0 8px 24px rgba(0, 0, 0, 0.08)
+    );
+
+    --transition: 0.2s ease;
+    --transition-normal: 0.3s ease;
+
+    /* Typography: override via theme.json typography.* → --walle-font-* */
+    --font-body: var(--walle-font-body, system-ui, -apple-system, sans-serif);
+    --font-heading: var(--walle-font-heading, var(--font-body));
+    --font-mono: var(--walle-font-mono, ui-monospace, "Cascadia Code", monospace);
+
+    /* Type scale: override via theme.json typography.scale.* → --walle-font-size-* */
+    --font-size-h1: var(--walle-font-size-h1, clamp(2.5rem, 5vw, 3.5rem));
+    --font-size-h2: var(--walle-font-size-h2, clamp(2rem, 4vw, 2.75rem));
+    --font-size-h3: var(--walle-font-size-h3, clamp(1.5rem, 3vw, 2rem));
+    --font-size-h4: var(--walle-font-size-h4, clamp(1.25rem, 2.5vw, 1.5rem));
+    --font-size-h5: var(--walle-font-size-h5, 1.25rem);
+    --font-size-body: var(--walle-font-size-body, 1.125rem);
+    --font-size-sm: var(--walle-font-size-sm, 0.875rem);
+    --font-size-xs: var(--walle-font-size-xs, 0.75rem);
+
+    /* Spacing: override via theme.json spacing.* → --walle-space-* */
+    --space-xs: var(--walle-space-xs, 0.5rem);
+    --space-sm: var(--walle-space-sm, 0.75rem);
+    --space-md: var(--walle-space-md, 1rem);
+    --space-lg: var(--walle-space-lg, 1.5rem);
+    --space-xl: var(--walle-space-xl, 2rem);
+    --space-2xl: var(--walle-space-2xl, 2.5rem);
+    --space-3xl: var(--walle-space-3xl, 3rem);
+    --space-4xl: var(--walle-space-4xl, 4rem);
+
+    /* Radii: override via theme.json radii.* → --walle-radius-*
+       Crisp, restrained scale. Softened corners, never pill-shaped. */
+    --radius-sm: var(--walle-radius-sm, 0.125rem);
+    --radius-md: var(--walle-radius-md, 0.25rem);
+    --radius-lg: var(--walle-radius-lg, 0.375rem);
+    --radius-xl: var(--walle-radius-xl, 0.5rem);
+
+    /* Not brand-configurable: below this, iOS Safari auto-zooms the viewport on focus
+       regardless of the themed body size. Centralized here, not exposed via theme.json. */
+    --input-font-size-min: 16px;
+  }
+
+  /* Variant tokens: every component that reads --variant-* emits its own data-variant
+     (default primary), so the nearest definition is always the component's own. */
+  [data-variant="primary"] {
+    --variant-color: var(--primary);
+    --variant-color-hover: var(--primary-dark);
+    --variant-bg: var(--primary);
+    --variant-bg-hover: var(--primary-dark);
+    --variant-fg: var(--primary-contrast);
+  }
+
+  [data-variant="secondary"] {
+    --variant-color: var(--secondary);
+    --variant-color-hover: var(--secondary-dark);
+    --variant-bg: var(--secondary);
+    --variant-bg-hover: var(--secondary-dark);
+    --variant-fg: var(--secondary-contrast);
+  }
+
+  [data-variant="alternative"] {
+    --variant-color: var(--alternative);
+    --variant-color-hover: var(--alternative-dark);
+    --variant-bg: var(--alternative);
+    --variant-bg-hover: var(--alternative-dark);
+    --variant-fg: var(--alternative-contrast);
+  }
+
+  /* site is identical to primary until a consumer redefines it in @layer site. */
+  [data-variant="site"] {
+    --variant-color: var(--primary);
+    --variant-color-hover: var(--primary-dark);
+    --variant-bg: var(--primary);
+    --variant-bg-hover: var(--primary-dark);
+    --variant-fg: var(--primary-contrast);
+  }
+}

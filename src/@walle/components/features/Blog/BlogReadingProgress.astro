@@ -1,4 +1,6 @@
 ---
+import { label as t } from "@walle/utils";
+
 export interface Props {
   targetSelector?: string;
   viewportOffsetFactor?: number;
@@ -15,38 +17,42 @@ const { targetSelector = "#article-content", viewportOffsetFactor = 0.25 } = Ast
   aria-valuemin="0"
   aria-valuemax="100"
   aria-valuenow="0"
-  aria-label="Article reading progress"
+  aria-label={t("blog.readingProgress")}
   data-target={targetSelector}
   data-offset={viewportOffsetFactor}
 >
 </div>
 
 <style>
-  .blog-progress-bar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 0%;
-    height: 3px;
-    background: var(--primary);
-    z-index: 1000;
-    transition: width 0.12s ease;
-    will-change: width;
-    pointer-events: none;
-  }
-  @media (max-width: 768px) {
+  @layer walle.components {
     .blog-progress-bar {
+      --progress-color: var(--primary);
+
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0%;
       height: 3px;
+      background: var(--progress-color);
+      z-index: 1000;
+      transition: width 0.12s ease;
+      will-change: width;
+      pointer-events: none;
     }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .blog-progress-bar {
-      transition: none;
+    @media (max-width: 768px) {
+      .blog-progress-bar {
+        height: 3px;
+      }
     }
-  }
-  @media print {
-    .blog-progress-bar {
-      display: none;
+    @media (prefers-reduced-motion: reduce) {
+      .blog-progress-bar {
+        transition: none;
+      }
+    }
+    @media print {
+      .blog-progress-bar {
+        display: none;
+      }
     }
   }
 </style>

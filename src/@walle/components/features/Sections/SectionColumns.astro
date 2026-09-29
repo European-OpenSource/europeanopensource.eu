@@ -1,8 +1,11 @@
 ---
-export interface Props {
-  /**
-   * Section title (optional)
-   */
+import type { BaseProps, VariantProps, ModifierProps } from "../../shared/types";
+import { splitProps } from "../../shared/attrs";
+import SectionWrapper from "./SectionWrapper.astro";
+
+export interface Props
+  extends BaseProps<"section">, VariantProps, Pick<ModifierProps, "filled" | "muted"> {
+  /** Section title (optional) */
   title?: string;
 
   /**
@@ -23,88 +26,63 @@ export interface Props {
    * @default false
    */
   centered?: boolean;
-
-  /**
-   * Visual variant
-   * @default null
-   */
-  variant?: "primary" | "gray" | null;
-
-  /**
-   * Additional CSS classes appended to the root element
-   */
-  class?: string;
 }
 
+const OWN_KEYS = [
+  "title",
+  "columns",
+  "minColumnWidth",
+  "centered",
+  "variant",
+  "filled",
+  "muted",
+] as const;
+
+const { own, rest } = splitProps(Astro.props, OWN_KEYS);
 const {
   title,
   columns = 3,
   minColumnWidth = "16rem",
   centered = false,
-  variant = null,
-  class: className = "",
-} = Astro.props;
-
-const classes = [
-  "section",
-  "section-columns",
-  variant ? `section-content-${variant}` : "",
-  centered ? "text-centered" : "",
-  className,
-]
-  .filter(Boolean)
-  .join(" ");
+  variant,
+  filled = false,
+  muted = false,
+} = own;
 ---
 
-<section class={classes} data-component="SectionColumns" data-columns={columns}>
-  <div class="section-columns__inner">
-    {title && <h2 class="section-columns__title">{title}</h2>}
-    <div
-      class="section-columns__grid"
-      style={`--columns: ${columns}; --min-col: ${minColumnWidth};`}
-    >
-      <slot />
-    </div>
+<SectionWrapper
+  title={title}
+  centered={centered}
+  variant={variant}
+  filled={filled}
+  muted={muted}
+  data-component="SectionColumns"
+  data-columns={columns}
+  {...rest}
+>
+  <slot name="title" slot="title" />
+  <div class="section-columns__grid" style={`--columns: ${columns}; --min-col: ${minColumnWidth};`}>
+    <slot />
   </div>
-</section>
+</SectionWrapper>
 
 <style>
-  .section-columns__inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 var(--space-xl);
-  }
-
-  .section-columns__title {
-    margin-bottom: var(--space-2xl);
-  }
-
-  /* auto-fit + minmax: columns collapse to 1 on narrow viewports without JS
-     or breakpoint props; --columns caps the count on wide screens. */
-  .section-columns__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--min-col)), 1fr));
-    gap: var(--space-xl);
-  }
-
-  @media (min-width: 769px) {
+  @layer walle.components {
+    /* auto-fit + minmax: columns collapse to 1 on narrow viewports without JS
+           or breakpoint props; --columns caps the count on wide screens. */
     .section-columns__grid {
-      grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+      /* Public properties */
+      --section-columns-gap: var(--space-xl);
+
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--min-col)), 1fr));
+      gap: var(--section-columns-gap);
     }
-  }
 
-  .section-content-primary {
-    background-color: var(--primary);
-    color: var(--white);
-  }
-
-  .section-content-gray {
-    background-color: var(--surface-alt);
-  }
-
-  @media (max-width: 640px) {
-    .section-columns__inner {
-      padding: 0 var(--space-md);
+    @media (min-width: 769px) {
+      .section-columns__grid {
+        grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+      }
     }
   }
 </style>

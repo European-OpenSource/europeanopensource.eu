@@ -1,9 +1,9 @@
 ---
 // Minimal footer variant: single centered row, navigation links + copyright, no social/brand block.
-// Selected via `components.footer = "minimal"` in app.json. Resolved by FooterResolver.astro.
+// Selected via `components.footer = "minimal"` in app.json, resolved by virtual:walle-components.
 import type { FooterConfig, NavigationLink } from "@walle/config";
 import config from "@walle/config";
-import { resolveInternalUrl } from "@walle/utils";
+import { label as t, resolveInternalUrl } from "@walle/utils";
 
 const footerConfig: FooterConfig = config.footer;
 const today = new Date();
@@ -13,7 +13,7 @@ const label = footerConfig.logo?.title || footerConfig.logo?.license || "";
 ---
 
 <footer class="footer-minimal">
-  <nav class="footer-minimal__nav" aria-label="Footer navigation">
+  <nav class="footer-minimal__nav" aria-label={t("footer.nav")}>
     <ul>
       {
         navigationLinks.map((item: NavigationLink) => (
@@ -28,40 +28,51 @@ const label = footerConfig.logo?.title || footerConfig.logo?.license || "";
 </footer>
 
 <style>
-  .footer-minimal {
-    margin-top: auto;
-    padding: 1.25rem 2rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    background-color: var(--gray);
-    border-top: 1px solid #eaeaea;
-    color: var(--text-muted);
-    font-size: 0.9rem;
-  }
+  @layer walle.components {
+    .footer-minimal {
+      /* `--footer-link-color` defaults to `inherit` rather than a fixed token, so nav links
+         keep matching the footer's own text color by default. */
+      --footer-bg: var(--gray);
+      --footer-fg: var(--text-muted);
+      --footer-link-color: inherit;
+      --footer-link-color-hover: var(--primary);
+      --footer-border: var(--gray);
+      --footer-gap: 1.5rem;
 
-  .footer-minimal__nav ul {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1.5rem;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
+      margin-top: auto;
+      padding: 1.25rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      background-color: var(--footer-bg);
+      border-top: 1px solid var(--footer-border);
+      color: var(--footer-fg);
+      font-size: 0.9rem;
+    }
 
-  .footer-minimal__nav a {
-    color: inherit;
-    text-decoration: none;
-    transition: color 0.2s ease;
-  }
+    .footer-minimal__nav ul {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--footer-gap);
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
 
-  .footer-minimal__nav a:hover {
-    color: var(--primary);
-  }
+    .footer-minimal__nav a {
+      color: var(--footer-link-color);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
 
-  .footer-minimal__license {
-    font-size: 0.8rem;
+    .footer-minimal__nav a:hover {
+      color: var(--footer-link-color-hover);
+    }
+
+    .footer-minimal__license {
+      font-size: 0.8rem;
+    }
   }
 </style>

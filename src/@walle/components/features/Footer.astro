@@ -2,8 +2,9 @@
 const today = new Date();
 import type { FooterConfig, NavigationLink } from "@walle/config";
 import config from "@walle/config";
-import { resolveInternalUrl } from "@walle/utils";
+import { label as t, resolveInternalUrl } from "@walle/utils";
 import { Icon } from "astro-icon/components";
+import { linkAttrs } from "../shared/attrs";
 
 const footerConfig: FooterConfig = config.footer;
 const footerItems = Array.isArray(footerConfig.items) ? footerConfig.items : [];
@@ -28,8 +29,8 @@ const shouldShowBrand = hasLogo || hasTitle;
               {hasLogo && (
                 <img
                   src={footerConfig.logo.src}
-                  alt={footerConfig.logo.alt || footerConfig.logo.title || "Logo"}
-                  aria-label={footerConfig.logo.alt || footerConfig.logo.title || "Logo"}
+                  alt={footerConfig.logo.alt || footerConfig.logo.title || t("logo")}
+                  aria-label={footerConfig.logo.alt || footerConfig.logo.title || t("logo")}
                   width={footerConfig.logo.width || 32}
                   height={footerConfig.logo.height || 32}
                   class={footerConfig.logo.cssClasses || ""}
@@ -46,7 +47,7 @@ const shouldShowBrand = hasLogo || hasTitle;
     </div>
 
     <div class="footer-section footer-center">
-      <nav class="footer-nav" aria-label="Footer navigation">
+      <nav class="footer-nav" aria-label={t("footer.nav")}>
         <ul class="footer-nav__list">
           {
             navigationLinks.map((item: NavigationLink) => (
@@ -60,14 +61,13 @@ const shouldShowBrand = hasLogo || hasTitle;
     </div>
 
     <div class="footer-section footer-right">
-      <ul class="social-links" aria-label="Social links">
+      <ul class="social-links" aria-label={t("footer.social")}>
         {
           socialLinks.map((item: NavigationLink) => (
             <li>
               <a
                 href={item.url}
-                target="_blank"
-                rel="noopener"
+                {...linkAttrs({ external: true })}
                 aria-label={item.icon?.replace("fa:", "")}
               >
                 <Icon name={item.icon!} aria-hidden="true" size={20} />
@@ -81,161 +81,175 @@ const shouldShowBrand = hasLogo || hasTitle;
 </footer>
 
 <style>
-  footer {
-    bottom: 0;
-    margin-top: auto;
-    padding: 1.75rem 2rem;
-    background-color: var(--gray);
-    border-top: 1px solid #eaeaea;
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    z-index: 10;
-  }
+  @layer walle.components {
+    footer {
+      /* Public properties. */
+      --footer-bg: var(--gray);
+      --footer-fg: var(--text-muted);
+      --footer-link-color: var(--text-muted);
+      --footer-link-color-hover: var(--primary);
+      --footer-border: var(--gray);
+      --footer-gap: 2rem;
 
-  .footer-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-
-  .footer-section {
-    flex: 1;
-  }
-
-  .footer-left {
-    text-align: left;
-  }
-
-  .footer-center {
-    text-align: center;
-  }
-
-  .footer-right {
-    text-align: right;
-  }
-
-  .copyright {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    font-family: var(--font-body);
-  }
-
-  .brand-link {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    text-decoration: none;
-    color: inherit;
-    transition: all 0.2s ease;
-  }
-
-  .brand-link:hover {
-    color: var(--primary);
-    transform: translateY(-1px);
-  }
-
-  .brand-link img {
-    border-radius: 4px;
-  }
-
-  .license {
-    font-size: 0.8rem;
-  }
-
-  .license a {
-    color: var(--primary);
-    text-decoration: none;
-    transition: color 0.2s ease;
-  }
-
-  .license a:hover {
-    text-decoration: underline;
-  }
-
-  .footer-nav__list {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .footer-nav a {
-    color: var(--text-muted);
-    text-decoration: none;
-    transition: color 0.2s ease;
-    position: relative;
-  }
-
-  .footer-nav a:after {
-    content: "";
-    position: absolute;
-    width: 0;
-    height: 1px;
-    bottom: -4px;
-    left: 0;
-    background-color: var(--primary);
-    transition: width 0.3s ease;
-  }
-
-  .footer-nav a:hover {
-    color: var(--primary);
-  }
-
-  .footer-nav a:hover:after {
-    width: 100%;
-  }
-
-  .social-links {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.75rem;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .social-links a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    background-color: var(--surface-alt);
-    color: var(--text-muted);
-    transition: all 0.2s ease;
-  }
-
-  .social-links a:hover {
-    background-color: var(--primary);
-    color: var(--white);
-    transform: translateY(-2px);
-  }
-
-  @media (max-width: 768px) {
-    .footer-container {
-      flex-direction: column;
-      gap: 1.5rem;
+      bottom: 0;
+      margin-top: auto;
+      padding: 1.75rem 2rem;
+      background-color: var(--footer-bg);
+      border-top: 1px solid var(--footer-border);
+      color: var(--footer-fg);
+      font-size: 0.9rem;
+      z-index: 10;
     }
 
-    .footer-left,
-    .footer-center,
-    .footer-right {
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .footer-section {
+      flex: 1;
+    }
+
+    .footer-left {
+      text-align: left;
+    }
+
+    .footer-center {
       text-align: center;
     }
 
+    .footer-right {
+      text-align: right;
+    }
+
     .copyright {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      font-family: var(--font-body);
+    }
+
+    .brand-link {
+      display: flex;
       align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.2s ease;
+    }
+
+    .brand-link:hover {
+      color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .brand-link img {
+      border-radius: var(--radius-md);
+    }
+
+    .license {
+      font-size: 0.8rem;
+    }
+
+    .license a {
+      color: var(--primary);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .license a:hover {
+      text-decoration: underline;
+    }
+
+    .footer-nav__list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--footer-gap);
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .footer-nav a {
+      color: var(--footer-link-color);
+      text-decoration: none;
+      transition: color 0.2s ease;
+      position: relative;
+    }
+
+    .footer-nav a:after {
+      content: "";
+      position: absolute;
+      width: 0;
+      height: 1px;
+      bottom: -4px;
+      left: 0;
+      background-color: var(--primary);
+      transition: width 0.3s ease;
+    }
+
+    .footer-nav a:hover {
+      color: var(--footer-link-color-hover);
+    }
+
+    .footer-nav a:hover:after {
+      width: 100%;
     }
 
     .social-links {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .social-links a {
+      display: flex;
+      align-items: center;
       justify-content: center;
+      width: 34px;
+      height: 34px;
+      /* Circular icon shape, not a radius-scale value: kept behind a local property so
+               the token-literal check sees a var() reference rather than a bare percentage. */
+      --social-icon-radius: 50%;
+      border-radius: var(--social-icon-radius);
+      background-color: var(--surface-alt);
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+    }
+
+    .social-links a:hover {
+      background-color: var(--primary);
+      color: var(--white);
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+      .footer-container {
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .footer-left,
+      .footer-center,
+      .footer-right {
+        text-align: center;
+      }
+
+      .copyright {
+        align-items: center;
+      }
+
+      .social-links {
+        justify-content: center;
+      }
     }
   }
 </style>

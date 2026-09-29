@@ -19,14 +19,24 @@ export interface TableOfContentsOptions {
   headingSelector?: string;
   /** List of CSS selectors; any heading matching one will be excluded */
   excludeSelectors?: string[];
-  /** Attribute name used to skip a single heading. Default: data-toc-skip */
+  /** Attribute name for skipping a single heading. Default: data-toc-skip */
   skipAttribute?: string;
-  /** Class name used to skip a single heading. Default: toc-skip */
+  /** Class name for skipping a single heading. Default: toc-skip */
   skipClass?: string;
   /** Container attribute; any heading inside an ancestor with this attribute is skipped. Default: data-toc-skip-container */
   skipContainerAttribute?: string;
   /** Optional text patterns; if heading text matches any pattern it will be excluded */
   excludeTextPatterns?: RegExp[];
+  /** Screen-reader announcements on mobile expand/collapse. Callers always resolve these
+   * through label() before constructing the manager, so no default lives here. */
+  labels?: {
+    expanded?: string | null;
+    collapsed?: string | null;
+    toggle?: string | null;
+    /** Template with a `{title}` placeholder. */
+    navigateTo?: string | null;
+    navigated?: string | null;
+  };
 }
 
 export class TableOfContentsManager {
@@ -168,7 +178,8 @@ export class TableOfContentsManager {
     link.textContent = tocItem.text;
     link.setAttribute("data-toc-index", index.toString());
     link.setAttribute("data-level", tagName === "H2" ? "2" : "3");
-    link.setAttribute("aria-label", `Navigate to: ${tocItem.text}`);
+    const navigateTo = this.options.labels?.navigateTo;
+    if (navigateTo) link.setAttribute("aria-label", navigateTo.replace("{title}", tocItem.text));
     link.setAttribute("role", "link");
 
     // Add indentation for h3
@@ -228,8 +239,8 @@ export class TableOfContentsManager {
 
       // Announce to screen readers
       const announcement = isCollapsed
-        ? "Table of contents expanded"
-        : "Table of contents collapsed";
+        ? this.options.labels?.expanded || "Table of contents expanded"
+        : this.options.labels?.collapsed || "Table of contents collapsed";
       this.announceToScreenReader(announcement);
     };
 
@@ -275,7 +286,8 @@ export class TableOfContentsManager {
     header.setAttribute("tabindex", "0");
     header.setAttribute("aria-expanded", "true");
     header.setAttribute("aria-controls", "toc-nav");
-    header.setAttribute("aria-label", "Toggle table of contents");
+    const toggle = this.options.labels?.toggle;
+    if (toggle) header.setAttribute("aria-label", toggle);
 
     // Keyboard support
     header.addEventListener("keydown", (e) => {
@@ -446,7 +458,7 @@ export class TableOfContentsManager {
   private onScrollComplete(link: HTMLElement): void {
     this.isScrolling = false;
     link.classList.remove("navigating");
-    if (this.isMobile) this.announceToScreenReader("Navigated to section");
+    if (this.isMobile) this.announceToScreenReader(this.options.labels?.navigated || "");
     // Force active state for the clicked target (helps when threshold logic hasn't run yet)
     const targetId = link.getAttribute("href")?.substring(1);
     if (targetId) {
@@ -611,7 +623,9 @@ export class TableOfContentsManager {
       // ESC key to collapse TOC on mobile
       if (event.key === "Escape" && this.isMobile && this.tocContainer) {
         this.tocContainer.classList.add("collapsed");
-        this.announceToScreenReader("Table of contents collapsed");
+        this.announceToScreenReader(
+          this.options.labels?.collapsed || "Table of contents collapsed"
+        );
       }
     });
 

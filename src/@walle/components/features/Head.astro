@@ -1,19 +1,25 @@
 ---
 import config from "@walle/config";
 import { resolveInternalUrl, truncateAtWord } from "@walle/utils";
+import { ogImageUrl as siteOgImageUrl } from "@walle/og/url";
 import pwa from "virtual:walle-pwa";
+import { WALLE_LAYER_DECLARATION } from "@walle/styles/layers";
 import "@walle/styles/global.css";
+import { Font } from "astro:assets";
+import type { ComponentProps } from "astro/types";
+import { fonts as configuredFonts } from "virtual:walle-fonts";
 
 interface Props {
   title: string;
   description: string;
   image?: string;
   ogImage?: string;
+  /** A layout's own per-entry OG image, e.g. BlogPostLayout passes `ogImageUrl("posts", id)`.
+   * Lower priority than an explicit `ogImage` override, higher than the site default. */
+  entryOgImage?: string;
   robots?: string;
   favicon?: string;
-  /**
-   * Article publication timestamp — emits `article:published_time`
-   */
+  /** Article publication timestamp. */
   publishedTime?: Date | string | null;
 }
 
@@ -24,61 +30,94 @@ const {
   description = config.app.website.description,
   image = config.app.website.image,
   ogImage,
+  entryOgImage,
   robots = null,
   favicon = config.app.website.favicon,
   publishedTime = null,
 } = Astro.props;
 
 // Site-name suffix, dropped rather than truncated when it would push the title past the
-// configured budget. Opt-in per site via `website.titleMaxLength`: without that key the suffix
-// is always appended, so every other walle consumer keeps its current titles byte for byte.
-//
-// Why drop the suffix instead of shortening the title: the page's own title is the content, the
-// site name is boilerplate repeated on every page. On a site whose titles are event names
-// (eventialatina.it), 10 of the 14 over-budget titles were over budget *only* because of the
-// 18-character suffix — the event name itself already fit. Truncating a real event name to fit
-// a fixed brand suffix would be trading the useful half for the redundant one.
-//
-// Google truncates the SERP display around 60 characters but still ranks on the full title, so
-// this is a click-through concern, not a ranking one: a title that is long because the page's
-// own name is long stays as it is (no ellipsis, no cut), it just loses the suffix first.
+// configured budget (opt-in via `website.titleMaxLength`; absent key keeps today's titles
+// byte for byte). The suffix is boilerplate repeated on every page, so it is the first thing
+// cut when a title runs long.
 const titleMaxLength = config.app.website.titleMaxLength as number | undefined;
 const titleWithSuffix = title + " | " + config.app.website.title;
 const titleSeo =
   titleMaxLength && titleWithSuffix.length > titleMaxLength ? title : titleWithSuffix;
 
-// Same opt-in shape as titleMaxLength (absent key = unchanged behaviour for other consumers),
-// but the opposite treatment, because a description is prose and a title is a name: here there
-// is no boilerplate half to drop, so an over-budget description is cut at the last word boundary
-// that fits and gets an ellipsis. Google truncates it anyway past ~155 characters; cutting on a
-// word ourselves just means it ends on a word instead of mid-syllable, and the full text is on
-// the page regardless. Note the budget is measured in UTF-16 code units, so an emoji (common at
-// the start of these event blurbs) counts as two — deliberately conservative.
+// Same opt-in shape as titleMaxLength, but an over-budget description is cut at the last word
+// boundary and gets an ellipsis instead: prose has no boilerplate half to drop. The budget is
+// measured in UTF-16 code units, so an emoji counts as two, deliberately conservative.
 const descriptionMaxLength = config.app.website.descriptionMaxLength as number | undefined;
 const descriptionSeo = descriptionMaxLength
   ? truncateAtWord(description, descriptionMaxLength)
   : description;
 
-const ogImageUrl = ogImage ?? new URL(image, Astro.url);
-const resolvedFavicon = resolveInternalUrl(favicon);
+// A root-relative path (ogImageUrl()'s own output, or a plain image/ogImage config value)
+// resolves against the origin regardless of the current page's path; an already-absolute
+// URL passes through unchanged.
+const toAbsolute = (value: string) =>
+  /^https?:\/\//.test(value) ? value : new URL(value, Astro.url).toString();
+
+// Fallback chain: an explicit override, then the layout's own per-entry image, then the
+// site-wide OG default (only when enabled, otherwise there is no /og route to point at),
+// then the plain `website.image`.
+const resolvedOgImage =
+  (ogImage ? toAbsolute(ogImage) : undefined) ??
+  (entryOgImage ? toAbsolute(entryOgImage) : undefined) ??
+  (config.app.seo?.ogImage?.enabled ? toAbsolute(siteOgImageUrl()) : undefined) ??
+  (image ? toAbsolute(image) : undefined);
+const resolvedFavicon = favicon ? resolveInternalUrl(favicon) : undefined;
 // BCP 47 ("en-US") → Open Graph locale ("en_US")
 const ogLocale = (config.app.website.language || "").replace("-", "_") || null;
 
 const publishedIso = publishedTime ? new Date(publishedTime).toISOString() : null;
+
+// One alternate link per enabled feed item; no link at all when feeds are disabled.
+const feeds = config.app.seo?.feeds?.enabled ? (config.app.seo.feeds.items ?? []) : [];
+// One alternate link per seo.alternates entry. No route is injected for these.
+const alternates = config.app.seo?.alternates ?? [];
 ---
 
+<style is:inline set:html={WALLE_LAYER_DECLARATION}></style>
 <!-- Global Metadata -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link rel="icon" type="image/svg+xml" href={resolvedFavicon} />
 <link rel="sitemap" href={resolveInternalUrl("/sitemap-index.xml")} />
-<link
-  rel="alternate"
-  type="application/rss+xml"
-  title={titleSeo}
-  href={new URL("rss.xml", Astro.site)}
-/>
+{
+  feeds.map((feed) => (
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={feed.title ?? config.app.website.title}
+      href={toAbsolute(resolveInternalUrl(feed.path))}
+    />
+  ))
+}
+{
+  alternates.map((alternate) => (
+    <link
+      rel="alternate"
+      type={alternate.type}
+      title={alternate.title ?? config.app.website.title}
+      href={toAbsolute(resolveInternalUrl(alternate.href))}
+    />
+  ))
+}
 <meta name="generator" content={Astro.generator} />
+
+{
+  configuredFonts.map((font) => (
+    // `virtual:walle-fonts` types `cssVariable` as a plain string (it's resolved from
+    // theme.json at build time, never a compile-time literal); Astro's own `CssVariable` is a
+    // literal union of only the values actually configured, so the cast is just a widen-back.
+    <Font
+      cssVariable={font.cssVariable as ComponentProps<typeof Font>["cssVariable"]}
+      preload={font.preload}
+    />
+  ))
+}
 
 {
   /* vite-plugin-pwa cannot inject these into Astro's static output (no transformIndexHtml
@@ -113,7 +152,7 @@ const publishedIso = publishedTime ? new Date(publishedTime).toISOString() : nul
 <meta property="og:url" content={Astro.url} />
 <meta property="og:title" content={titleSeo} />
 <meta property="og:description" content={descriptionSeo} />
-<meta property="og:image" content={ogImageUrl} />
+<meta property="og:image" content={resolvedOgImage} />
 {ogLocale && <meta property="og:locale" content={ogLocale} />}
 {publishedIso && <meta property="article:published_time" content={publishedIso} />}
 
@@ -122,4 +161,4 @@ const publishedIso = publishedTime ? new Date(publishedTime).toISOString() : nul
 <meta property="twitter:url" content={Astro.url} />
 <meta property="twitter:title" content={titleSeo} />
 <meta property="twitter:description" content={descriptionSeo} />
-<meta property="twitter:image" content={ogImageUrl} />
+<meta property="twitter:image" content={resolvedOgImage} />

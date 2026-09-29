@@ -1,387 +1,423 @@
 ---
+import { label as t } from "@walle/utils";
+
 export interface Props {}
 
 const {} = Astro.props;
+
+const heading = t("toc.heading");
+const navLabel = t("toc.nav");
+const loadingText = t("toc.loading");
+const expandedText = t("toc.expanded");
+const collapsedText = t("toc.collapsed");
+const toggleText = t("toc.toggle");
+const navigateToText = t("toc.navigateTo");
+const navigatedText = t("toc.navigated");
+// CSS `content` needs a quoted string literal; a site label could contain a quote or
+// backslash, so it's escaped before being embedded in the inline custom property.
+const cssEscapedLoadingText = loadingText.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
 ---
 
-<aside class="table-of-contents" id="toc">
-  <h3>Contents</h3>
-  <nav class="toc-nav" id="toc-nav" aria-label="Table of contents navigation"></nav>
+<aside
+  class="table-of-contents"
+  id="toc"
+  style={`--_toc-loading-text: "${cssEscapedLoadingText}";`}
+  data-label-expanded={expandedText}
+  data-label-collapsed={collapsedText}
+  data-label-toggle={toggleText}
+  data-label-navigate-to={navigateToText}
+  data-label-navigated={navigatedText}
+>
+  <h3>{heading}</h3>
+  <nav class="toc-nav" id="toc-nav" aria-label={navLabel}></nav>
 </aside>
 
 <style>
-  .table-of-contents {
-    position: sticky;
-    margin-top: 3.5rem;
-    top: 100px;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 16px;
-    padding: 0;
-    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.08);
-    max-height: calc(100vh - 120px);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .table-of-contents h3 {
-    margin: 0;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-    padding: 1.25rem 1.5rem;
-    background: transparent;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    letter-spacing: 0.025em;
-    font-family: "Ronzino-Bold", sans-serif;
-  }
-
-  .toc-nav {
-    display: flex;
-    flex-direction: column;
-    padding: 1rem 1.5rem;
-    line-height: 1.3;
-    overflow-y: auto;
-    flex: 1;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(0, 0, 0, 0.08) transparent;
-    gap: 0.6rem;
-  }
-
-  .toc-nav::-webkit-scrollbar {
-    width: 3px;
-  }
-
-  .toc-nav::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .toc-nav::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.08);
-    border-radius: 2px;
-  }
-
-  .toc-nav :global(a) {
-    display: flex;
-    align-items: center;
-    padding: 0.75rem 1.5rem;
-    color: var(--text-muted);
-    text-decoration: none;
-    font-size: 0.9rem;
-    line-height: 1.5;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 0;
-    position: relative;
-    margin: 0;
-    border-left: 3px solid transparent;
-    font-weight: 500;
-    letter-spacing: -0.01em;
-  }
-
-  .toc-nav :global(a::before) {
-    display: none;
-  }
-
-  .toc-nav :global(a:hover) {
-    background: rgba(var(--primary), 0.06);
-    color: var(--primary);
-    border-left-color: var(--primary);
-    transform: translateX(4px);
-  }
-
-  .toc-nav :global(a.active) {
-    background: rgba(var(--primary), 0.08);
-    color: var(--primary);
-    border-left-color: var(--primary);
-    font-weight: 600;
-    transform: translateX(4px);
-  }
-
-  .toc-nav :global(a.navigating) {
-    background: rgba(var(--primary), 0.12);
-    color: var(--primary-dark);
-    border-left-color: var(--primary-dark);
-    pointer-events: none;
-  }
-
-  /* Simplified focus style (no surrounding border/box) */
-  .toc-nav :global(a:focus-visible) {
-    outline: none;
-    box-shadow: none;
-    background: rgba(var(--primary), 0.06);
-    border-left-color: var(--primary);
-  }
-
-  /* Ensure tap/click focus on mobile doesn't show default browser outline */
-  .toc-nav :global(a:focus),
-  .toc-nav :global(a:active) {
-    outline: none !important;
-    box-shadow: none !important;
-    background: rgba(var(--primary), 0.06);
-    border-left-color: var(--primary);
-  }
-
-  /* Remove Firefox dotted outline fallback */
-  .toc-nav :global(a::-moz-focus-inner) {
-    border: 0;
-  }
-
-  /* Optional: provide a very subtle accessibility indicator only when navigated via keyboard */
-  @media (hover: none) {
-    .toc-nav :global(a:focus-visible) {
-      background: rgba(var(--primary), 0.08);
-    }
-  }
-
-  .toc-nav.loading {
-    opacity: 0.6;
-  }
-
-  .toc-nav.loading::after {
-    content: "Loading...";
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-    color: var(--text-muted);
-    font-size: 0.875rem;
-    font-style: italic;
-  }
-
-  .toc-footer {
-    border-top: 1px solid rgba(0, 0, 0, 0.08);
-    padding: 1.25rem 1.5rem;
-    background: transparent;
-  }
-
-  .reading-progress {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .progress-text {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    font-weight: 600;
-    letter-spacing: 0.025em;
-    font-family: "Ronzino-Bold", sans-serif;
-  }
-
-  .progress-track {
-    height: 3px;
-    background: rgba(0, 0, 0, 0.08);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: var(--primary);
-    width: 0%;
-    transition: width 0.3s ease;
-    border-radius: 2px;
-  }
-
-  /* Responsive - Tablet & Mobile */
-  @media (max-width: 1024px) {
+  @layer walle.components {
     .table-of-contents {
-      position: relative;
-      top: 0;
-      max-height: none;
-      margin-top: 0;
-      margin-bottom: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+      /* Public properties */
+      --toc-bg: color-mix(in srgb, var(--surface) 95%, transparent);
+      --toc-border: color-mix(in srgb, var(--text) 8%, transparent);
+      --toc-radius: var(--radius-xl);
+      --toc-link-hover-bg: color-mix(in srgb, var(--primary) 6%, transparent);
+      --toc-link-active-bg: color-mix(in srgb, var(--primary) 8%, transparent);
+      --toc-link-navigating-bg: color-mix(in srgb, var(--primary) 12%, transparent);
+
+      /* Internal */
+      --_toc-shadow: 0 12px 48px color-mix(in srgb, var(--black) 8%, transparent);
+
+      position: sticky;
+      margin-top: 3.5rem;
+      top: 100px;
+      background: var(--toc-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--toc-border);
+      border-radius: var(--toc-radius);
+      padding: 0;
+      box-shadow: var(--_toc-shadow);
+      max-height: calc(100vh - 120px);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .table-of-contents h3 {
-      cursor: pointer;
-      position: relative;
-      padding: 1rem 1.5rem;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-      transition: all 0.2s ease;
-      touch-action: manipulation;
-    }
-
-    .table-of-contents h3:hover {
-      background: rgba(var(--primary), 0.03);
-    }
-
-    .table-of-contents h3:active {
-      background: rgba(var(--primary), 0.06);
-      transform: scale(0.98);
-    }
-
-    .table-of-contents h3::after {
-      content: "▼";
-      position: absolute;
-      right: 1.5rem;
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      transform-origin: center;
-    }
-
-    .table-of-contents.collapsed h3::after {
-      transform: rotate(-90deg);
-    }
-
-    .table-of-contents.collapsed .toc-nav,
-    .table-of-contents.collapsed .toc-footer {
-      display: none;
-      opacity: 0;
+      margin: 0;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      border-bottom: 1px solid var(--toc-border);
+      padding: 1.25rem 1.5rem;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      letter-spacing: 0.025em;
+      font-family: var(--font-heading);
     }
 
     .toc-nav {
-      max-height: 40vh;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem 1.5rem;
+      line-height: 1.3;
       overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
+      flex: 1;
       scrollbar-width: thin;
+      scrollbar-color: var(--toc-border) transparent;
+      gap: 0.6rem;
+    }
+
+    .toc-nav::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    .toc-nav::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .toc-nav::-webkit-scrollbar-thumb {
+      background: var(--toc-border);
+      border-radius: var(--radius-sm);
     }
 
     .toc-nav :global(a) {
-      transition: all 0.2s ease;
-      -webkit-tap-highlight-color: transparent;
-      word-break: break-word;
-      line-height: 1.4;
-      touch-action: manipulation;
-      cursor: pointer;
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1.5rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 0;
+      position: relative;
+      margin: 0;
+      border-left: 3px solid transparent;
+      font-weight: 500;
+      letter-spacing: -0.01em;
     }
 
-    .toc-nav :global(a:active:not(.navigating)) {
-      background: rgba(var(--primary), 0.12);
-      transform: scale(0.98);
+    .toc-nav :global(a::before) {
+      display: none;
+    }
+
+    .toc-nav :global(a:hover) {
+      background: var(--toc-link-hover-bg);
+      color: var(--primary);
+      border-left-color: var(--primary);
+      transform: translateX(4px);
+    }
+
+    .toc-nav :global(a.active) {
+      background: var(--toc-link-active-bg);
+      color: var(--primary);
+      border-left-color: var(--primary);
+      font-weight: 600;
+      transform: translateX(4px);
     }
 
     .toc-nav :global(a.navigating) {
-      animation: pulse 0.8s ease-in-out;
+      background: var(--toc-link-navigating-bg);
+      color: var(--primary-dark);
+      border-left-color: var(--primary-dark);
+      pointer-events: none;
     }
 
-    @keyframes pulse {
-      0%,
-      100% {
-        opacity: 1;
+    /* Simplified focus style (no surrounding border/box) */
+    .toc-nav :global(a:focus-visible) {
+      outline: none;
+      box-shadow: none;
+      background: var(--toc-link-hover-bg);
+      border-left-color: var(--primary);
+    }
+
+    /* Ensure tap/click focus on mobile doesn't show default browser outline */
+    .toc-nav :global(a:focus),
+    .toc-nav :global(a:active) {
+      outline: none !important;
+      box-shadow: none;
+      background: var(--toc-link-hover-bg);
+      border-left-color: var(--primary);
+    }
+
+    /* Remove Firefox dotted outline fallback */
+    .toc-nav :global(a::-moz-focus-inner) {
+      border: 0;
+    }
+
+    /* Optional: provide a very subtle accessibility indicator only when navigated via keyboard */
+    @media (hover: none) {
+      .toc-nav :global(a:focus-visible) {
+        background: var(--toc-link-active-bg);
       }
-      50% {
-        opacity: 0.7;
-      }
-    }
-  }
-
-  /* Mobile Optimizations */
-  @media (max-width: 768px) {
-    .table-of-contents {
-      border-radius: 8px;
-      backdrop-filter: none;
-      -webkit-backdrop-filter: none;
-      background: var(--surface);
-      margin-bottom: 1.5rem;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     }
 
-    .table-of-contents h3 {
-      padding: 0.875rem 1.25rem;
-      font-size: 0.85rem;
+    .toc-nav.loading {
+      opacity: 0.6;
     }
 
-    .table-of-contents h3::after {
-      right: 1.25rem;
-    }
-
-    .toc-nav {
-      max-height: 35vh;
-    }
-
-    .toc-nav :global(a) {
-      padding: 0.875rem 1.25rem;
-      font-size: 0.85rem;
-      line-height: 1.3;
-      margin: 0.125rem 0;
-    }
-
-    .toc-nav :global(a:hover),
-    .toc-nav :global(a.active) {
-      transform: translateX(2px);
+    .toc-nav.loading::after {
+      content: var(--_toc-loading-text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      font-style: italic;
     }
 
     .toc-footer {
-      padding: 1rem 1.25rem;
-    }
-  }
-
-  /* Small Mobile */
-  @media (max-width: 480px) {
-    .table-of-contents {
-      border-radius: 8px;
-      margin-bottom: 1rem;
+      border-top: 1px solid var(--toc-border);
+      padding: 1.25rem 1.5rem;
+      background: transparent;
     }
 
-    .table-of-contents h3 {
-      padding: 0.75rem 1rem;
-      font-size: 0.8rem;
-    }
-
-    .table-of-contents h3::after {
-      right: 1rem;
-      font-size: 0.6rem;
-    }
-
-    .toc-nav {
-      max-height: 30vh;
-    }
-
-    .toc-nav :global(a) {
-      padding: 0.75rem 1rem;
-      font-size: 0.8rem;
-      line-height: 1.25;
-      margin: 0.125rem 0;
-      border-radius: 4px;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-      hyphens: auto;
-    }
-
-    .toc-nav :global(a:hover),
-    .toc-nav :global(a.active) {
-      transform: translateX(1px);
-    }
-
-    .toc-footer {
-      padding: 0.875rem 1rem;
+    .reading-progress {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
     }
 
     .progress-text {
-      font-size: 0.7rem;
-    }
-  }
-
-  /* Print */
-  @media print {
-    .table-of-contents {
-      display: none;
-    }
-  }
-
-  /* Accessibility - Reduced Motion */
-  @media (prefers-reduced-motion: reduce) {
-    .table-of-contents,
-    .toc-nav :global(a),
-    .table-of-contents h3,
-    .table-of-contents h3::after {
-      transition: none;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      letter-spacing: 0.025em;
+      font-family: var(--font-heading);
     }
 
-    .toc-nav :global(a.navigating) {
-      animation: none;
+    .progress-track {
+      height: 3px;
+      background: var(--toc-border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.3s ease;
+      border-radius: var(--radius-sm);
+    }
+
+    /* Responsive - Tablet & Mobile */
+    @media (max-width: 1024px) {
+      .table-of-contents {
+        --toc-radius: var(--radius-xl);
+        --_toc-shadow: 0 8px 24px color-mix(in srgb, var(--black) 6%, transparent);
+        position: relative;
+        top: 0;
+        max-height: none;
+        margin-top: 0;
+        margin-bottom: 2rem;
+      }
+
+      .table-of-contents h3 {
+        cursor: pointer;
+        position: relative;
+        padding: 1rem 1.5rem;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        transition: all 0.2s ease;
+        touch-action: manipulation;
+      }
+
+      .table-of-contents h3:hover {
+        background: color-mix(in srgb, var(--primary) 3%, transparent);
+      }
+
+      .table-of-contents h3:active {
+        background: var(--toc-link-hover-bg);
+        transform: scale(0.98);
+      }
+
+      .table-of-contents h3::after {
+        content: "▼";
+        position: absolute;
+        right: 1.5rem;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        transform-origin: center;
+      }
+
+      .table-of-contents.collapsed h3::after {
+        transform: rotate(-90deg);
+      }
+
+      .table-of-contents.collapsed .toc-nav,
+      .table-of-contents.collapsed .toc-footer {
+        display: none;
+        opacity: 0;
+      }
+
+      .toc-nav {
+        max-height: 40vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+      }
+
+      .toc-nav :global(a) {
+        transition: all 0.2s ease;
+        -webkit-tap-highlight-color: transparent;
+        word-break: break-word;
+        line-height: 1.4;
+        touch-action: manipulation;
+        cursor: pointer;
+      }
+
+      .toc-nav :global(a:active:not(.navigating)) {
+        background: var(--toc-link-navigating-bg);
+        transform: scale(0.98);
+      }
+
+      .toc-nav :global(a.navigating) {
+        animation: pulse 0.8s ease-in-out;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.7;
+        }
+      }
+    }
+
+    /* Mobile Optimizations */
+    @media (max-width: 768px) {
+      .table-of-contents {
+        --toc-bg: var(--surface);
+        --toc-radius: var(--radius-xl);
+        --_toc-shadow: 0 4px 16px color-mix(in srgb, var(--black) 8%, transparent);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        margin-bottom: 1.5rem;
+      }
+
+      .table-of-contents h3 {
+        padding: 0.875rem 1.25rem;
+        font-size: 0.85rem;
+      }
+
+      .table-of-contents h3::after {
+        right: 1.25rem;
+      }
+
+      .toc-nav {
+        max-height: 35vh;
+      }
+
+      .toc-nav :global(a) {
+        padding: 0.875rem 1.25rem;
+        font-size: 0.85rem;
+        line-height: 1.3;
+        margin: 0.125rem 0;
+      }
+
+      .toc-nav :global(a:hover),
+      .toc-nav :global(a.active) {
+        transform: translateX(2px);
+      }
+
+      .toc-footer {
+        padding: 1rem 1.25rem;
+      }
+    }
+
+    /* Small Mobile */
+    @media (max-width: 480px) {
+      .table-of-contents {
+        --toc-radius: var(--radius-xl);
+        margin-bottom: 1rem;
+      }
+
+      .table-of-contents h3 {
+        padding: 0.75rem 1rem;
+        font-size: 0.8rem;
+      }
+
+      .table-of-contents h3::after {
+        right: 1rem;
+        font-size: 0.6rem;
+      }
+
+      .toc-nav {
+        max-height: 30vh;
+      }
+
+      .toc-nav :global(a) {
+        padding: 0.75rem 1rem;
+        font-size: 0.8rem;
+        line-height: 1.25;
+        margin: 0.125rem 0;
+        border-radius: var(--radius-md);
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
+      }
+
+      .toc-nav :global(a:hover),
+      .toc-nav :global(a.active) {
+        transform: translateX(1px);
+      }
+
+      .toc-footer {
+        padding: 0.875rem 1rem;
+      }
+
+      .progress-text {
+        font-size: 0.7rem;
+      }
+    }
+
+    /* Print */
+    @media print {
+      .table-of-contents {
+        display: none;
+      }
+    }
+
+    /* Accessibility - Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      .table-of-contents,
+      .toc-nav :global(a),
+      .table-of-contents h3,
+      .table-of-contents h3::after {
+        transition: none;
+      }
+
+      .toc-nav :global(a.navigating) {
+        animation: none;
+      }
     }
   }
 </style>
@@ -411,6 +447,15 @@ const {} = Astro.props;
     if (skipAttr) options.skipAttribute = skipAttr;
     const skipClass = tocEl.getAttribute("data-skip-class");
     if (skipClass) options.skipClass = skipClass;
+
+    // Always set: BlogTableOfContents.astro resolves these through label() before rendering.
+    options.labels = {
+      expanded: tocEl.getAttribute("data-label-expanded"),
+      collapsed: tocEl.getAttribute("data-label-collapsed"),
+      toggle: tocEl.getAttribute("data-label-toggle"),
+      navigateTo: tocEl.getAttribute("data-label-navigate-to"),
+      navigated: tocEl.getAttribute("data-label-navigated"),
+    };
   }
 
   const init = () => new TableOfContentsManager(options).init();

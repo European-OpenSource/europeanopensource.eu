@@ -2,137 +2,725 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://walle.dev/schemas/app.schema.json",
   "title": "Walle app config (src/configs/app.json)",
-  "version": "2.1.0",
   "type": "object",
-  "additionalProperties": false,
-  "required": ["website", "astro"],
   "properties": {
-    "$schema": { "type": "string" },
+    "$schema": {
+      "type": "string"
+    },
     "website": {
       "type": "object",
-      "additionalProperties": false,
-      "required": ["title", "description"],
       "properties": {
-        "title": { "type": "string" },
-        "description": { "type": "string" },
-        "favicon": { "type": "string" },
-        "image": { "type": "string" },
-        "robots": { "type": "string" },
-        "language": { "type": "string" },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "favicon": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        },
+        "robots": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string"
+        },
         "titleMaxLength": {
           "type": "integer",
           "minimum": 20,
-          "description": "Character budget for the rendered <title>. When set, and \"<page title> | <site title>\" would exceed it, the site-title suffix is dropped and the page title is emitted alone — never truncated, because the page title is the content and the suffix is boilerplate repeated on every page. Omit to always append the suffix (default). 60 is roughly where Google truncates the SERP display; ranking still uses the full title, so this is a click-through concern."
+          "maximum": 9007199254740991
         },
         "descriptionMaxLength": {
           "type": "integer",
           "minimum": 50,
-          "description": "Character budget for the meta/OG/Twitter description. When set, a longer description is cut at the last word boundary that fits and gets an ellipsis. Unlike the title there is no boilerplate half to drop, because a description is prose. Omit to emit it untouched (default). 155 is roughly where Google truncates."
+          "maximum": 9007199254740991
         }
-      }
+      },
+      "required": ["title", "description"],
+      "additionalProperties": false
     },
     "astro": {
       "type": "object",
-      "additionalProperties": false,
-      "required": ["baseUrl", "basePath"],
       "properties": {
-        "baseUrl": { "type": "string" },
-        "basePath": { "type": "string" },
-        "trailingSlash": { "enum": ["always", "never", "ignore"] },
-        "analyticsScriptContent": { "type": "string" },
+        "baseUrl": {
+          "type": "string"
+        },
+        "basePath": {
+          "type": "string"
+        },
+        "trailingSlash": {
+          "type": "string",
+          "enum": ["always", "never", "ignore"]
+        },
+        "analyticsScriptContent": {
+          "type": "string"
+        },
         "sitemapExclude": {
           "type": "array",
-          "items": { "type": "string" },
-          "description": "Path prefixes kept out of sitemap.xml, e.g. [\"/offline\"]. For pages that must stay routable but not indexed: listing a noindex page in the sitemap is the \"Submitted URL marked noindex\" conflict Search Console reports. Omit to list every page (default)."
+          "items": {
+            "type": "string"
+          }
+        },
+        "redirects": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "destination": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "const": 301
+                      },
+                      {
+                        "type": "number",
+                        "const": 302
+                      },
+                      {
+                        "type": "number",
+                        "const": 307
+                      },
+                      {
+                        "type": "number",
+                        "const": 308
+                      }
+                    ]
+                  }
+                },
+                "required": ["destination", "status"],
+                "additionalProperties": false
+              }
+            ]
+          }
+        },
+        "adapter": {
+          "type": "string",
+          "enum": ["node"]
         },
         "ssr": {
-          "type": "object",
-          "additionalProperties": false,
-          "description": "Optional SSR config. Absent or enabled:false => static output (default).",
-          "properties": {
-            "enabled": { "type": "boolean", "default": false },
-            "adapter": { "enum": ["node"], "default": "node" }
-          }
+          "not": {},
+          "description": "This key has been removed. Use \"astro.adapter\" instead."
+        },
+        "prefetch": {
+          "anyOf": [
+            {
+              "type": "boolean",
+              "const": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "strategy": {
+                  "type": "string",
+                  "enum": ["hover", "tap", "viewport", "load"]
+                },
+                "all": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": false
+            }
+          ]
         }
-      }
+      },
+      "required": ["baseUrl", "basePath"],
+      "additionalProperties": false
     },
     "components": {
       "type": "object",
-      "description": "Per-component variant selection. Absent key => 'standard'.",
-      "additionalProperties": { "type": "string" },
-      "properties": {
-        "navbar": { "type": "string", "default": "standard" },
-        "footer": { "type": "string", "default": "standard" }
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "string"
       }
     },
     "pwa": {
       "type": "object",
-      "additionalProperties": false,
-      "description": "Progressive web app. Opt-in: absent or enabled:false => no manifest, no service worker, no registration script. Every other key falls back to the site's website/theme config.",
       "properties": {
-        "enabled": { "type": "boolean", "default": false },
-        "name": { "type": "string", "description": "Defaults to website.title." },
-        "shortName": { "type": "string", "description": "Home-screen label. Defaults to name." },
-        "description": { "type": "string", "description": "Defaults to website.description." },
-        "lang": { "type": "string", "description": "Defaults to website.language." },
+        "enabled": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "shortName": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "lang": {
+          "type": "string"
+        },
         "themeColor": {
-          "type": "string",
-          "description": "Browser chrome color. Defaults to the theme palette's primary."
+          "type": "string"
         },
         "backgroundColor": {
-          "type": "string",
-          "description": "Splash background. Defaults to the theme palette's background."
+          "type": "string"
         },
         "display": {
-          "enum": ["standalone", "fullscreen", "minimal-ui", "browser"],
-          "default": "standalone"
+          "type": "string",
+          "enum": ["standalone", "fullscreen", "minimal-ui", "browser"]
         },
-        "startUrl": { "type": "string", "description": "Defaults to astro.basePath." },
-        "scope": { "type": "string", "description": "Defaults to astro.basePath." },
+        "startUrl": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "string"
+        },
         "icons": {
           "type": "array",
-          "description": "Manifest icons, served from public/. Without these a browser shows no install prompt.",
           "items": {
             "type": "object",
-            "additionalProperties": false,
-            "required": ["src", "sizes"],
             "properties": {
-              "src": { "type": "string" },
-              "sizes": { "type": "string" },
-              "type": { "type": "string" },
-              "purpose": { "type": "string" }
-            }
+              "src": {
+                "type": "string"
+              },
+              "sizes": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "purpose": {
+                "type": "string"
+              }
+            },
+            "required": ["src", "sizes"],
+            "additionalProperties": false
           }
         },
         "appleTouchIcon": {
-          "type": "string",
-          "description": "iOS home-screen icon. Omitted => no apple-touch-icon link."
+          "type": "string"
+        },
+        "offline": {
+          "anyOf": [
+            {
+              "type": "boolean",
+              "const": true
+            },
+            {
+              "type": "string"
+            }
+          ]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "commerce": {
       "type": "object",
-      "additionalProperties": false,
-      "description": "Shopify headless catalog. showBuyButton:false => vetrina (catalog only, no cart/checkout).",
       "properties": {
-        "showBuyButton": { "type": "boolean", "default": false },
-        "cartInNavbar": {
-          "type": "boolean",
-          "default": false,
-          "description": "true => cart trigger lives in the navbar; false => floating badge."
-        },
-        "locale": { "type": "string", "default": "en-US" },
-        "addToCartLabel": {
+        "mode": {
+          "default": "off",
           "type": "string",
-          "default": "Add to cart",
-          "description": "Text on the add-to-cart button (icon is always shown alongside it)."
+          "enum": ["off", "catalog", "shop"]
+        },
+        "cartInNavbar": {
+          "type": "boolean"
         },
         "showAddToCartOnCards": {
-          "type": "boolean",
-          "default": true,
-          "description": "Show the add-to-cart button on product listing cards. false => cards link to the detail page only (add-to-cart still available there). No effect in vetrina mode."
+          "type": "boolean"
+        },
+        "pages": {
+          "type": "object",
+          "properties": {
+            "list": {
+              "type": "string"
+            },
+            "detail": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "showBuyButton": {
+          "not": {},
+          "description": "This key has been removed. Use \"commerce.mode\" instead."
+        },
+        "locale": {
+          "not": {},
+          "description": "This key has been removed. Use \"website.language\" instead."
+        },
+        "addToCartLabel": {
+          "not": {},
+          "description": "This key has been removed. Use \"labels\" instead."
         }
-      }
+      },
+      "additionalProperties": false
+    },
+    "labels": {
+      "type": "object",
+      "properties": {
+        "skipLink": {
+          "type": "string"
+        },
+        "scrollableRegion": {
+          "type": "string"
+        },
+        "logo": {
+          "type": "string"
+        },
+        "card": {
+          "type": "object",
+          "properties": {
+            "read": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "breadcrumbs": {
+          "type": "object",
+          "properties": {
+            "nav": {
+              "type": "string"
+            },
+            "back": {
+              "type": "string"
+            },
+            "home": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "carousel": {
+          "type": "object",
+          "properties": {
+            "previous": {
+              "type": "string"
+            },
+            "next": {
+              "type": "string"
+            },
+            "zoom": {
+              "type": "string"
+            },
+            "close": {
+              "type": "string"
+            },
+            "slide": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "filters": {
+          "type": "object",
+          "properties": {
+            "searchPlaceholder": {
+              "type": "string"
+            },
+            "searchLabel": {
+              "type": "string"
+            },
+            "clear": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "facetSelect": {
+              "type": "string"
+            },
+            "facetSelected": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "cart": {
+          "type": "object",
+          "properties": {
+            "ariaLabel": {
+              "type": "string"
+            },
+            "open": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "close": {
+              "type": "string"
+            },
+            "empty": {
+              "type": "string"
+            },
+            "subtotal": {
+              "type": "string"
+            },
+            "checkout": {
+              "type": "string"
+            },
+            "add": {
+              "type": "string"
+            },
+            "decreaseQuantity": {
+              "type": "string"
+            },
+            "increaseQuantity": {
+              "type": "string"
+            },
+            "remove": {
+              "type": "string"
+            },
+            "inStock": {
+              "type": "string"
+            },
+            "outOfStock": {
+              "type": "string"
+            },
+            "unavailable": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "price": {
+          "type": "object",
+          "properties": {
+            "discounted": {
+              "type": "string"
+            },
+            "original": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "offline": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "notFound": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "toc": {
+          "type": "object",
+          "properties": {
+            "heading": {
+              "type": "string"
+            },
+            "nav": {
+              "type": "string"
+            },
+            "loading": {
+              "type": "string"
+            },
+            "expanded": {
+              "type": "string"
+            },
+            "collapsed": {
+              "type": "string"
+            },
+            "toggle": {
+              "type": "string"
+            },
+            "navigateTo": {
+              "type": "string"
+            },
+            "navigated": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "readingTime": {
+          "type": "string"
+        },
+        "nav": {
+          "type": "object",
+          "properties": {
+            "main": {
+              "type": "string"
+            },
+            "toggle": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "footer": {
+          "type": "object",
+          "properties": {
+            "nav": {
+              "type": "string"
+            },
+            "social": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "blog": {
+          "type": "object",
+          "properties": {
+            "publishedOn": {
+              "type": "string"
+            },
+            "readingProgress": {
+              "type": "string"
+            },
+            "articleNavigation": {
+              "type": "string"
+            },
+            "previousArticle": {
+              "type": "string"
+            },
+            "nextArticle": {
+              "type": "string"
+            },
+            "info": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "string"
+            },
+            "empty": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "products": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "searchPlaceholder": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "empty": {
+              "type": "string"
+            },
+            "related": {
+              "type": "string"
+            },
+            "galleryHeading": {
+              "type": "string"
+            },
+            "gallery": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "map": {
+          "type": "object",
+          "properties": {
+            "directions": {
+              "type": "string"
+            },
+            "region": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "seo": {
+      "type": "object",
+      "properties": {
+        "ogImage": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "collections": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "templates": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "fonts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  },
+                  "weight": {
+                    "type": "number"
+                  },
+                  "style": {
+                    "type": "string",
+                    "enum": ["normal", "italic"]
+                  }
+                },
+                "required": ["name", "path"],
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "feeds": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "collection": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "fields": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "date": {
+                        "type": "string"
+                      },
+                      "categories": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "link": {
+                    "type": "string"
+                  },
+                  "limit": {
+                    "type": "number"
+                  },
+                  "excludeDrafts": {
+                    "type": "boolean"
+                  }
+                },
+                "required": ["collection", "path", "link"],
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "alternates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "href": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": ["application/rss+xml", "application/atom+xml", "application/feed+json"]
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": ["href", "type"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "map": {
+      "type": "object",
+      "properties": {
+        "tiles": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string"
+            },
+            "attribution": {
+              "type": "string"
+            },
+            "subdomains": {
+              "type": "string"
+            },
+            "maxZoom": {
+              "type": "number"
+            }
+          },
+          "required": ["url", "attribution"],
+          "additionalProperties": false
+        },
+        "directions": {
+          "type": "string",
+          "enum": ["google", "osm", "apple", "none"]
+        }
+      },
+      "additionalProperties": false
     }
-  }
+  },
+  "required": ["website", "astro"],
+  "additionalProperties": false
 }

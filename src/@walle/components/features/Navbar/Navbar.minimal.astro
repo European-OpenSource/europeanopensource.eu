@@ -1,19 +1,23 @@
 ---
 // Minimal navbar variant: brand + flat horizontal links, no dropdowns or mobile menu.
-// Selected via `components.navbar = "minimal"` in app.json. Resolved by NavbarResolver.astro.
+// Selected via `components.navbar = "minimal"` in app.json, resolved by virtual:walle-components.
 import type { NavbarConfig, NavigationLink } from "@walle/config";
-import { resolveInternalUrl } from "@walle/utils";
+import { label as t, resolveInternalUrl } from "@walle/utils";
+import type { BaseProps } from "../../shared/types";
+import { splitProps } from "../../shared/attrs";
 
-export interface Props {
+export interface Props extends BaseProps<"header"> {
   config: NavbarConfig;
 }
 
-const { config } = Astro.props;
+const OWN_KEYS = ["config", "class"] as const;
+const { own, rest } = splitProps(Astro.props, OWN_KEYS);
+const { config, class: className } = own;
 const items = Array.isArray(config.items) ? config.items : [];
-const title = config.logo?.title || "Home";
+const title = config.logo?.title || t("breadcrumbs.home");
 ---
 
-<header class="navbar-minimal">
+<header class:list={["navbar-minimal", className]} {...rest}>
   <div class="navbar-minimal__container">
     <a
       class="navbar-minimal__brand"
@@ -22,7 +26,7 @@ const title = config.logo?.title || "Home";
     >
       {title}
     </a>
-    <nav class="navbar-minimal__nav" aria-label="Main navigation">
+    <nav class="navbar-minimal__nav" aria-label={t("nav.main")}>
       <ul>
         {
           items.map((item: NavigationLink) => (
@@ -39,42 +43,55 @@ const title = config.logo?.title || "Home";
 </header>
 
 <style>
-  .navbar-minimal {
-    border-bottom: 1px solid #eaeaea;
-  }
+  @layer walle.components {
+    .navbar-minimal {
+      /* Public properties. `--navbar-fg` defaults to `inherit` (as the original unthemed
+                 color did) rather than a fixed token, so pages that set their own text color on
+                 an ancestor keep working unchanged. */
+      --navbar-bg: transparent;
+      --navbar-fg: inherit;
+      --navbar-border: var(--gray);
+      --navbar-link-color: var(--navbar-fg);
+      --navbar-link-color-hover: var(--primary);
 
-  .navbar-minimal__container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 1rem 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem;
-  }
+      background: var(--navbar-bg);
+      color: var(--navbar-fg);
+      border-bottom: 1px solid var(--navbar-border);
+    }
 
-  .navbar-minimal__brand {
-    font-weight: 700;
-    text-decoration: none;
-    color: inherit;
-  }
+    .navbar-minimal__container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
 
-  .navbar-minimal__nav ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.25rem;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
+    .navbar-minimal__brand {
+      font-weight: 700;
+      text-decoration: none;
+      color: var(--navbar-link-color);
+    }
 
-  .navbar-minimal__nav a {
-    color: inherit;
-    text-decoration: none;
-    transition: color 0.2s ease;
-  }
+    .navbar-minimal__nav ul {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
 
-  .navbar-minimal__nav a:hover {
-    color: var(--primary);
+    .navbar-minimal__nav a {
+      color: var(--navbar-link-color);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .navbar-minimal__nav a:hover {
+      color: var(--navbar-link-color-hover);
+    }
   }
 </style>

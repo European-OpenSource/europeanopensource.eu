@@ -1,5 +1,8 @@
 ---
 import { Icon } from "astro-icon/components";
+import type { BaseProps } from "../shared/types";
+import { splitProps } from "../shared/attrs";
+import { label } from "@walle/utils";
 
 export interface BreadcrumbItem {
   /**
@@ -18,7 +21,7 @@ export interface BreadcrumbItem {
   icon?: string;
 }
 
-export interface Props {
+export interface Props extends BaseProps<"nav"> {
   /**
    * Array of breadcrumb items
    */
@@ -28,26 +31,22 @@ export interface Props {
    * Custom separator (default: chevron-right)
    */
   separator?: string;
-
-  /**
-   * Additional CSS classes appended to the root element
-   */
-  class?: string;
 }
 
-const { items = [], class: className = "" } = Astro.props;
-
-const breadcrumbsClasses = ["breadcrumbs", className].filter(Boolean).join(" ");
+const OWN_KEYS = ["items", "separator", "class"] as const;
+const { own, rest } = splitProps(Astro.props, OWN_KEYS);
+const { items = [], class: className } = own;
 ---
 
-<nav aria-label="Breadcrumb" class={breadcrumbsClasses}>
+<nav aria-label={label("breadcrumbs.nav")} class:list={["breadcrumbs", className]} {...rest}>
   <ol>
     {
       items.map((item, index) => (
         <li class={index === items.length - 1 ? "current" : ""}>
           {index > 0 && (
             <span class="separator" aria-hidden="true">
-              /
+              {" "}
+              /{" "}
             </span>
           )}
 
@@ -72,122 +71,117 @@ const breadcrumbsClasses = ["breadcrumbs", className].filter(Boolean).join(" ");
 </nav>
 
 <style>
-  .breadcrumbs {
-    margin-bottom: 1.5rem;
-    font-size: 0.95rem;
-    color: var(--text-muted);
-  }
-
-  .breadcrumbs ol {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    gap: 0.2rem;
-  }
-
-  .breadcrumbs li {
-    display: flex;
-    align-items: center;
-  }
-
-  .breadcrumbs a {
-    color: var(--primary);
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    padding: 0.3rem 0.4rem;
-    border-radius: 0.3rem;
-    transition: all 0.15s ease;
-    white-space: nowrap;
-  }
-
-  .breadcrumbs a:hover {
-    background: rgba(0, 70, 173, 0.05);
-    color: var(--primary-dark);
-  }
-
-  .current-item {
-    color: var(--text-muted);
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    padding: 0.3rem 0.4rem;
-    white-space: nowrap;
-    min-width: 0;
-  }
-
-  /* Safety net, not a visual change: `white-space: nowrap` above makes each crumb one
-     unbreakable box, and `flex-wrap` on the <ol> can only move a box to the next line, never
-     shrink one that is already wider than the container. A long label therefore used to push
-     the whole document wider than the viewport and give the page a horizontal scrollbar.
-     A label that fits still renders identically; one that cannot is clipped here instead of
-     breaking the page around it. `min-width: 0` on both the <li> and the flex parent is what
-     lets the text actually shrink — flex items default to min-width: auto and refuse to go
-     below their content width, which is why overflow/text-overflow alone would do nothing. */
-  .breadcrumbs li {
-    min-width: 0;
-  }
-
-  .current-item > span {
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .separator {
-    color: var(--text-muted);
-    display: flex;
-    align-items: center;
-    opacity: 0.6;
-    font-size: 0.7rem;
-    margin: 0 0.2rem;
-  }
-
-  .item-icon {
-    width: 0.9em;
-    height: 0.9em;
-  }
-
-  @media (max-width: 640px) {
+  @layer walle.components {
     .breadcrumbs {
-      font-size: 0.85rem;
+      /* Public properties */
+      --breadcrumbs-color: var(--primary);
+      --breadcrumbs-current-color: var(--text-muted);
+      --breadcrumbs-separator-color: color-mix(in srgb, var(--text-muted) 60%, transparent);
+
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+      color: var(--text-muted);
     }
 
-    /* Hide Home (first item) on mobile, show immediate parent + current */
-    .breadcrumbs li:first-child {
-      display: none;
+    .breadcrumbs ol {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      gap: 0.2rem;
     }
 
-    /* Hide the leading separator on the item that becomes first visible */
-    .breadcrumbs li:first-child + li .separator {
-      display: none;
+    .breadcrumbs li {
+      display: flex;
+      align-items: center;
     }
 
-    /* Drop the current page too, same reasoning that already drops Home: on a narrow screen
-       the crumbs are worth their space as a way back, and the current page is the one label
-       the visitor does not need to be told — it is the <h1> directly below it on every page
-       that uses this component. Keeping it truncated instead would spend a second line on an
-       ellipsised copy of that heading. The trail still reads Parent / Grandparent, which is
-       the part that is actually navigable.
-
-       `:not(:nth-child(2))` is the guard that keeps this from backfiring: with Home already
-       hidden above, the second child is the first crumb still visible, so on a two-item trail
-       (Home / Current — a real shape for a top-level page) hiding the current one as well
-       would leave an empty nav. Only trails with something left to show lose their last
-       crumb. */
-    .breadcrumbs li.current:not(:nth-child(2)) {
-      display: none;
+    .breadcrumbs a {
+      color: var(--breadcrumbs-color);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.3rem 0.4rem;
+      border-radius: var(--radius-md);
+      transition: all 0.15s ease;
+      white-space: nowrap;
     }
-  }
 
-  @media (max-width: 380px) {
-    .breadcrumbs a,
+    .breadcrumbs a:hover {
+      background: color-mix(in srgb, var(--primary) 5%, transparent);
+      color: var(--primary-dark);
+    }
+
     .current-item {
-      padding: 0.2rem;
+      color: var(--breadcrumbs-current-color);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.3rem 0.4rem;
+      white-space: nowrap;
+      min-width: 0;
+    }
+
+    /* Safety net, not a visual change: an over-long label is clipped here instead of pushing
+           the page wider than the viewport. `min-width: 0` on both the <li> and the flex parent
+           is required for the text to shrink at all: flex items default to min-width: auto and
+           refuse to go below their content width, so overflow/text-overflow alone would do
+           nothing without it. */
+    .breadcrumbs li {
+      min-width: 0;
+    }
+
+    .current-item > span {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .separator {
+      color: var(--breadcrumbs-separator-color);
+      display: flex;
+      align-items: center;
+      font-size: 0.7rem;
+      margin: 0 0.2rem;
+    }
+
+    .item-icon {
+      width: 0.9em;
+      height: 0.9em;
+    }
+
+    @media (max-width: 640px) {
+      .breadcrumbs {
+        font-size: 0.85rem;
+      }
+
+      /* Hide Home (first item) on mobile, show immediate parent + current */
+      .breadcrumbs li:first-child {
+        display: none;
+      }
+
+      /* Hide the leading separator on the item that becomes first visible */
+      .breadcrumbs li:first-child + li .separator {
+        display: none;
+      }
+
+      /* Drop the current page too, same reasoning that already drops Home: it duplicates the
+                 page's own <h1>. `:not(:nth-child(2))` guards a two-item trail (Home / Current): with
+                 Home already hidden, the second child is the first crumb still visible, so hiding
+                 the current one too would leave an empty nav. */
+      .breadcrumbs li.current:not(:nth-child(2)) {
+        display: none;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .breadcrumbs a,
+      .current-item {
+        padding: 0.2rem;
+      }
     }
   }
 </style>

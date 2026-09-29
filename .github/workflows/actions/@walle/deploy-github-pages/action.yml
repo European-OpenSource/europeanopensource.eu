@@ -25,7 +25,7 @@ runs:
   steps:
     - name: Checkout your repository using git
       uses: actions/checkout@v7
-    # Must run before setup-node's cache: yarn — see comment in website-tests/action.yml.
+    # Must run before setup-node's cache: yarn; see comment in website-tests/action.yml.
     - name: Enable Corepack
       shell: bash
       run: corepack enable

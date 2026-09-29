@@ -1,0 +1,209 @@
+---
+import type { BaseProps, VariantProps, ModifierProps } from "../../shared/types";
+import { splitProps, variantAttrs } from "../../shared/attrs";
+
+export interface Props
+  extends BaseProps<"section">, VariantProps, Pick<ModifierProps, "filled" | "muted"> {
+  // `id` comes from BaseProps (HTMLAttributes) as `string | null | undefined`, not redeclared
+  // narrower here, since callers like Hero/Section/SectionColumns/SectionFlow forward their own
+  // unmodified `id` through {...rest} straight from the same HTMLAttributes type.
+  /** Optional tagline shown above the title. String prop or `tagline` slot (slot wins). */
+  tagline?: string;
+  /** Section title. String prop or `title` slot (slot wins). */
+  title?: string;
+  /** Heading tag for the title. @default "h2" */
+  headingLevel?: "h1" | "h2";
+  /** Optional subtitle below the title. String prop or `subtitle` slot (slot wins). */
+  subtitle?: string;
+  /** Center tagline/title/subtitle text. @default false */
+  centered?: boolean;
+}
+
+const OWN_KEYS = [
+  "id",
+  "tagline",
+  "title",
+  "headingLevel",
+  "subtitle",
+  "centered",
+  "variant",
+  "filled",
+  "muted",
+  "class",
+] as const;
+
+const { own, rest } = splitProps(Astro.props, OWN_KEYS);
+const {
+  id,
+  tagline,
+  title,
+  headingLevel = "h2",
+  subtitle,
+  centered = false,
+  variant = "primary",
+  filled = false,
+  muted = false,
+  class: className,
+} = own;
+
+const Tag = headingLevel;
+
+/**
+ * A caller may forward `<slot name="title" slot="title" />` unconditionally, whether or not
+ * its own caller actually provided that slot: Astro's compiler registers the slot as present
+ * from the syntax alone, so `Astro.slots.has()` alone cannot tell "provided but empty" apart
+ * from "provided with content". Rendering it and checking the result is the only reliable way;
+ * an empty render then falls back to the prop instead of leaving the section headless.
+ */
+const taglineHtml = Astro.slots.has("tagline") ? (await Astro.slots.render("tagline")).trim() : "";
+const titleHtml = Astro.slots.has("title") ? (await Astro.slots.render("title")).trim() : "";
+const subtitleHtml = Astro.slots.has("subtitle")
+  ? (await Astro.slots.render("subtitle")).trim()
+  : "";
+
+const hasTagline = Boolean(taglineHtml) || Boolean(tagline);
+const hasTitle = Boolean(titleHtml) || Boolean(title);
+const hasSubtitle = Boolean(subtitleHtml) || Boolean(subtitle);
+---
+
+<section
+  class:list={["section-wrapper", { "section-wrapper--centered": centered }, className]}
+  id={id}
+  {...variantAttrs({ variant, filled, muted })}
+  {...rest}
+>
+  <div class="section-wrapper__bg"><slot name="background" /></div>
+  <div class="section-wrapper__inner">
+    {
+      hasTagline && (
+        <p class="section-wrapper__tagline">
+          {taglineHtml ? <Fragment set:html={taglineHtml} /> : tagline}
+        </p>
+      )
+    }
+    {
+      hasTitle && (
+        <Tag class="section-wrapper__title">
+          {titleHtml ? <Fragment set:html={titleHtml} /> : title}
+        </Tag>
+      )
+    }
+    {
+      hasSubtitle && (
+        <p class="section-wrapper__subtitle">
+          {subtitleHtml ? <Fragment set:html={subtitleHtml} /> : subtitle}
+        </p>
+      )
+    }
+    <slot />
+  </div>
+</section>
+
+<style>
+  @layer walle.components {
+    .section-wrapper {
+      /* Public properties */
+      --wrapper-bg: transparent;
+      --wrapper-fg: var(--text);
+      --wrapper-title-color: var(--heading);
+      --wrapper-padding-y: var(--space-4xl);
+      --wrapper-max-width: 1200px;
+      --wrapper-gutter: var(--space-xl);
+
+      position: relative;
+      padding: var(--wrapper-padding-y) 0;
+      background: var(--wrapper-bg);
+      color: var(--wrapper-fg);
+    }
+
+    .section-wrapper__bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .section-wrapper__inner {
+      position: relative;
+      z-index: 1;
+      max-width: var(--wrapper-max-width);
+      margin: 0 auto;
+      padding: 0 var(--wrapper-gutter);
+    }
+
+    .section-wrapper--centered .section-wrapper__inner {
+      text-align: center;
+    }
+
+    .section-wrapper__tagline {
+      margin: 0 0 var(--space-sm);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: inherit;
+    }
+
+    .section-wrapper__title {
+      margin: 0 0 var(--space-2xl);
+      color: var(--wrapper-title-color);
+      font-size: clamp(2rem, 4vw, 2.75rem);
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .section-wrapper__subtitle {
+      margin: 0 0 var(--space-2xl);
+      color: inherit;
+    }
+
+    /* Modifiers map --variant-* tokens to the public properties above. `muted` is declared
+           before `filled` so that, if a consumer sets both, `filled` wins. Both also redefine
+           --text/--text-muted/--heading/--surface-alt/link colors, not just --wrapper-bg/fg,
+           so base rules on descendant content (p, code, links) resolve correctly too. */
+    .section-wrapper[data-muted] {
+      --wrapper-bg: var(--surface-alt);
+      /* Only code's own background moves: it defaults to the same --surface-alt as the
+         section itself and would otherwise blend into it. */
+      --surface-alt: var(--surface);
+    }
+
+    .section-wrapper[data-filled] {
+      --wrapper-bg: var(--variant-bg);
+      --wrapper-fg: var(--variant-fg);
+      --wrapper-title-color: var(--variant-fg);
+      --text: var(--variant-fg);
+      --text-muted: var(--variant-fg);
+      --heading: var(--variant-fg);
+      --link: var(--variant-fg);
+      --link-hover: var(--variant-fg);
+      /* code's background reuses the variant's already-audited hover shade (darker, so
+         contrast against --variant-fg only improves) rather than a new color. */
+      --surface-alt: var(--variant-bg-hover);
+    }
+
+    @media (max-width: 900px) {
+      .section-wrapper {
+        --wrapper-padding-y: var(--space-2xl);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .section-wrapper {
+        --wrapper-gutter: var(--space-md);
+      }
+    }
+  }
+</style>
+
+<style is:global>
+  @layer walle.components {
+    /* Global, not scoped: a consumer's default-slot content never carries this component's
+       own data-astro-cid-* attribute, so a normal scoped rule would never match it; prefixed
+       with .section-wrapper so it only ever affects a walle Section. Underlines plain links
+       because --link above equals --variant-fg, the same color as the surrounding text
+       (WCAG 1.4.1); `:not([class])` excludes Button/Link's own styled output. */
+    .section-wrapper[data-filled] a:not([class]) {
+      text-decoration: underline;
+    }
+  }
+</style>
