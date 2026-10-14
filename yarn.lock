@@ -27,6 +27,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@astrojs/compiler-binding-android-arm64@npm:0.4.1":
+  version: 0.4.1
+  resolution: "@astrojs/compiler-binding-android-arm64@npm:0.4.1"
+  conditions: os=android & cpu=arm64
+  languageName: node
+  linkType: hard
+
 "@astrojs/compiler-binding-android-arm64@npm:0.5.1":
   version: 0.5.1
   resolution: "@astrojs/compiler-binding-android-arm64@npm:0.5.1"
@@ -37,6 +44,13 @@ __metadata:
 "@astrojs/compiler-binding-darwin-arm64@npm:0.3.1":
   version: 0.3.1
   resolution: "@astrojs/compiler-binding-darwin-arm64@npm:0.3.1"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@astrojs/compiler-binding-darwin-arm64@npm:0.4.1":
+  version: 0.4.1
+  resolution: "@astrojs/compiler-binding-darwin-arm64@npm:0.4.1"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
@@ -55,6 +69,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@astrojs/compiler-binding-darwin-x64@npm:0.4.1":
+  version: 0.4.1
+  resolution: "@astrojs/compiler-binding-darwin-x64@npm:0.4.1"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
 "@astrojs/compiler-binding-darwin-x64@npm:0.5.1":
   version: 0.5.1
   resolution: "@astrojs/compiler-binding-darwin-x64@npm:0.5.1"
@@ -65,6 +86,13 @@ __metadata:
 "@astrojs/compiler-binding-linux-arm64-gnu@npm:0.3.1":
   version: 0.3.1
   resolution: "@astrojs/compiler-binding-linux-arm64-gnu@npm:0.3.1"
+  conditions: os=linux & cpu=arm64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@astrojs/compiler-binding-linux-arm64-gnu@npm:0.4.1":
+  version: 0.4.1
+  resolution: "@astrojs/compiler-binding-linux-arm64-gnu@npm:0.4.1"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
@@ -83,6 +111,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@astrojs/compiler-binding-linux-arm64-musl@npm:0.4.1":
+  version: 0.4.1
+  resolution: "@astrojs/compiler-binding-linux-arm64-musl@npm:0.4.1"
+  conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
 "@astrojs/compiler-binding-linux-arm64-musl@npm:0.5.1":
   version: 0.5.1
   resolution: "@astrojs/compiler-binding-linux-arm64-musl@npm:0.5.1"
@@ -93,6 +128,13 @@ __metadata:
 "@astrojs/compiler-binding-linux-x64-gnu@npm:0.3.1":
   version: 0.3.1
   resolution: "@astrojs/compiler-binding-linux-x64-gnu@npm:0.3.1"
+  conditions: os=linux & cpu=x64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@astrojs/compiler-binding-linux-x64-gnu@npm:0.4.1":
+  version: 0.4.1
+  resolution: "@astrojs/compiler-binding-linux-x64-gnu@npm:0.4.1"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
@@ -111,6 +153,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@astrojs/compiler-binding-linux-x64-musl@npm:0.4.1":
+  version: 0.4.1
+  resolution: "@astrojs/compiler-binding-linux-x64-musl@npm:0.4.1"
+  conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
 "@astrojs/compiler-binding-linux-x64-musl@npm:0.5.1":
   version: 0.5.1
   resolution: "@astrojs/compiler-binding-linux-x64-musl@npm:0.5.1"
@@ -123,6 +172,15 @@ __metadata:
   resolution: "@astrojs/compiler-binding-wasm32-wasi@npm:0.3.1"
   dependencies:
     "@napi-rs/wasm-runtime": "npm:^1.1.6"
+  conditions: cpu=wasm32
+  languageName: node
+  linkType: hard
+
+"@astrojs/compiler-binding-wasm32-wasi@npm:0.4.1":
+  version: 0.4.1
+  resolution: "@astrojs/compiler-binding-wasm32-wasi@npm:0.4.1"
+  dependencies:
+    "@napi-rs/wasm-runtime": "npm:^1.2.4"
   conditions: cpu=wasm32
   languageName: node
   linkType: hard
@@ -145,6 +203,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@astrojs/compiler-binding-win32-arm64-msvc@npm:0.4.1":
+  version: 0.4.1
+  resolution: "@astrojs/compiler-binding-win32-arm64-msvc@npm:0.4.1"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
 "@astrojs/compiler-binding-win32-arm64-msvc@npm:0.5.1":
   version: 0.5.1
   resolution: "@astrojs/compiler-binding-win32-arm64-msvc@npm:0.5.1"
@@ -155,6 +220,13 @@ __metadata:
 "@astrojs/compiler-binding-win32-x64-msvc@npm:0.3.1":
   version: 0.3.1
   resolution: "@astrojs/compiler-binding-win32-x64-msvc@npm:0.3.1"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@astrojs/compiler-binding-win32-x64-msvc@npm:0.4.1":
+  version: 0.4.1
+  resolution: "@astrojs/compiler-binding-win32-x64-msvc@npm:0.4.1"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -199,6 +271,45 @@ __metadata:
     "@astrojs/compiler-binding-win32-x64-msvc":
       optional: true
   checksum: 10c0/4b4b583d5b49960e8c7f10154c38d8f914bf0dbb09a8db1bf0fcbae31367604769a4e7aec02fc6e328de8c51da889780ef701f74b8e9718276c2611457f81e26
+  languageName: node
+  linkType: hard
+
+"@astrojs/compiler-binding@npm:0.4.1":
+  version: 0.4.1
+  resolution: "@astrojs/compiler-binding@npm:0.4.1"
+  dependencies:
+    "@astrojs/compiler-binding-android-arm64": "npm:0.4.1"
+    "@astrojs/compiler-binding-darwin-arm64": "npm:0.4.1"
+    "@astrojs/compiler-binding-darwin-x64": "npm:0.4.1"
+    "@astrojs/compiler-binding-linux-arm64-gnu": "npm:0.4.1"
+    "@astrojs/compiler-binding-linux-arm64-musl": "npm:0.4.1"
+    "@astrojs/compiler-binding-linux-x64-gnu": "npm:0.4.1"
+    "@astrojs/compiler-binding-linux-x64-musl": "npm:0.4.1"
+    "@astrojs/compiler-binding-wasm32-wasi": "npm:0.4.1"
+    "@astrojs/compiler-binding-win32-arm64-msvc": "npm:0.4.1"
+    "@astrojs/compiler-binding-win32-x64-msvc": "npm:0.4.1"
+  dependenciesMeta:
+    "@astrojs/compiler-binding-android-arm64":
+      optional: true
+    "@astrojs/compiler-binding-darwin-arm64":
+      optional: true
+    "@astrojs/compiler-binding-darwin-x64":
+      optional: true
+    "@astrojs/compiler-binding-linux-arm64-gnu":
+      optional: true
+    "@astrojs/compiler-binding-linux-arm64-musl":
+      optional: true
+    "@astrojs/compiler-binding-linux-x64-gnu":
+      optional: true
+    "@astrojs/compiler-binding-linux-x64-musl":
+      optional: true
+    "@astrojs/compiler-binding-wasm32-wasi":
+      optional: true
+    "@astrojs/compiler-binding-win32-arm64-msvc":
+      optional: true
+    "@astrojs/compiler-binding-win32-x64-msvc":
+      optional: true
+  checksum: 10c0/75ab9b1806f2941165a17ca8e5228037fd23f30e75861a3c1d5fb9c563ce38fd46aa20e1bc72868bcdf804eeecbdff2a85a5a98f4dddc71d155ef650e8496267
   languageName: node
   linkType: hard
 
@@ -250,19 +361,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@astrojs/compiler-rs@npm:^0.4.0":
+  version: 0.4.1
+  resolution: "@astrojs/compiler-rs@npm:0.4.1"
+  dependencies:
+    "@astrojs/compiler-binding": "npm:0.4.1"
+  checksum: 10c0/3c6859b40baffabc257544ce3ea1e5120432676a0ff207ed316df1a3024e1f20445716d742133c7c89f2c675156af72d2bc0e82d670066d855b4eb9c8fc02173
+  languageName: node
+  linkType: hard
+
 "@astrojs/compiler-rs@npm:^0.5.0":
   version: 0.5.1
   resolution: "@astrojs/compiler-rs@npm:0.5.1"
   dependencies:
     "@astrojs/compiler-binding": "npm:0.5.1"
   checksum: 10c0/f3b8bd560d0321032ee58b0bbf9fa274ea27d7fde31ec8b5b82ef76b88811e635d8d22ef026581d7ac36f09708132267f5a9dbf3e2331cd4af4a76359b69f98d
-  languageName: node
-  linkType: hard
-
-"@astrojs/compiler@npm:^2.9.1":
-  version: 2.13.1
-  resolution: "@astrojs/compiler@npm:2.13.1"
-  checksum: 10c0/83d85c30c8b1bd6d2382f1bc3d99126732838dc747e3a9defa55f726ccc2276c710e6af81bfb68d8fb17fde452c69cf0187cb1d2f8eb022764f1ccc4cf3a3db1
   languageName: node
   linkType: hard
 
@@ -2469,6 +2582,13 @@ __metadata:
   bin:
     playwright: cli.js
   checksum: 10c0/795cd06c2eb6cb6142e72792f4df8f97665aa8c551c16278a7f2b3f31664e0cff07ed3c066490da55daf2fe51bc18e9c1ec6cba05b2c37387a0c49ad63017db8
+  languageName: node
+  linkType: hard
+
+"@prettier/parse-srcset@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "@prettier/parse-srcset@npm:3.1.0"
+  checksum: 10c0/8dfa3c13bbad6029724280fc0d13370028887fe2397e708d3be4f3889bb1833349bac564ac3016e37ebc0dfb83141022dd94946bde3f0d862b901c2fe23df533
   languageName: node
   linkType: hard
 
@@ -6904,23 +7024,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier-plugin-astro@npm:^0.14.1":
-  version: 0.14.1
-  resolution: "prettier-plugin-astro@npm:0.14.1"
+"prettier-plugin-astro@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "prettier-plugin-astro@npm:1.1.1"
   dependencies:
-    "@astrojs/compiler": "npm:^2.9.1"
-    prettier: "npm:^3.0.0"
-    sass-formatter: "npm:^0.7.6"
-  checksum: 10c0/f812607d422ff36df1bf58534a96590a861dedf41e70f8f36fa9546b91def65b17f4507e1c9212dab56cbbae2f4ab5ff6e7e31370b9198261360c6444daa297c
-  languageName: node
-  linkType: hard
-
-"prettier@npm:^3.0.0":
-  version: 3.9.6
-  resolution: "prettier@npm:3.9.6"
-  bin:
-    prettier: bin/prettier.cjs
-  checksum: 10c0/9f7ddae234035868f3daab3dc34e6de7e54622185afb017378029f0c09a9c023248ccf6f34def0b17a0538e18c47aa1b3188bab72965d1bf735919baa0747e99
+    "@astrojs/compiler-rs": "npm:^0.4.0"
+    "@prettier/parse-srcset": "npm:^3.1.0"
+    sass-formatter: "npm:^0.8.0"
+  peerDependencies:
+    prettier: ^3.5.3
+  checksum: 10c0/bb696c40af2664a6d99c6d086924b95a33805affa3332451f075dc8a09012bf746a59de19ba493bc1dd8d7ec0f7edd5a4cec6e0ec76a993d2a1017e6a4fd67c5
   languageName: node
   linkType: hard
 
@@ -7360,12 +7473,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sass-formatter@npm:^0.7.6":
-  version: 0.7.9
-  resolution: "sass-formatter@npm:0.7.9"
+"sass-formatter@npm:^0.8.0":
+  version: 0.8.0
+  resolution: "sass-formatter@npm:0.8.0"
   dependencies:
     suf-log: "npm:^2.5.3"
-  checksum: 10c0/172eb326121ace1a48e689a1419efab2d780623631d106ac306ac2a055e96813bda36044f20bc4cc28d761427efc136a08d07153d1b8a8ccf0a032dca5fdce3c
+  bin:
+    sass-formatter: dist/cli.js
+  checksum: 10c0/b7b49e46b6d91e07003d3326c0717651609bf7978222f6af347c152c2ddb2fba97b548d73fa84536ad03891d73578ffe4e809aee36f713af592585117d0518ed
   languageName: node
   linkType: hard
 
@@ -8704,7 +8819,7 @@ __metadata:
     leaflet: "npm:^1.9.4"
     nanostores: "npm:^1.5.3"
     prettier: "npm:^3.9.9"
-    prettier-plugin-astro: "npm:^0.14.1"
+    prettier-plugin-astro: "npm:^1.1.1"
     satori: "npm:^0.33.5"
     typescript: "npm:^6.0.3"
     vitest: "npm:^5.0.1"
