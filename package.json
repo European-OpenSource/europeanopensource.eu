@@ -35,7 +35,7 @@
     "astro": "^7.3.4",
     "astro-icon": "^1.2.0",
     "leaflet": "^1.9.4",
-    "nanostores": "^1.5.3"
+    "nanostores": "^1.5.5"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
